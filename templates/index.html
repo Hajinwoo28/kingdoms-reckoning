@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>⚔️ Kingdom's Reckoning — Tactical Tower Defense</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <div class="bg-base"></div>
+  <div class="bg-vignette"></div>
+  <div id="vfx-overlay"></div>
+  <div id="toast-container"></div>
+
+  <!-- GAME OVER -->
+  <div id="game-over-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box danger-box">
+      <div class="modal-crest">💀</div>
+      <h2 class="modal-title danger-title">KINGDOM FALLEN</h2>
+      <p class="modal-sub">Realm crumbled at <strong>Wave <span id="go-wave">0</span></strong></p>
+      <div class="modal-rewards">
+        <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val" id="go-score">0</span><span
+            class="ri-lbl">Score</span></div>
+        <div class="rwd-item"><span class="ri-icon">🌊</span><span class="ri-val" id="go-waveval">0</span><span
+            class="ri-lbl">Waves</span></div>
+      </div>
+      <p class="modal-hint">Your towers stand — repair and fight on, Commander!</p>
+      <button class="btn-modal primary-btn" onclick="retryWave()">🔄 REPAIR &amp; RETRY</button>
+    </div>
+  </div>
+
+  <!-- WAVE PREVIEW -->
+  <div id="wave-start-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <div class="modal-crest">⚔️</div>
+      <h2 class="modal-title gold-title" id="wsm-title">WAVE 1 INCOMING</h2>
+      <p class="modal-sub" id="wsm-sub">Darkness gathers at the gate...</p>
+      <div class="enemy-preview-grid" id="wsm-enemies"></div>
+      <div class="modal-rewards" id="wsm-rewards"></div>
+      <button class="btn-modal primary-btn" onclick="closeWaveModal()">⚔️ PREPARE DEFENSES</button>
+    </div>
+  </div>
+
+  <!-- WAVE COMPLETE -->
+  <div id="wave-complete-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box success-box">
+      <div class="modal-crest" id="wcm-icon">🏆</div>
+      <h2 class="modal-title success-title" id="wcm-title">WAVE CLEARED!</h2>
+      <div class="modal-rewards" id="wcm-rewards"></div>
+      <p class="modal-hint" id="wcm-hint"></p>
+      <div class="modal-btn-row">
+        <button class="btn-modal primary-btn" onclick="closeWaveComplete()">⚔️ NEXT WAVE</button>
+        <button class="btn-modal gold-btn" onclick="closeWaveComplete();openShop()">🛒 SHOP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div id="shop-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box shop-box">
+      <h2 class="modal-title gold-title">🏪 ROYAL EMPORIUM</h2>
+      <div class="shop-currency-bar">
+        <span class="shop-cur gold-cur">🪙 <strong id="shop-gold">0</strong> Gold</span>
+        <span class="shop-cur dia-cur">💎 <strong id="shop-dia">0</strong> Diamonds</span>
+      </div>
+      <div class="shop-tabs">
+        <button class="shop-tab active" id="stab-castles" onclick="shopTab('castles')">🏰 Castles</button>
+        <button class="shop-tab" id="stab-towers" onclick="shopTab('towers')">🗼 Tower Skins</button>
+        <button class="shop-tab" id="stab-powerups" onclick="shopTab('powerups')">⚡ Power-Ups</button>
+      </div>
+      <div id="shop-content" class="shop-content-area"></div>
+      <button class="btn-modal secondary-btn" onclick="closeShop()" style="margin-top:10px;width:100%">✕ CLOSE
+        EMPORIUM</button>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div id="leaderboard-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h2 class="modal-title gold-title">🏆 HALL OF GLORY</h2>
+      <ul id="leaderboard-list" class="lb-list"></ul>
+      <button class="btn-modal secondary-btn" onclick="closeLeaderboard()"
+        style="margin-top:12px;width:100%">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="settings-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h2 class="modal-title">⚙️ SETTINGS</h2>
+      <div class="settings-rows">
+        <div class="setting-row"><span>🎵 Music</span><button class="btn-toggle tog-on" id="btn-set-music"
+            onclick="toggleSetting('music')">ON</button></div>
+        <div class="setting-row"><span>🔊 Sound FX</span><button class="btn-toggle tog-on" id="btn-set-sfx"
+            onclick="toggleSetting('sfx')">ON</button></div>
+        <div class="setting-row"><span>✨ Visual FX</span><button class="btn-toggle tog-on" id="btn-set-vfx"
+            onclick="toggleSetting('vfx')">ON</button></div>
+        <div class="setting-row"><span>⚡ Fast Mode</span><button class="btn-toggle tog-off" id="btn-set-fastMode2"
+            onclick="toggleSetting('fastMode')">OFF</button></div>
+        <button class="btn-modal primary-btn" onclick="saveGame()" style="width:100%;margin-top:12px">💾 SAVE
+          GAME</button>
+      </div>
+      <button class="btn-modal secondary-btn" onclick="closeSettings()" style="margin-top:8px;width:100%">APPLY &amp;
+        CLOSE</button>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="admin-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h2 class="modal-title gold-title">🛡️ ADMIN COMMAND</h2>
+      <div class="modal-body-inner">
+        <img id="qr-code-img" src="" alt="QR" style="display:none;margin:10px auto;border-radius:8px;display:block">
+        <p style="font-size:12px;color:var(--col-dim);margin-top:10px">Network Link:<br><strong id="admin-mobile-link"
+            style="color:var(--col-cyan);word-break:break-all">Loading...</strong></p>
+      </div>
+      <button class="btn-modal secondary-btn" onclick="closeAdminPanel()"
+        style="margin-top:12px;width:100%">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- ══ MAIN APP ══ -->
+  <div class="app-wrapper">
+
+    <!-- AUTH SCREEN -->
+    <div id="auth-section" class="auth-screen">
+      <div class="auth-card">
+        <div class="auth-emblem">⚔️</div>
+        <h1 class="auth-game-title">Kingdom's<br>Reckoning</h1>
+        <p class="auth-tagline">TACTICAL TURN-BASED TOWER DEFENSE</p>
+        <div class="auth-form">
+          <input type="text" id="username" placeholder="Commander ID" class="auth-input" autocomplete="off">
+          <input type="password" id="password" placeholder="War Seal" class="auth-input">
+          <div class="auth-btn-row">
+            <button class="btn-auth-primary" onclick="login()">ENTER REALM</button>
+            <button class="btn-auth-secondary" onclick="register()">ENLIST</button>
+          </div>
+          <p id="auth-message" class="auth-msg"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-section" class="game-screen" style="display:none">
+
+      <!-- TOP HUD -->
+      <header class="top-hud">
+        <div class="hud-brand">
+          <span class="hud-crest">⚔️</span>
+          <span class="hud-game-name">Kingdom's Reckoning</span>
+        </div>
+        <nav class="hud-stats">
+          <div class="hud-badge hp-badge">❤️ <span id="hud-hp">10/10</span></div>
+          <div class="hud-badge gold-badge">🪙 <span id="hud-gold">40</span></div>
+          <div class="hud-badge dia-badge">💎 <span id="hud-dia">0</span></div>
+          <div class="hud-badge wave-badge">🌊 W<span id="hud-wave">1</span></div>
+          <div class="hud-badge score-badge">🏆 <span id="hud-score">0</span></div>
+        </nav>
+        <div class="hud-actions">
+          <span class="hud-user-label">👤 <span id="display-username"></span></span>
+          <button id="btn-admin" class="hud-btn" style="display:none" onclick="openAdminPanel()">ADMIN</button>
+          <button class="hud-btn" onclick="openLeaderboard()">🏆</button>
+          <button class="hud-btn shop-hud-btn" onclick="openShop()">🛒 SHOP</button>
+          <button class="hud-btn" onclick="openSettings()">⚙️</button>
+          <button class="hud-btn logout-btn" onclick="logout()">LOGOUT</button>
+        </div>
+      </header>
+
+      <!-- 3-COLUMN LAYOUT -->
+      <div class="game-layout">
+
+        <!-- LEFT: SIDE QUESTS -->
+        <aside class="side-panel quests-panel">
+          <h3 class="panel-title"><span class="pt-icon">📜</span>SIDE QUESTS</h3>
+          <div id="quests-container" class="quest-list"></div>
+        </aside>
+
+        <!-- CENTER: BOARD + LOG + ABILITIES -->
+        <main class="game-center">
+          <div class="phase-strip" id="phase-strip">
+            <div class="phase-indicator planning" id="phase-dot"></div>
+            <span id="phase-label">⚔️ PLANNING PHASE — Place &amp; upgrade towers before executing</span>
+          </div>
+          <div class="board-wrapper" id="shake-wrapper">
+            <div id="game-board" class="board"></div>
+          </div>
+          <div class="combat-log-wrap">
+            <div class="combat-log-scroll" id="combat-log"><span class="log-init">📜 Awaiting orders,
+                Commander...</span></div>
+          </div>
+          <div class="ability-bar">
+            <div class="abilities-group">
+              <button class="ab-btn meteor-ab" onclick="castMeteor()" title="Destroy ALL enemies">
+                <span class="ab-ico">☄️</span><span class="ab-n">METEOR</span><span class="ab-c">5💎</span>
+              </button>
+              <button class="ab-btn freeze-ab" onclick="castFreeze()" title="Freeze enemies 1 turn">
+                <span class="ab-ico">❄️</span><span class="ab-n">FREEZE</span><span class="ab-c">2💎</span>
+              </button>
+              <button class="ab-btn lightning-ab" onclick="castLightning()" title="Chain-zap 3 enemies">
+                <span class="ab-ico">⚡</span><span class="ab-n">STRIKE</span><span class="ab-c">3💎</span>
+              </button>
+              <button class="ab-btn repair-ab" onclick="castRepair()" title="Restore 3 Castle HP">
+                <span class="ab-ico">🛡️</span><span class="ab-n">REPAIR</span><span class="ab-c">4💎</span>
+              </button>
+            </div>
+            <div class="right-actions">
+              <div class="fast-row">
+                <span class="fast-label">⚡ FAST</span>
+                <button class="btn-toggle tog-off" id="btn-set-fastMode"
+                  onclick="toggleSetting('fastMode')">OFF</button>
+              </div>
+              <button class="execute-btn" id="execute-btn" onclick="executeTurn()">
+                ⚔️ <span id="execute-label">EXECUTE TURN</span>
+              </button>
+            </div>
+          </div>
+        </main>
+
+        <!-- RIGHT: TOWER PANEL -->
+        <aside class="side-panel towers-panel">
+          <h3 class="panel-title"><span class="pt-icon">🗼</span>TOWER COMMAND</h3>
+          <div id="tower-selector" class="tower-selector"></div>
+          <div id="tower-info-box" class="tower-info-box">
+            <p class="info-placeholder">Select a tower type, then click a tile to place it</p>
+          </div>
+          <div id="upgrade-panel" class="upgrade-panel" style="display:none">
+            <div class="up-header">
+              <span class="up-tower-icon" id="up-icon">🗼</span>
+              <div>
+                <div class="up-tower-name" id="up-name">Tower</div>
+                <div class="up-tower-level" id="up-level">Level 1</div>
+              </div>
+            </div>
+            <div id="up-stats" class="up-stats-grid"></div>
+            <div class="up-action-row">
+              <button class="btn-upgrade-act" id="btn-upgrade" onclick="upgradeSelected()">⬆ UPGRADE</button>
+              <button class="btn-sell-act" id="btn-sell" onclick="sellSelected()">💰 SELL</button>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div><!-- /game-section -->
+  </div><!-- /app-wrapper -->
+
+  <script src="{{ url_for('static', filename='game.js') }}"></script>
+</body>
+
+</html>
