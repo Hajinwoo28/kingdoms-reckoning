@@ -194,6 +194,137 @@ def get_admin_link():
     except Exception: local_ip = "127.0.0.1"
     return jsonify({"link": f"http://{local_ip}:5000"})
 
+<<<<<<< HEAD
+=======
+@app.route('/api/admin/players', methods=['GET'])
+def admin_get_players():
+    if session.get('username') != 'admin': return jsonify({"error": "Unauthorized"}), 403
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('''
+            SELECT u.username, ps.gold, ps.diamonds, ps.wave, ps.score, ps.castle_skin, ps.tower_skin,
+                   COALESCE((SELECT MAX(s.score) FROM scores s WHERE s.player = u.username), 0) as best_score,
+                   COALESCE((SELECT COUNT(*) FROM scores s WHERE s.player = u.username), 0) as games_played
+            FROM users u
+            LEFT JOIN player_saves ps ON u.username = ps.username
+            ORDER BY best_score DESC
+        ''')
+        rows = c.fetchall()
+        c.close(); conn.close()
+        return jsonify([{
+            "username": r[0], "gold": r[1], "diamonds": r[2], "wave": r[3],
+            "score": r[4], "castle_skin": r[5], "tower_skin": r[6],
+            "best_score": r[7], "games_played": r[8]
+        } for r in rows])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/delete_player', methods=['POST'])
+def admin_delete_player():
+    if session.get('username') != 'admin': return jsonify({"error": "Unauthorized"}), 403
+    username = request.json.get('username')
+    if username == 'admin': return jsonify({"error": "Cannot delete admin"}), 400
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('DELETE FROM scores WHERE player = %s', (username,))
+        c.execute('DELETE FROM player_saves WHERE username = %s', (username,))
+        c.execute('DELETE FROM users WHERE username = %s', (username,))
+        conn.commit(); c.close(); conn.close()
+        return jsonify({"status": "success", "message": f"Player '{username}' deleted."})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/reset_score', methods=['POST'])
+def admin_reset_score():
+    if session.get('username') != 'admin': return jsonify({"error": "Unauthorized"}), 403
+    username = request.json.get('username')
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('DELETE FROM scores WHERE player = %s', (username,))
+        c.execute('UPDATE player_saves SET score=0, wave=1 WHERE username=%s', (username,))
+        conn.commit(); c.close(); conn.close()
+        return jsonify({"status": "success", "message": f"Scores reset for '{username}'."})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/give_currency', methods=['POST'])
+def admin_give_currency():
+    if session.get('username') != 'admin': return jsonify({"error": "Unauthorized"}), 403
+    data = request.json
+    username = data.get('username')
+    gold = int(data.get('gold', 0))
+    diamonds = int(data.get('diamonds', 0))
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('UPDATE player_saves SET gold=gold+%s, diamonds=diamonds+%s WHERE username=%s', (gold, diamonds, username))
+        conn.commit(); c.close(); conn.close()
+        return jsonify({"status": "success", "message": f"Gave {gold}g / {diamonds}💎 to '{username}'."})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/all_scores', methods=['GET'])
+def admin_all_scores():
+    if session.get('username') != 'admin': return jsonify({"error": "Unauthorized"}), 403
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('SELECT player, score, id FROM scores ORDER BY score DESC LIMIT 50')
+        rows = c.fetchall()
+        c.close(); conn.close()
+        return jsonify([{"player": r[0], "score": r[1], "id": r[2]} for r in rows])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/delete_score', methods=['POST'])
+def admin_delete_score():
+    if session.get('username') != 'admin': return jsonify({"error": "Unauthorized"}), 403
+    score_id = request.json.get('id')
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('DELETE FROM scores WHERE id = %s', (score_id,))
+        conn.commit(); c.close(); conn.close()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/stats', methods=['GET'])
+def admin_stats():
+    if session.get('username') != 'admin': return jsonify({"error": "Unauthorized"}), 403
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('SELECT COUNT(*) FROM users')
+        total_users = c.fetchone()[0]
+        c.execute("SELECT COUNT(*) FROM users WHERE username != 'admin'")
+        player_count = c.fetchone()[0]
+        c.execute('SELECT COUNT(*) FROM scores')
+        total_games = c.fetchone()[0]
+        c.execute('SELECT MAX(score) FROM scores')
+        top_score = c.fetchone()[0] or 0
+        c.execute('SELECT player FROM scores ORDER BY score DESC LIMIT 1')
+        top_player_row = c.fetchone()
+        top_player = top_player_row[0] if top_player_row else 'N/A'
+        c.execute('SELECT AVG(score) FROM scores')
+        avg_score = round(c.fetchone()[0] or 0)
+        c.close(); conn.close()
+        return jsonify({
+            "total_users": total_users,
+            "player_count": player_count,
+            "total_games": total_games,
+            "top_score": top_score,
+            "top_player": top_player,
+            "avg_score": avg_score,
+            "server_link": global_public_url or "Local only"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+>>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 if __name__ == '__main__':
     init_db()
     if NGROK_ENABLED:
