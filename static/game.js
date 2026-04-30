@@ -89,54 +89,31 @@ const ENEMY_DEFS = {
 
 // ── CASTLE SKINS ─────────────────────────────────────────────
 const CASTLE_SKINS = {
-<<<<<<< HEAD
   Wooden: { name: 'Wooden Keep', icon: '🏰', cssClass: 'castle-wooden', maxHp: 15, cost: 0, currency: 'free', desc: 'Your starting stronghold.' },
   Stone: { name: 'Stone Fortress', icon: '🗼', cssClass: 'castle-stone', maxHp: 30, cost: 600, currency: 'gold', desc: '+15 castle HP. Reinforced battlements.' },
   Crystal: { name: 'Crystal Sanctum', icon: '💠', cssClass: 'castle-crystal', maxHp: 60, cost: 25, currency: 'dia', desc: '+45 HP. Magical wards protect the gates.' },
   Infernal: { name: 'Infernal Citadel', icon: '🔥', cssClass: 'castle-infernal', maxHp: 100, cost: 55, currency: 'dia', desc: '+85 HP. Hellfire-forged walls.' },
   Celestial: { name: 'Celestial Throne', icon: '✨', cssClass: 'castle-celestial', maxHp: 150, cost: 100, currency: 'dia', desc: '+135 HP. Heaven\'s last bastion.' }
-=======
-  Wooden:    { name: 'Wooden Keep',       icon: '🏰', cssClass: 'castle-wooden',   maxHp: 15,  cost: 0,   currency: 'free',  desc: 'Your starting stronghold.' },
-  Stone:     { name: 'Stone Fortress',    icon: '🗼', cssClass: 'castle-stone',    maxHp: 30,  cost: 600, currency: 'gold',  desc: '+15 castle HP. Reinforced battlements.' },
-  Crystal:   { name: 'Crystal Sanctum',   icon: '💠', cssClass: 'castle-crystal',  maxHp: 60,  cost: 25,  currency: 'dia',   desc: '+45 HP. Magical wards protect the gates.' },
-  Infernal:  { name: 'Infernal Citadel',  icon: '🔥', cssClass: 'castle-infernal', maxHp: 100, cost: 55,  currency: 'dia',   desc: '+85 HP. Hellfire-forged walls.' },
-  Celestial: { name: 'Celestial Throne',  icon: '✨', cssClass: 'castle-celestial',maxHp: 150, cost: 100, currency: 'dia',   desc: '+135 HP. Heaven\'s last bastion.' }
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 };
 
 // ── TOWER SKINS ──────────────────────────────────────────────
 const TOWER_SKINS = {
-<<<<<<< HEAD
   Basic: { name: 'Standard Stone', icon: '🗿', cost: 0, currency: 'free', desc: 'Classic construction.', dmgBonus: 0, rangeBonus: 0 },
   Plasma: { name: 'Plasma Core', icon: '🔵', cost: 350, currency: 'gold', desc: '+5 damage to all towers.', dmgBonus: 5, rangeBonus: 0 },
   Shadow: { name: 'Shadow Weave', icon: '🌑', cost: 30, currency: 'dia', desc: '+1 range to all towers.', dmgBonus: 0, rangeBonus: 1 },
   Infernal: { name: 'Infernal Forge', icon: '🔥', cost: 60, currency: 'dia', desc: '+12 damage to all towers.', dmgBonus: 12, rangeBonus: 0 }
-=======
-  Basic:    { name: 'Standard Stone',  icon: '🗿', cost: 0,   currency: 'free', desc: 'Classic construction.',      dmgBonus: 0, rangeBonus: 0 },
-  Plasma:   { name: 'Plasma Core',     icon: '🔵', cost: 350, currency: 'gold', desc: '+5 damage to all towers.',   dmgBonus: 5, rangeBonus: 0 },
-  Shadow:   { name: 'Shadow Weave',    icon: '🌑', cost: 30,  currency: 'dia',  desc: '+1 range to all towers.',    dmgBonus: 0, rangeBonus: 1 },
-  Infernal: { name: 'Infernal Forge',  icon: '🔥', cost: 60,  currency: 'dia',  desc: '+12 damage to all towers.',  dmgBonus: 12, rangeBonus: 0 }
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 };
 
 // ── POWER-UPS ────────────────────────────────────────────────
 const POWERUPS = [
-<<<<<<< HEAD
   { id: 'repair5', name: 'Emergency Repair', icon: '🛠️', cost: 120, currency: 'gold', desc: 'Restore 5 Castle HP immediately.', effect: 'repairCastle', val: 5 },
   { id: 'gold250', name: 'Royal Tax', icon: '👑', cost: 20, currency: 'dia', desc: 'Instantly gain 250 gold.', effect: 'addGold', val: 250 },
   { id: 'repair10', name: 'Full Restoration', icon: '✨', cost: 35, currency: 'dia', desc: 'Restore 10 Castle HP.', effect: 'repairCastle', val: 10 },
   { id: 'shield', name: 'Arcane Shield', icon: '🛡️', cost: 50, currency: 'dia', desc: '+2 extra castle HP for this wave.', effect: 'tempShield', val: 2 },
-=======
-  { id: 'repair5',  name: 'Emergency Repair',  icon: '🛠️', cost: 120, currency: 'gold', desc: 'Restore 5 Castle HP immediately.', effect: 'repairCastle', val: 5 },
-  { id: 'gold250',  name: 'Royal Tax',          icon: '👑', cost: 20,  currency: 'dia',  desc: 'Instantly gain 250 gold.',         effect: 'addGold',      val: 250 },
-  { id: 'repair10', name: 'Full Restoration',   icon: '✨', cost: 35,  currency: 'dia',  desc: 'Restore 10 Castle HP.',            effect: 'repairCastle', val: 10 },
-  { id: 'shield',   name: 'Arcane Shield',      icon: '🛡️', cost: 50,  currency: 'dia',  desc: '+2 extra castle HP for this wave.', effect: 'tempShield',   val: 2 },
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 ];
 
 // ── QUESTS ───────────────────────────────────────────────────
 const QUEST_DEFS = [
-<<<<<<< HEAD
   { id: 'q_kill5', title: 'First Blood', desc: 'Defeat 5 enemies', type: 'kill', target: 5, rwd: { gold: 40, dia: 1 } },
   { id: 'q_build3', title: 'Architect', desc: 'Build 3 towers', type: 'build', target: 3, rwd: { gold: 80, dia: 2 } },
   { id: 'q_wave5', title: 'Survivor', desc: 'Reach Wave 5', type: 'wave', target: 5, rwd: { gold: 150, dia: 3 } },
@@ -147,24 +124,11 @@ const QUEST_DEFS = [
   { id: 'q_upgrade5', title: 'Forgemaster', desc: 'Upgrade towers 5 times', type: 'upgrade', target: 5, rwd: { gold: 180, dia: 4 } },
   { id: 'q_tesla', title: 'Storm Caller', desc: 'Build 2 Tesla Towers', type: 'tesla', target: 2, rwd: { gold: 200, dia: 5 } },
   { id: 'q_nodmg', title: 'Iron Fortress', desc: 'Complete a wave with full castle HP', type: 'nodmg', target: 1, rwd: { gold: 200, dia: 6 } },
-=======
-  { id: 'q_kill5',     title: 'First Blood',       desc: 'Defeat 5 enemies',         type: 'kill',   target: 5,   rwd: { gold: 40,  dia: 1 } },
-  { id: 'q_build3',    title: 'Architect',          desc: 'Build 3 towers',           type: 'build',  target: 3,   rwd: { gold: 80,  dia: 2 } },
-  { id: 'q_wave5',     title: 'Survivor',           desc: 'Reach Wave 5',             type: 'wave',   target: 5,   rwd: { gold: 150, dia: 3 } },
-  { id: 'q_kill30',    title: 'Slayer',             desc: 'Defeat 30 enemies',        type: 'kill',   target: 30,  rwd: { gold: 200, dia: 5 } },
-  { id: 'q_wave10',    title: 'Veteran',            desc: 'Reach Wave 10',            type: 'wave',   target: 10,  rwd: { gold: 300, dia: 8 } },
-  { id: 'q_dragon',    title: 'Dragon Slayer',      desc: 'Slay a Dragon',            type: 'dragon', target: 1,   rwd: { gold: 500, dia: 15 } },
-  { id: 'q_build10',   title: 'Master Builder',     desc: 'Build 10 towers',          type: 'build',  target: 10,  rwd: { gold: 250, dia: 5 } },
-  { id: 'q_upgrade5',  title: 'Forgemaster',        desc: 'Upgrade towers 5 times',   type: 'upgrade',target: 5,   rwd: { gold: 180, dia: 4 } },
-  { id: 'q_tesla',     title: 'Storm Caller',       desc: 'Build 2 Tesla Towers',     type: 'tesla',  target: 2,   rwd: { gold: 200, dia: 5 } },
-  { id: 'q_nodmg',     title: 'Iron Fortress',      desc: 'Complete a wave with full castle HP', type: 'nodmg', target: 1, rwd: { gold: 200, dia: 6 } },
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 ];
 
 // ── WAVE COMPOSITIONS ────────────────────────────────────────
 function getWaveEnemies(wave) {
   const scale = 1 + (wave - 1) * 0.15;
-<<<<<<< HEAD
   if (wave === 1) return [{ type: 'goblin', count: 4 }];
   if (wave === 2) return [{ type: 'goblin', count: 6 }, { type: 'orc', count: 1 }];
   if (wave === 3) return [{ type: 'goblin', count: 5 }, { type: 'orc', count: 2 }];
@@ -174,17 +138,6 @@ function getWaveEnemies(wave) {
   if (wave === 7) return [{ type: 'knight', count: 2 }, { type: 'orc', count: 5 }];
   if (wave === 8) return [{ type: 'knight', count: 3 }, { type: 'troll', count: 2 }];
   if (wave === 9) return [{ type: 'knight', count: 4 }, { type: 'troll', count: 3 }];
-=======
-  if (wave === 1)  return [{ type: 'goblin', count: 4 }];
-  if (wave === 2)  return [{ type: 'goblin', count: 6 }, { type: 'orc', count: 1 }];
-  if (wave === 3)  return [{ type: 'goblin', count: 5 }, { type: 'orc', count: 2 }];
-  if (wave === 4)  return [{ type: 'orc', count: 4 }, { type: 'goblin', count: 4 }];
-  if (wave === 5)  return [{ type: 'orc', count: 5 }, { type: 'troll', count: 1 }];
-  if (wave === 6)  return [{ type: 'troll', count: 2 }, { type: 'orc', count: 4 }];
-  if (wave === 7)  return [{ type: 'knight', count: 2 }, { type: 'orc', count: 5 }];
-  if (wave === 8)  return [{ type: 'knight', count: 3 }, { type: 'troll', count: 2 }];
-  if (wave === 9)  return [{ type: 'knight', count: 4 }, { type: 'troll', count: 3 }];
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
   if (wave === 10) return [{ type: 'dragon', count: 1 }, { type: 'knight', count: 3 }, { type: 'orc', count: 5 }];
   if (wave === 11) return [{ type: 'dragon', count: 1 }, { type: 'troll', count: 4 }];
   if (wave === 12) return [{ type: 'dragon', count: 2 }, { type: 'knight', count: 5 }];
@@ -256,14 +209,7 @@ async function saveGame() {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score, castle_skin: G.castleSkin, tower_skin: G.towerSkin })
   });
-<<<<<<< HEAD
   showToast('Game Saved!', 'tsuccess');
-=======
-  if (G.score > 0) {
-    await fetch('/api/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ score: G.score }) });
-  }
-  showToast('💾 Game Saved & Score Recorded!', 'tsuccess');
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 }
 async function loadSavedState() {
   const res = await fetch('/api/load_state');
@@ -280,7 +226,6 @@ async function loadSavedState() {
 
 // ── ADMIN ─────────────────────────────────────────────────────
 function checkAdminStatus(u) { document.getElementById('btn-admin').style.display = u === 'admin' ? 'inline-block' : 'none'; }
-<<<<<<< HEAD
 async function openAdminPanel() {
   document.getElementById('admin-modal').style.display = 'flex';
   try {
@@ -296,138 +241,6 @@ async function openAdminPanel() {
 }
 function closeAdminPanel() { document.getElementById('admin-modal').style.display = 'none'; }
 
-=======
-
-async function openAdminPanel() {
-  document.getElementById('admin-modal').style.display = 'flex';
-  await adminLoadStats();
-  adminTab('overview');
-}
-function closeAdminPanel() { document.getElementById('admin-modal').style.display = 'none'; }
-
-function adminTab(tab) {
-  document.querySelectorAll('.adm-tab').forEach(b => b.classList.remove('adm-tab-active'));
-  document.getElementById('adm-tab-' + tab).classList.add('adm-tab-active');
-  document.querySelectorAll('.adm-section').forEach(s => s.style.display = 'none');
-  document.getElementById('adm-sec-' + tab).style.display = 'block';
-  if (tab === 'players') adminLoadPlayers();
-  if (tab === 'scores') adminLoadScores();
-}
-
-async function adminLoadStats() {
-  try {
-    const r = await fetch('/api/admin/stats');
-    const d = await r.json();
-    document.getElementById('adm-stat-players').textContent = d.player_count;
-    document.getElementById('adm-stat-games').textContent = d.total_games;
-    document.getElementById('adm-stat-topscore').textContent = d.top_score;
-    document.getElementById('adm-stat-topplayer').textContent = d.top_player;
-    document.getElementById('adm-stat-avg').textContent = d.avg_score;
-    const ts2 = document.getElementById('adm-stat-topscore2');
-    if (ts2) ts2.textContent = d.top_score;
-    document.getElementById('adm-link-val').textContent = d.server_link;
-    if (d.server_link && d.server_link !== 'Local only') {
-      const img = document.getElementById('adm-qr');
-      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(d.server_link)}`;
-      img.style.display = 'block';
-    }
-  } catch(e) { console.error(e); }
-}
-
-async function adminLoadPlayers() {
-  try {
-    const r = await fetch('/api/admin/players');
-    const players = await r.json();
-    const tbody = document.getElementById('adm-players-body');
-    tbody.innerHTML = '';
-    players.forEach(p => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="adm-td">${p.username}</td>
-        <td class="adm-td adm-center">W${p.wave || 1}</td>
-        <td class="adm-td adm-center">🪙${p.gold || 0}</td>
-        <td class="adm-td adm-center">💎${p.diamonds || 0}</td>
-        <td class="adm-td adm-center">${p.best_score}</td>
-        <td class="adm-td adm-center">${p.games_played}</td>
-        <td class="adm-td adm-actions">
-          ${p.username !== 'admin' ? `
-          <button class="adm-btn adm-btn-give" onclick="adminOpenGive('${p.username}')">💰 Give</button>
-          <button class="adm-btn adm-btn-reset" onclick="adminResetScore('${p.username}')">🔄 Reset</button>
-          <button class="adm-btn adm-btn-del" onclick="adminDeletePlayer('${p.username}')">🗑️ Del</button>
-          ` : '<span style="color:var(--col-dim);font-size:11px">ADMIN</span>'}
-        </td>`;
-      tbody.appendChild(tr);
-    });
-    if (!players.length) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--col-dim);padding:20px">No players yet</td></tr>';
-  } catch(e) { console.error(e); }
-}
-
-async function adminLoadScores() {
-  try {
-    const r = await fetch('/api/admin/all_scores');
-    const scores = await r.json();
-    const tbody = document.getElementById('adm-scores-body');
-    tbody.innerHTML = '';
-    scores.forEach((s, i) => {
-      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="adm-td adm-center">${medal || '#'+(i+1)}</td>
-        <td class="adm-td">${s.player}</td>
-        <td class="adm-td adm-center" style="color:var(--col-gold)">${s.score}</td>
-        <td class="adm-td adm-center">
-          <button class="adm-btn adm-btn-del" onclick="adminDeleteScore(${s.id}, this)">✕</button>
-        </td>`;
-      tbody.appendChild(tr);
-    });
-    if (!scores.length) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--col-dim);padding:20px">No scores yet</td></tr>';
-  } catch(e) { console.error(e); }
-}
-
-let adminGiveTarget = null;
-function adminOpenGive(username) {
-  adminGiveTarget = username;
-  document.getElementById('adm-give-title').textContent = `Give Currency — ${username}`;
-  document.getElementById('adm-give-gold').value = '';
-  document.getElementById('adm-give-dia').value = '';
-  document.getElementById('adm-give-panel').style.display = 'block';
-}
-function adminCloseGive() { document.getElementById('adm-give-panel').style.display = 'none'; adminGiveTarget = null; }
-async function adminConfirmGive() {
-  if (!adminGiveTarget) return;
-  const gold = parseInt(document.getElementById('adm-give-gold').value) || 0;
-  const dia = parseInt(document.getElementById('adm-give-dia').value) || 0;
-  if (gold === 0 && dia === 0) return;
-  const r = await fetch('/api/admin/give_currency', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username: adminGiveTarget, gold, diamonds: dia}) });
-  const d = await r.json();
-  showToast(d.message || 'Done!', 'tsuccess');
-  adminCloseGive(); adminLoadPlayers();
-}
-
-async function adminResetScore(username) {
-  if (!confirm(`Reset ALL scores and progress for "${username}"?`)) return;
-  const r = await fetch('/api/admin/reset_score', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username}) });
-  const d = await r.json();
-  showToast(d.message || 'Reset!', 'tsuccess');
-  adminLoadPlayers(); adminLoadStats();
-}
-
-async function adminDeletePlayer(username) {
-  if (!confirm(`PERMANENTLY delete player "${username}" and all their data?`)) return;
-  const r = await fetch('/api/admin/delete_player', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username}) });
-  const d = await r.json();
-  showToast(d.message || 'Deleted!', 'tsuccess');
-  adminLoadPlayers(); adminLoadStats();
-}
-
-async function adminDeleteScore(id, btn) {
-  if (!confirm('Remove this score entry?')) return;
-  await fetch('/api/admin/delete_score', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id}) });
-  btn.closest('tr').remove();
-  adminLoadStats();
-}
-
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 // ── SHOW GAME ─────────────────────────────────────────────────
 function showGame(username) {
   document.getElementById('auth-section').style.display = 'none';
@@ -984,7 +797,6 @@ window.castRepair = function () {
 };
 
 // ── RENDER BOARD ──────────────────────────────────────────────
-<<<<<<< HEAD
 function getTowerSVG(type) {
   const svgs = {
     archer: `<svg viewBox="0 0 40 56" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
@@ -1100,11 +912,6 @@ function getTowerSVG(type) {
 function renderBoard() {
   // Clear old towers/enemies/hp-bars
   document.querySelectorAll('.tower-el, .enemy-el, .enemy-hp-bar').forEach(el => el.remove());
-=======
-function renderBoard() {
-  // Clear old towers/enemies
-  document.querySelectorAll('.tower-el, .enemy-el').forEach(el => el.remove());
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
 
   // Render towers
   G.towers.forEach(tower => {
@@ -1113,11 +920,7 @@ function renderBoard() {
     const def = TOWER_DEFS[tower.type];
     const el = document.createElement('div');
     el.className = `tower-el ${def.cssClass} tw-level-${tower.level} skin-${G.towerSkin}`;
-<<<<<<< HEAD
     el.innerHTML = `${getTowerSVG(tower.type)}<span class="tower-lvl-badge">${'★'.repeat(tower.level)}</span>`;
-=======
-    el.innerHTML = `<span>${def.icon}</span><span class="tower-lvl-badge">${'★'.repeat(tower.level)}</span>`;
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
     cell.appendChild(el);
   });
 
@@ -1126,7 +929,6 @@ function renderBoard() {
     const cell = boardEl.querySelector(`.cell[data-x="${enemy.x}"][data-y="${enemy.y}"]`);
     if (!cell) return;
     const hpPct = Math.max(0, (enemy.hp / enemy.maxHp) * 100);
-<<<<<<< HEAD
 
     // Enemy icon — animated independently
     const el = document.createElement('div');
@@ -1139,14 +941,6 @@ function renderBoard() {
     hpBar.className = 'enemy-hp-bar';
     hpBar.innerHTML = `<div class="enemy-hp-fill" style="width:${hpPct}%;background:${hpPct > 60 ? '#22C55E' : hpPct > 30 ? '#EAB308' : '#EF4444'}"></div>`;
     cell.appendChild(hpBar);
-=======
-    const el = document.createElement('div');
-    el.className = `enemy-el ${enemy.def.cssClass}${enemy.frozen ? ' enemy-frozen' : ''}`;
-    el.innerHTML = `
-      <span>${enemy.def.icon}</span>
-      <div class="enemy-hp-bar"><div class="enemy-hp-fill" style="width:${hpPct}%;background:${hpPct>60?'#22C55E':hpPct>30?'#EAB308':'#EF4444'}"></div></div>`;
-    cell.appendChild(el);
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
   });
 }
 
@@ -1154,11 +948,7 @@ function renderBoard() {
 function drawLaser(tower, target, type) {
   if (!gameSettings.vfx) return;
   const fromCell = boardEl.querySelector(`.cell[data-x="${tower.x}"][data-y="${tower.y}"]`);
-<<<<<<< HEAD
   const toCell = boardEl.querySelector(`.cell[data-x="${target.x}"][data-y="${target.y}"]`);
-=======
-  const toCell   = boardEl.querySelector(`.cell[data-x="${target.x}"][data-y="${target.y}"]`);
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
   if (!fromCell || !toCell) return;
   const r1 = fromCell.getBoundingClientRect(), r2 = toCell.getBoundingClientRect();
   const dx = r2.left - r1.left, dy = r2.top - r1.top;
