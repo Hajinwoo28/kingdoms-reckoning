@@ -85,7 +85,7 @@ def index():
 @app.route('/api/register', methods=['POST'])
 @limiter.limit("3 per minute")
 def register():
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
     username = data.get('username', '').strip()
     password = data.get('password', '')
     if not username or not password:
@@ -110,7 +110,7 @@ def register():
 @app.route('/api/login', methods=['POST'])
 @limiter.limit("5 per minute")
 def login():
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
     username = data.get('username', '').strip()
     password = data.get('password', '')
     try:
@@ -146,7 +146,7 @@ def current_user():
 def save_state():
     if 'username' not in session:
         return jsonify({"error": "Unauthorized"}), 401
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
     try:
         conn = get_db_connection()
         c = conn.cursor()
@@ -186,7 +186,7 @@ def load_state():
 def save_score():
     if 'username' not in session:
         return jsonify({"error": "Unauthorized"}), 401
-    score = request.json.get('score', 0)
+    score = (request.get_json(force=True, silent=True) or {}).get('score', 0)
     try:
         conn = get_db_connection()
         c = conn.cursor()
