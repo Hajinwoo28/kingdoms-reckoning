@@ -57,12 +57,18 @@ def init_db():
             tower_skin VARCHAR(50) DEFAULT 'Basic',
             streak INTEGER DEFAULT 0,
             last_login DATE DEFAULT NULL,
-            best_wave INTEGER DEFAULT 0
+            best_wave INTEGER DEFAULT 0,
+            towers_json TEXT DEFAULT '[]'
         )''')
         # Migrate existing tables — add columns if they don't exist yet
-        for col, defval in [('streak', '0'), ('last_login', 'NULL'), ('best_wave', '0')]:
+        for col, defval in [('streak', '0'), ('last_login', 'NULL'), ('best_wave', '0'), ('towers_json', "''''[]''''")]:
             try:
-                c.execute(f"ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS {col} {'INTEGER DEFAULT ' + defval if col != 'last_login' else 'DATE DEFAULT NULL'}"  )
+                if col == 'last_login':
+                    c.execute(f"ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS last_login DATE DEFAULT NULL")
+                elif col == 'towers_json':
+                    c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS towers_json TEXT DEFAULT '[]'")
+                else:
+                    c.execute(f"ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS {col} INTEGER DEFAULT {defval}")
             except Exception:
                 pass
 
@@ -159,15 +165,17 @@ def save_state():
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        import json as _json
+        towers_json = _json.dumps(data.get('towers', []))
         c.execute('''UPDATE player_saves SET
             gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
-            streak=%s, last_login=%s, best_wave=%s
+            streak=%s, last_login=%s, best_wave=%s, towers_json=%s
             WHERE username=%s''',
             (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
              data.get('score', 0), data.get('castle_skin', 'Wooden'),
              data.get('tower_skin', 'Basic'), data.get('streak', 0),
              data.get('last_login'), data.get('best_wave', 0),
-             session['username']))
+             towers_json, session['username']))
         conn.commit()
         c.close()
         conn.close()
@@ -182,16 +190,21 @@ def load_state():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave FROM player_saves WHERE username=%s',
+        c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave, towers_json FROM player_saves WHERE username=%s',
                   (session['username'],))
         row = c.fetchone()
         c.close()
         conn.close()
         if row:
+            import json as _json
+            try:
+                towers = _json.loads(row[9]) if row[9] else []
+            except Exception:
+                towers = []
             return jsonify({"gold": row[0], "diamonds": row[1], "wave": row[2],
                             "score": row[3], "castle_skin": row[4], "tower_skin": row[5],
                             "streak": row[6] or 0, "last_login": str(row[7]) if row[7] else None,
-                            "best_wave": row[8] or 0})
+                            "best_wave": row[8] or 0, "towers": towers})
         return jsonify({"error": "No save found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500

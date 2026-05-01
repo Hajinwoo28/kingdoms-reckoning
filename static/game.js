@@ -225,12 +225,22 @@ function setAuthMsg(msg, err = false) {
 // ── SAVE / LOAD ───────────────────────────────────────────────
 async function saveGame() {
   const today = new Date().toISOString().split('T')[0];
+  // Strip non-serialisable def reference before sending
+  const towersPayload = G.towers.map(t => ({
+    x: t.x, y: t.y, type: t.type,
+    level: t.level, upgrades: t.upgrades,
+    damage: t.damage, range: t.range,
+    chainCount: t.chainCount || 0,
+    splashRange: t.splashRange || 1,
+    kills: t.kills || 0
+  }));
   await fetch('/api/save_state', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
       castle_skin: G.castleSkin, tower_skin: G.towerSkin,
-      streak: G.streak, last_login: today, best_wave: G.bestWave
+      streak: G.streak, last_login: today, best_wave: G.bestWave,
+      towers: towersPayload
     })
   });
   showToast('Game Saved!', 'tsuccess');
@@ -246,6 +256,8 @@ async function loadSavedState() {
       G.towerSkin = d.tower_skin || 'Basic';
       G.streak = d.streak || 0;
       G.bestWave = d.best_wave || 0;
+      // Stash towers for restoration after board is created
+      G._savedTowers = Array.isArray(d.towers) ? d.towers : [];
     }
   }
 }
@@ -276,24 +288,38 @@ function showGame(username) {
   loadSavedState().then(() => {
     checkDailyStreak();
     initDailyChallenges();
-    restartGame();
+    restartGame(true); // true = login restore, preserves saved towers
     const seen = localStorage.getItem('kr_tutorial_done');
     if (!seen) setTimeout(startTutorial, 800);
   });
 }
 
-function restartGame() {
+function restartGame(loginRestore = false) {
   document.getElementById('game-over-modal').style.display = 'none';
   const skin = CASTLE_SKINS[G.castleSkin] || CASTLE_SKINS.Wooden;
   G.maxHp = skin.maxHp;
   G.hp = G.maxHp; G.waveStartHp = G.maxHp;
-  G.towers = []; G.enemies = []; G.spawnIndex = 0;
+  G.enemies = []; G.spawnIndex = 0;
   G.gameOver = false; G.isAnimating = false; G.frozenTurn = false;
   G.selectedTowerType = null; G.selectedTower = null;
   G.tempShield = 0;
   G.totalKills = 0; G.totalBuilds = 0; G.totalUpgrades = 0;
   G.dragonKills = 0; G.teslaTowers = 0;
   G.abilitiesUsed = 0; G.towelsSold = 0;
+
+  // On login restore, rehydrate saved towers instead of starting empty
+  if (loginRestore && G._savedTowers && G._savedTowers.length > 0) {
+    G.towers = G._savedTowers.map(t => ({
+      ...t,
+      def: TOWER_DEFS[t.type] // re-attach runtime def reference
+    }));
+    G._savedTowers = [];
+    // Recount tesla towers for quest tracking
+    G.teslaTowers = G.towers.filter(t => t.type === 'tesla').length;
+  } else {
+    G.towers = [];
+  }
+
   initQuests();
   buildWaveQueue();
   createBoard();
