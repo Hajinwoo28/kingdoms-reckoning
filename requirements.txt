@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 flask==3.0.3
 werkzeug==3.0.3
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
 flask-limiter==3.8.0
-=======
-flask
-psycopg2-binary
-werkzeug
->>>>>>> fd12a7adb7477c7464908299a05ec670f5f9eaf4
