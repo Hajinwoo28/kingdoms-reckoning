@@ -54,8 +54,17 @@ def init_db():
             wave INTEGER DEFAULT 1,
             score INTEGER DEFAULT 0,
             castle_skin VARCHAR(50) DEFAULT 'Wooden',
-            tower_skin VARCHAR(50) DEFAULT 'Basic'
+            tower_skin VARCHAR(50) DEFAULT 'Basic',
+            streak INTEGER DEFAULT 0,
+            last_login DATE DEFAULT NULL,
+            best_wave INTEGER DEFAULT 0
         )''')
+        # Migrate existing tables — add columns if they don't exist yet
+        for col, defval in [('streak', '0'), ('last_login', 'NULL'), ('best_wave', '0')]:
+            try:
+                c.execute(f"ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS {col} {'INTEGER DEFAULT ' + defval if col != 'last_login' else 'DATE DEFAULT NULL'}"  )
+            except Exception:
+                pass
 
         admin_pw_plain = os.getenv("ADMIN_PASSWORD")
         if not admin_pw_plain:
@@ -151,11 +160,14 @@ def save_state():
         conn = get_db_connection()
         c = conn.cursor()
         c.execute('''UPDATE player_saves SET
-            gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s
+            gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
+            streak=%s, last_login=%s, best_wave=%s
             WHERE username=%s''',
             (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
              data.get('score', 0), data.get('castle_skin', 'Wooden'),
-             data.get('tower_skin', 'Basic'), session['username']))
+             data.get('tower_skin', 'Basic'), data.get('streak', 0),
+             data.get('last_login'), data.get('best_wave', 0),
+             session['username']))
         conn.commit()
         c.close()
         conn.close()
@@ -170,14 +182,16 @@ def load_state():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin FROM player_saves WHERE username=%s',
+        c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave FROM player_saves WHERE username=%s',
                   (session['username'],))
         row = c.fetchone()
         c.close()
         conn.close()
         if row:
             return jsonify({"gold": row[0], "diamonds": row[1], "wave": row[2],
-                            "score": row[3], "castle_skin": row[4], "tower_skin": row[5]})
+                            "score": row[3], "castle_skin": row[4], "tower_skin": row[5],
+                            "streak": row[6] or 0, "last_login": str(row[7]) if row[7] else None,
+                            "best_wave": row[8] or 0})
         return jsonify({"error": "No save found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -210,3 +224,20 @@ def get_leaderboard():
         return jsonify(scores)
     except Exception:
         return jsonify([]), 500
+
+@app.route('/api/best_wave', methods=['POST'])
+def save_best_wave():
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    wave = (request.get_json(force=True, silent=True) or {}).get('wave', 0)
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('UPDATE player_saves SET best_wave = GREATEST(COALESCE(best_wave,0), %s) WHERE username=%s',
+                  (wave, session['username']))
+        conn.commit()
+        c.close()
+        conn.close()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"status": "error"}), 500

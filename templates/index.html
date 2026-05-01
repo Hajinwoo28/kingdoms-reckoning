@@ -17,6 +17,20 @@
   <div id="vfx-overlay"></div>
   <div id="toast-container"></div>
 
+  <!-- TUTORIAL -->
+  <div id="tutorial-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box tut-box">
+      <div class="tut-step-counter" id="tut-counter">1 / 6</div>
+      <div class="modal-crest">⚔️</div>
+      <h2 class="modal-title gold-title" id="tut-title">Welcome, Commander!</h2>
+      <p class="modal-sub" id="tut-body">Loading tutorial...</p>
+      <div class="tut-btn-row">
+        <button class="btn-modal secondary-btn" onclick="skipTutorial()" style="padding:10px 16px">Skip</button>
+        <button class="btn-modal primary-btn" id="tut-cta" onclick="nextTutorialStep()" style="flex:1">Next →</button>
+      </div>
+    </div>
+  </div>
+
   <!-- GAME OVER -->
   <div id="game-over-modal" class="modal-overlay" style="display:none">
     <div class="modal-box danger-box">
@@ -29,8 +43,12 @@
         <div class="rwd-item"><span class="ri-icon">🌊</span><span class="ri-val" id="go-waveval">0</span><span
             class="ri-lbl">Waves</span></div>
       </div>
+      <p class="modal-hint" id="go-best">Best: Wave 0</p>
       <p class="modal-hint">Your towers stand — repair and fight on, Commander!</p>
-      <button class="btn-modal primary-btn" onclick="retryWave()">🔄 REPAIR &amp; RETRY</button>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+        <button class="btn-modal primary-btn" style="width:100%" onclick="retryWave()">🔄 REPAIR &amp; RETRY</button>
+        <button class="btn-modal share-btn" style="width:100%" onclick="shareScoreCard()">📤 SHARE MY RUN</button>
+      </div>
     </div>
   </div>
 
@@ -160,12 +178,14 @@
           <div class="hud-badge dia-badge">💎 <span id="hud-dia">0</span></div>
           <div class="hud-badge wave-badge">🌊 W<span id="hud-wave">1</span></div>
           <div class="hud-badge score-badge">🏆 <span id="hud-score">0</span></div>
+          <div class="hud-badge streak-badge" title="Login streak">🔥 <span id="hud-streak">0</span></div>
         </nav>
         <div class="hud-actions">
           <span class="hud-user-label">👤 <span id="display-username"></span></span>
           <button id="btn-admin" class="hud-btn" style="display:none" onclick="openAdminPanel()">ADMIN</button>
           <button class="hud-btn" onclick="openLeaderboard()">🏆</button>
           <button class="hud-btn shop-hud-btn" onclick="openShop()">🛒 SHOP</button>
+          <button class="hud-btn" onclick="startTutorial()" title="Tutorial">❓</button>
           <button class="hud-btn" onclick="openSettings()">⚙️</button>
           <button class="hud-btn logout-btn" onclick="logout()">LOGOUT</button>
         </div>
@@ -174,10 +194,14 @@
       <!-- 3-COLUMN LAYOUT -->
       <div class="game-layout">
 
-        <!-- LEFT: SIDE QUESTS -->
+        <!-- LEFT: SIDE QUESTS + DAILY -->
         <aside class="side-panel quests-panel">
-          <h3 class="panel-title"><span class="pt-icon">📜</span>SIDE QUESTS</h3>
+          <div class="quest-panel-tabs">
+            <button class="qp-tab active" id="qtab-quests" onclick="switchQuestTab('quests')">📜 QUESTS</button>
+            <button class="qp-tab" id="qtab-daily" onclick="switchQuestTab('daily')">📅 DAILY</button>
+          </div>
           <div id="quests-container" class="quest-list"></div>
+          <div id="daily-container" class="quest-list" style="display:none"></div>
         </aside>
 
         <!-- CENTER: BOARD + LOG + ABILITIES -->

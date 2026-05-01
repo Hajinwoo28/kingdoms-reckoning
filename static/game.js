@@ -63,7 +63,7 @@ const ENEMY_DEFS = {
   goblin: {
     id: 'goblin', name: 'Goblin', icon: '👺', cssClass: 'en-goblin',
     baseHp: 18, speed: 2, reward: 8, damage: 1,
-    desc: 'Fast and weak'
+    desc: 'Fast and weak', ability: 'dash', abilityChance: 0.25
   },
   orc: {
     id: 'orc', name: 'Orc Warrior', icon: '👹', cssClass: 'en-orc',
@@ -73,17 +73,17 @@ const ENEMY_DEFS = {
   troll: {
     id: 'troll', name: 'Stone Troll', icon: '🧌', cssClass: 'en-troll',
     baseHp: 100, speed: 1, reward: 30, damage: 3,
-    desc: 'Heavy tank'
+    desc: 'Heavy tank — regenerates HP', ability: 'regen', regenAmt: 8
   },
   knight: {
     id: 'knight', name: 'Dark Knight', icon: '⚔️', cssClass: 'en-knight',
     baseHp: 160, speed: 1, reward: 45, damage: 4,
-    desc: 'Armored and dangerous'
+    desc: 'Armored — deflects 30% of hits', ability: 'deflect', deflectChance: 0.30
   },
   dragon: {
     id: 'dragon', name: 'Dragon', icon: '🐉', cssClass: 'en-dragon',
     baseHp: 420, speed: 1, reward: 120, damage: 8,
-    desc: 'BOSS — Immense power', boss: true
+    desc: 'BOSS — breathes fire on arrival', boss: true, ability: 'breath'
   }
 };
 
@@ -126,6 +126,22 @@ const QUEST_DEFS = [
   { id: 'q_nodmg', title: 'Iron Fortress', desc: 'Complete a wave with full castle HP', type: 'nodmg', target: 1, rwd: { gold: 200, dia: 6 } },
 ];
 
+// ── DAILY CHALLENGE POOL ──────────────────────────────────────
+const DAILY_POOL = [
+  { id: 'd_kill10', title: 'Daily Hunt', desc: 'Kill 10 enemies today', type: 'kill', target: 10, rwd: { gold: 60, dia: 2 } },
+  { id: 'd_kill20', title: 'Slaughterer', desc: 'Kill 20 enemies today', type: 'kill', target: 20, rwd: { gold: 100, dia: 3 } },
+  { id: 'd_build5', title: 'War Engineer', desc: 'Build 5 towers today', type: 'build', target: 5, rwd: { gold: 90, dia: 2 } },
+  { id: 'd_wave3', title: 'Hold the Line', desc: 'Survive 3 waves today', type: 'wave', target: 3, rwd: { gold: 80, dia: 2 } },
+  { id: 'd_wave7', title: 'Siege Master', desc: 'Survive 7 waves today', type: 'wave', target: 7, rwd: { gold: 200, dia: 5 } },
+  { id: 'd_upgrade3', title: 'Upgrade Rush', desc: 'Upgrade 3 towers today', type: 'upgrade', target: 3, rwd: { gold: 70, dia: 2 } },
+  { id: 'd_nodmg', title: 'Untouchable', desc: 'Complete a wave with full HP', type: 'nodmg', target: 1, rwd: { gold: 120, dia: 4 } },
+  { id: 'd_tesla', title: 'Storm Bringer', desc: 'Build a Tesla Tower', type: 'tesla', target: 1, rwd: { gold: 80, dia: 3 } },
+  { id: 'd_dragon', title: 'Dragon Hunt', desc: 'Slay a Dragon', type: 'dragon', target: 1, rwd: { gold: 300, dia: 8 } },
+  { id: 'd_ability', title: 'Arcane Surge', desc: 'Use 2 abilities', type: 'ability', target: 2, rwd: { gold: 60, dia: 3 } },
+  { id: 'd_meteor', title: 'Meteor Mage', desc: 'Cast Meteor Strike', type: 'meteor', target: 1, rwd: { gold: 50, dia: 2 } },
+  { id: 'd_sell', title: 'Merchant', desc: 'Sell 2 towers', type: 'sell', target: 2, rwd: { gold: 100, dia: 2 } },
+];
+
 // ── WAVE COMPOSITIONS ────────────────────────────────────────
 function getWaveEnemies(wave) {
   const scale = 1 + (wave - 1) * 0.15;
@@ -160,6 +176,9 @@ let G = {
   waveStartHp: 15,
   totalKills: 0, totalBuilds: 0, totalUpgrades: 0,
   dragonKills: 0, teslaTowers: 0,
+  streak: 0, bestWave: 0,
+  dailyChallenges: [], dailyProgress: {},
+  abilitiesUsed: 0, towelsSold: 0,
   castleOwned: ['Wooden'], towerSkinOwned: ['Basic'],
   quests: [], questProgress: {},
   selectedTowerType: null, selectedTower: null,
@@ -205,9 +224,14 @@ function setAuthMsg(msg, err = false) {
 
 // ── SAVE / LOAD ───────────────────────────────────────────────
 async function saveGame() {
+  const today = new Date().toISOString().split('T')[0];
   await fetch('/api/save_state', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score, castle_skin: G.castleSkin, tower_skin: G.towerSkin })
+    body: JSON.stringify({
+      gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
+      castle_skin: G.castleSkin, tower_skin: G.towerSkin,
+      streak: G.streak, last_login: today, best_wave: G.bestWave
+    })
   });
   showToast('Game Saved!', 'tsuccess');
 }
@@ -220,6 +244,8 @@ async function loadSavedState() {
       G.wave = d.wave || 1; G.score = d.score || 0;
       G.castleSkin = d.castle_skin || 'Wooden';
       G.towerSkin = d.tower_skin || 'Basic';
+      G.streak = d.streak || 0;
+      G.bestWave = d.best_wave || 0;
     }
   }
 }
@@ -247,7 +273,13 @@ function showGame(username) {
   document.getElementById('game-section').style.display = 'flex';
   document.getElementById('display-username').textContent = username;
   checkAdminStatus(username);
-  loadSavedState().then(() => restartGame());
+  loadSavedState().then(() => {
+    checkDailyStreak();
+    initDailyChallenges();
+    restartGame();
+    const seen = localStorage.getItem('kr_tutorial_done');
+    if (!seen) setTimeout(startTutorial, 800);
+  });
 }
 
 function restartGame() {
@@ -259,6 +291,9 @@ function restartGame() {
   G.gameOver = false; G.isAnimating = false; G.frozenTurn = false;
   G.selectedTowerType = null; G.selectedTower = null;
   G.tempShield = 0;
+  G.totalKills = 0; G.totalBuilds = 0; G.totalUpgrades = 0;
+  G.dragonKills = 0; G.teslaTowers = 0;
+  G.abilitiesUsed = 0; G.towelsSold = 0;
   initQuests();
   buildWaveQueue();
   createBoard();
@@ -487,6 +522,8 @@ function sellSelected() {
   G.gold += sellAmt;
   G.towers = G.towers.filter(tw => tw !== t);
   if (t.type === 'tesla') G.teslaTowers = Math.max(0, G.teslaTowers - 1);
+  G.towelsSold++;
+  updateDailyProgress('sell');
   addLog(`💰 ${def.name} sold for ${sellAmt}🪙.`, 'log-gold');
   showToast(`Sold for ${sellAmt}🪙`, 'tsuccess');
   G.selectedTower = null;
@@ -570,6 +607,13 @@ async function executeTurn() {
 
     if (def.type === 'single' || def.type === 'freeze' || def.type === 'heavy') {
       const target = targets[0]; // furthest along path (highest x)
+      // Knight deflect ability
+      if (target.def.ability === 'deflect' && Math.random() < (target.def.deflectChance || 0.3)) {
+        addLog(`🛡️ ${target.def.name} deflected the attack!`, 'log-ability');
+        showFloatText(target, 'DEFLECT', '#FCD34D');
+        await sleep(80);
+        continue;
+      }
       const dmg = tower.damage;
       target.hp -= dmg;
       tower.kills = (tower.kills || 0) + 1;
@@ -631,8 +675,26 @@ async function executeTurn() {
     const toRemove = [];
     G.enemies.forEach(e => {
       if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; return; }
-      e.x += e.speed;
+      // Troll regeneration
+      if (e.def.ability === 'regen' && e.hp < e.maxHp && e.hp > 0) {
+        const regen = e.def.regenAmt || 8;
+        e.hp = Math.min(e.maxHp, e.hp + regen);
+        showFloatText(e, `+${regen}`, '#34D399');
+      }
+      // Goblin dash (extra move chance)
+      const extraMove = (e.def.ability === 'dash' && Math.random() < (e.def.abilityChance || 0.25)) ? 1 : 0;
+      e.x += e.speed + extraMove;
+      if (extraMove > 0) addLog(`💨 Goblin dashed forward!`, 'log-ability');
       if (e.x >= GRID_W - 1) {
+        // Dragon breath — damages a random tower on breach
+        if (e.def.ability === 'breath' && G.towers.length > 0) {
+          const idx = Math.floor(Math.random() * G.towers.length);
+          const hitTower = G.towers[idx];
+          const def2 = TOWER_DEFS[hitTower.type];
+          addLog(`🔥 Dragon breathed fire — ${def2.name} at [${hitTower.x},${hitTower.y}] scorched! (-1 level)`, 'log-attack');
+          showToast(`🔥 Dragon breath hit ${def2.name}!`, 'terror');
+          if (hitTower.level > 1) { hitTower.level--; hitTower.upgrades = Math.max(0, hitTower.upgrades - 1); hitTower.damage = Math.max(1, hitTower.damage - 5); }
+        }
         const actualDmg = Math.max(1, e.damage - G.tempShield);
         G.hp -= actualDmg;
         addLog(`💀 ${e.def.name} breached the gate! (Castle -${actualDmg}HP)`, 'log-attack');
@@ -684,16 +746,21 @@ function getTargetsInRange(tower) {
 // ── WAVE COMPLETE ─────────────────────────────────────────────
 async function waveComplete() {
   const goldRwd = 30 + G.wave * 10;
-  const isMilestone = G.wave % 10 === 0;
-  const diaRwd = 1 + (isMilestone ? 5 : 0);
+  const isMilestone = G.wave % 5 === 0;  // milestone every 5 waves (was 10)
+  const diaRwd = 1 + (isMilestone ? (G.wave % 10 === 0 ? 5 : 2) : 0);
   G.gold += goldRwd; G.diamonds += diaRwd; G.score += G.wave * 50;
+  if (G.wave > G.bestWave) G.bestWave = G.wave;
   updateQuestProgress('wave');
+  updateDailyProgress('wave', G.wave);
 
   // No damage quest
-  if (G.hp === G.waveStartHp) updateQuestProgress('nodmg');
+  if (G.hp === G.waveStartHp) {
+    updateQuestProgress('nodmg');
+    updateDailyProgress('nodmg');
+  }
 
   addLog(`🏆 Wave ${G.wave} cleared! +${goldRwd}🪙 +${diaRwd}💎`, 'log-wave');
-  showToast(isMilestone ? `🐉 MILESTONE! Wave ${G.wave}! +${diaRwd}💎` : `Wave ${G.wave} cleared! +${goldRwd}🪙 +${diaRwd}💎`, 'tdiamond');
+  showToast(isMilestone ? `🎯 MILESTONE! Wave ${G.wave}! +${diaRwd}💎` : `Wave ${G.wave} cleared! +${goldRwd}🪙 +${diaRwd}💎`, 'tdiamond');
 
   await saveGame();
 
@@ -704,13 +771,14 @@ async function waveComplete() {
     <div class="rwd-item"><span class="ri-icon">🪙</span><span class="ri-val">+${goldRwd}</span><span class="ri-lbl">Gold</span></div>
     <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd}</span><span class="ri-lbl">Diamond${diaRwd > 1 ? 's' : ''}</span></div>
     <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val">+${G.wave * 50}</span><span class="ri-lbl">Score</span></div>`;
-  document.getElementById('wcm-hint').textContent = isMilestone ? `Every 10 waves = +5 bonus 💎! Keep going, Commander!` : '';
+  document.getElementById('wcm-hint').textContent = isMilestone ? `Milestone bonus! Every 5 waves = extra 💎! Push further!` : '';
   wcm.style.display = 'flex';
 
   G.wave++;
   buildWaveQueue();
   updateHUD();
   renderQuests();
+  renderDailyChallenges();
 }
 
 function closeWaveComplete() {
@@ -725,14 +793,17 @@ function closeWaveComplete() {
 // ── GAME OVER ─────────────────────────────────────────────────
 async function handleGameOver() {
   G.gameOver = true;
+  if (G.wave > G.bestWave) G.bestWave = G.wave;
   setPhase('combat');
   document.getElementById('go-wave').textContent = G.wave;
   document.getElementById('go-waveval').textContent = G.wave;
   document.getElementById('go-score').textContent = G.score;
+  document.getElementById('go-best').textContent = `Best: Wave ${G.bestWave}`;
   document.getElementById('game-over-modal').style.display = 'flex';
   gameSettings.fastMode = false;
   document.querySelectorAll('#btn-set-fastMode,#btn-set-fastMode2').forEach(b => { b.classList.replace('tog-on', 'tog-off'); b.textContent = 'OFF'; });
   await fetch('/api/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ score: G.score }) });
+  await saveGame();
 }
 
 window.retryWave = function () {
@@ -752,6 +823,9 @@ window.castMeteor = function () {
   if (G.isAnimating) return;
   if (G.diamonds < 5) return showToast('Need 5💎 for Meteor!', 'terror');
   G.diamonds -= 5;
+  G.abilitiesUsed++;
+  updateDailyProgress('ability');
+  updateDailyProgress('meteor');
   if (gameSettings.vfx) { const o = document.getElementById('vfx-overlay'); o.style.backgroundColor = 'rgba(239,68,68,0.35)'; o.style.opacity = 1; setTimeout(() => o.style.opacity = 0, 500); document.getElementById('shake-wrapper').classList.add('shake'); setTimeout(() => document.getElementById('shake-wrapper').classList.remove('shake'), 450); }
   const killed = G.enemies.length;
   G.enemies.forEach(e => e.hp = 0);
@@ -984,9 +1058,10 @@ function updateQuestProgress(type, amt = 1) {
     if (q.progress >= q.target && !q.done) {
       q.done = true;
       addLog(`📜 Quest Complete: "${q.title}"! Claim your reward!`, 'log-quest');
-      showToast(`✅ Quest Complete: "${q.title}"!`, 'tsuccess');
+      showToast(`✅ Quest: "${q.title}" done!`, 'tsuccess');
     }
   });
+  updateDailyProgress(type, amt);
   renderQuests();
 }
 
@@ -1020,6 +1095,13 @@ function renderQuests() {
     cont.appendChild(card);
   });
 }
+
+window.switchQuestTab = function (tab) {
+  document.getElementById('quests-container').style.display = tab === 'quests' ? '' : 'none';
+  document.getElementById('daily-container').style.display = tab === 'daily' ? '' : 'none';
+  document.querySelectorAll('.qp-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`qtab-${tab}`).classList.add('active');
+};
 
 // ── SHOP ──────────────────────────────────────────────────────
 function openShop() {
@@ -1204,13 +1286,300 @@ function setPhase(phase) {
   }
 }
 
-// ── HUD ───────────────────────────────────────────────────────
+// ── DAILY CHALLENGE SYSTEM ────────────────────────────────────
+function getDailyDateKey() {
+  return new Date().toISOString().split('T')[0]; // e.g. "2026-05-01"
+}
+
+function seededRandom(seed) {
+  let s = seed;
+  return function () { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; };
+}
+
+function getDailyChallenges() {
+  const dateKey = getDailyDateKey();
+  const seed = dateKey.replace(/-/g, '') | 0;
+  const rng = seededRandom(seed);
+  const pool = [...DAILY_POOL];
+  const picks = [];
+  while (picks.length < 3 && pool.length > 0) {
+    const idx = Math.floor(rng() * pool.length);
+    picks.push({ ...pool[idx], progress: 0, done: false, claimed: false });
+    pool.splice(idx, 1);
+  }
+  return picks;
+}
+
+function initDailyChallenges() {
+  const dateKey = getDailyDateKey();
+  const stored = JSON.parse(localStorage.getItem('kr_daily') || '{}');
+  if (stored.date === dateKey) {
+    G.dailyChallenges = stored.challenges;
+  } else {
+    G.dailyChallenges = getDailyChallenges();
+    saveDailyChallenges();
+  }
+  renderDailyChallenges();
+}
+
+function saveDailyChallenges() {
+  localStorage.setItem('kr_daily', JSON.stringify({
+    date: getDailyDateKey(),
+    challenges: G.dailyChallenges
+  }));
+}
+
+function updateDailyProgress(type, amt = 1) {
+  if (!G.dailyChallenges || !G.dailyChallenges.length) return;
+  let changed = false;
+  G.dailyChallenges.forEach(q => {
+    if (q.done || q.claimed) return;
+    if (q.type !== type) return;
+    if (type === 'wave') q.progress = Math.max(q.progress, typeof amt === 'number' ? amt : G.wave);
+    else q.progress = Math.min(q.progress + 1, q.target);
+    if (q.progress >= q.target && !q.done) {
+      q.done = true;
+      addLog(`📅 Daily Complete: "${q.title}"! Claim your reward!`, 'log-quest');
+      showToast(`📅 Daily: "${q.title}" done!`, 'tdiamond');
+      changed = true;
+    }
+  });
+  if (changed) { saveDailyChallenges(); renderDailyChallenges(); }
+  else saveDailyChallenges();
+}
+
+window.claimDaily = function (idx) {
+  const q = G.dailyChallenges[idx];
+  if (!q || !q.done || q.claimed) return;
+  q.claimed = true;
+  G.gold += q.rwd.gold; G.diamonds += q.rwd.dia;
+  addLog(`🎁 Daily "${q.title}" claimed! +${q.rwd.gold}🪙 +${q.rwd.dia}💎`, 'log-quest');
+  showToast(`+${q.rwd.gold}🪙 +${q.rwd.dia}💎 (Daily!)`, 'tdiamond');
+  saveDailyChallenges();
+  updateHUD(); renderDailyChallenges();
+};
+
+function renderDailyChallenges() {
+  const cont = document.getElementById('daily-container');
+  if (!cont) return;
+  cont.innerHTML = '';
+  if (!G.dailyChallenges || !G.dailyChallenges.length) return;
+  G.dailyChallenges.forEach((q, i) => {
+    const pct = Math.min(100, (q.progress / q.target) * 100);
+    const card = document.createElement('div');
+    card.className = `quest-card daily-card${q.done ? ' qcomplete' : ''}${q.claimed ? ' qclaimed' : ''}`;
+    card.innerHTML = `
+      <div class="q-title">${q.done ? '✓ ' : '📅 '}${q.title}</div>
+      <div class="q-desc">${q.desc}</div>
+      <div class="q-progress-bar"><div class="q-fill daily-fill" style="width:${pct}%"></div></div>
+      <div class="q-foot">
+        <span class="q-prog-text">${q.progress}/${q.target}</span>
+        <span class="q-reward">${q.rwd.gold > 0 ? `🪙${q.rwd.gold}` : ''} ${q.rwd.dia > 0 ? `💎${q.rwd.dia}` : ''}</span>
+      </div>
+      ${q.done && !q.claimed ? `<button class="q-claim-btn" onclick="claimDaily(${i})">CLAIM DAILY</button>` : ''}
+    `;
+    cont.appendChild(card);
+  });
+}
+
+// ── STREAK SYSTEM ─────────────────────────────────────────────
+function checkDailyStreak() {
+  const today = getDailyDateKey();
+  const stored = JSON.parse(localStorage.getItem('kr_streak') || '{}');
+  const lastLogin = stored.lastLogin;
+  let streak = stored.streak || G.streak || 0;
+  if (lastLogin === today) {
+    // Already logged in today, keep streak
+  } else {
+    const yesterday = new Date(Date.now() - 864e5).toISOString().split('T')[0];
+    if (lastLogin === yesterday) {
+      streak++;
+      if (streak % 7 === 0) {
+        const bonus = streak >= 30 ? 15 : streak >= 14 ? 8 : 3;
+        showToast(`🔥 ${streak}-day streak! +${bonus}💎 bonus!`, 'tdiamond');
+        G.diamonds += bonus;
+        addLog(`🔥 ${streak}-day login streak! +${bonus}💎 bonus reward!`, 'log-quest');
+      } else {
+        showToast(`🔥 Day ${streak} streak! Keep it up!`, 'tsuccess');
+      }
+    } else if (lastLogin && lastLogin !== yesterday) {
+      streak = 1; // streak broken
+      showToast('Streak reset. Start fresh today!', '');
+    } else {
+      streak = 1; // first time
+    }
+    localStorage.setItem('kr_streak', JSON.stringify({ streak, lastLogin: today }));
+  }
+  G.streak = streak;
+  updateStreakDisplay();
+}
+
+function updateStreakDisplay() {
+  const el = document.getElementById('hud-streak');
+  if (el) el.textContent = G.streak;
+}
+
+// ── TUTORIAL SYSTEM ───────────────────────────────────────────
+const TUTORIAL_STEPS = [
+  {
+    title: 'Welcome, Commander!',
+    body: "Kingdom's Reckoning is a turn-based tower defense. Enemies march from the left — stop them before they breach your castle on the right.",
+    highlight: null, cta: 'Next →'
+  },
+  {
+    title: 'Pick a Tower',
+    body: 'Select a tower type from the Tower Command panel on the right. Each tower has unique abilities — try the Archer Tower first (🏹 30 gold).',
+    highlight: '.towers-panel', cta: 'Got it →'
+  },
+  {
+    title: 'Place on the Board',
+    body: 'Click any non-path tile (avoid the middle row — that\'s the enemy path). Hover a tile to see the tower\'s attack range highlighted in green.',
+    highlight: '.game-center', cta: 'Got it →'
+  },
+  {
+    title: 'Execute Your Turn',
+    body: 'Hit ⚔️ EXECUTE TURN. Your towers fire, then enemies move one step. Repeat: plan → execute until the wave is cleared.',
+    highlight: '.execute-btn', cta: 'Got it →'
+  },
+  {
+    title: 'Use Abilities & Shop',
+    body: 'Spend 💎 Diamonds on powerful abilities (Meteor, Freeze). Visit the 🛒 Shop to upgrade your castle and tower skins for bonuses.',
+    highlight: '.ability-bar', cta: 'Got it →'
+  },
+  {
+    title: 'Complete Daily Challenges',
+    body: '3 Daily Challenges refresh every day. Complete them for bonus gold and diamonds — and keep your login streak going for weekly bonuses!',
+    highlight: '.quests-panel', cta: 'Let\'s Fight! ⚔️'
+  }
+];
+
+let tutorialStep = 0;
+
+function startTutorial() {
+  tutorialStep = 0;
+  showTutorialStep();
+}
+
+function showTutorialStep() {
+  const step = TUTORIAL_STEPS[tutorialStep];
+  if (!step) { endTutorial(); return; }
+  document.getElementById('tut-title').textContent = step.title;
+  document.getElementById('tut-body').textContent = step.body;
+  document.getElementById('tut-cta').textContent = step.cta;
+  document.getElementById('tut-counter').textContent = `${tutorialStep + 1} / ${TUTORIAL_STEPS.length}`;
+  document.getElementById('tutorial-modal').style.display = 'flex';
+  // Highlight target element
+  document.querySelectorAll('.tut-highlight').forEach(e => e.classList.remove('tut-highlight'));
+  if (step.highlight) {
+    const el = document.querySelector(step.highlight);
+    if (el) el.classList.add('tut-highlight');
+  }
+}
+
+window.nextTutorialStep = function () {
+  tutorialStep++;
+  if (tutorialStep >= TUTORIAL_STEPS.length) { endTutorial(); return; }
+  showTutorialStep();
+};
+
+function endTutorial() {
+  document.getElementById('tutorial-modal').style.display = 'none';
+  document.querySelectorAll('.tut-highlight').forEach(e => e.classList.remove('tut-highlight'));
+  localStorage.setItem('kr_tutorial_done', '1');
+  showToast('Tutorial complete! Good luck, Commander! ⚔️', 'tsuccess');
+}
+
+window.skipTutorial = function () { endTutorial(); };
+
+// ── SCORE CARD SHARE ──────────────────────────────────────────
+window.shareScoreCard = function () {
+  const canvas = document.createElement('canvas');
+  canvas.width = 600; canvas.height = 340;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#07061A';
+  ctx.fillRect(0, 0, 600, 340);
+
+  // Gold border
+  ctx.strokeStyle = '#C9A227';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(8, 8, 584, 324);
+
+  // Inner accent
+  ctx.strokeStyle = 'rgba(201,162,39,0.25)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(16, 16, 568, 308);
+
+  // Title
+  ctx.fillStyle = '#F0C842';
+  ctx.font = 'bold 28px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText("⚔️ KINGDOM'S RECKONING", 300, 60);
+
+  // Player name
+  const username = document.getElementById('display-username').textContent || 'Commander';
+  ctx.fillStyle = '#D5C9B0';
+  ctx.font = '18px serif';
+  ctx.fillText(`Commander: ${username}`, 300, 95);
+
+  // Stats
+  const stats = [
+    { label: 'WAVE REACHED', val: G.wave, icon: '🌊', x: 150 },
+    { label: 'SCORE', val: G.score, icon: '🏆', x: 300 },
+    { label: 'BEST WAVE', val: G.bestWave, icon: '⭐', x: 450 },
+  ];
+  stats.forEach(s => {
+    ctx.fillStyle = 'rgba(201,162,39,0.15)';
+    ctx.beginPath();
+    ctx.roundRect(s.x - 75, 120, 150, 90, 8);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(201,162,39,0.4)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#F0C842';
+    ctx.font = 'bold 32px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(s.val, s.x, 165);
+    ctx.fillStyle = '#8B7E6A';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(s.label, s.x, 198);
+  });
+
+  // Castle skin
+  ctx.fillStyle = '#5A5270';
+  ctx.font = '13px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Castle: ${CASTLE_SKINS[G.castleSkin].name}  |  Streak: ${G.streak} days`, 300, 248);
+
+  // Streak fire
+  if (G.streak >= 3) {
+    ctx.fillStyle = '#F59E0B';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(`🔥 ${G.streak}-Day Streak`, 300, 270);
+  }
+
+  // Footer
+  ctx.fillStyle = '#3D3558';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('Play at kingdoms-reckoning.com • Can you beat my score?', 300, 308);
+
+  // Download
+  const link = document.createElement('a');
+  link.download = `kingdoms-reckoning-${username}-w${G.wave}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('Score card saved! Share your run! 🏆', 'tdiamond');
+};
+
+// ── HUD UPDATE (include streak) ───────────────────────────────
 function updateHUD() {
   document.getElementById('hud-hp').textContent = `${Math.max(0, G.hp)}/${G.maxHp}`;
   document.getElementById('hud-gold').textContent = G.gold;
   document.getElementById('hud-dia').textContent = G.diamonds;
   document.getElementById('hud-wave').textContent = G.wave;
   document.getElementById('hud-score').textContent = G.score;
+  updateStreakDisplay();
 }
 
 // ── COMBAT LOG ────────────────────────────────────────────────
