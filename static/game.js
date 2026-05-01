@@ -223,9 +223,8 @@ function setAuthMsg(msg, err = false) {
 }
 
 // ── SAVE / LOAD ───────────────────────────────────────────────
-async function saveGame() {
+async function saveGame(silent = false) {
   const today = new Date().toISOString().split('T')[0];
-  // Strip non-serialisable def reference before sending
   const towersPayload = G.towers.map(t => ({
     x: t.x, y: t.y, type: t.type,
     level: t.level, upgrades: t.upgrades,
@@ -234,16 +233,36 @@ async function saveGame() {
     splashRange: t.splashRange || 1,
     kills: t.kills || 0
   }));
-  await fetch('/api/save_state', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
-      castle_skin: G.castleSkin, tower_skin: G.towerSkin,
-      streak: G.streak, last_login: today, best_wave: G.bestWave,
-      towers: towersPayload
-    })
-  });
-  showToast('Game Saved!', 'tsuccess');
+  try {
+    const res = await fetch('/api/save_state', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
+        castle_skin: G.castleSkin, tower_skin: G.towerSkin,
+        streak: G.streak, last_login: today, best_wave: G.bestWave,
+        towers: towersPayload
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || data.status === 'error') {
+      if (!silent) showToast('⚠️ Save failed — check connection!', 'terror');
+      console.error('[Save] Error:', data);
+      return false;
+    }
+    if (!silent) showToast('Game Saved! 💾', 'tsuccess');
+    return true;
+  } catch (e) {
+    if (!silent) showToast('⚠️ Save failed — check connection!', 'terror');
+    console.error('[Save] Exception:', e);
+    return false;
+  }
+}
+
+// Debounced auto-save — fires 1.5s after the last tower change
+let _autoSaveTimer = null;
+function scheduleAutoSave() {
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(() => saveGame(true), 1500);
 }
 async function loadSavedState() {
   const res = await fetch('/api/load_state');
@@ -483,6 +502,7 @@ function placeTower(x, y) {
   if (G.selectedTowerType === 'tesla') { G.teslaTowers++; updateQuestProgress('tesla'); }
   showToast(`${def.name} built! (-${def.cost}🪙)`, 'tsuccess');
   renderBoard(); renderTowerSelector(); updateHUD();
+  scheduleAutoSave();
 }
 
 // ── SELECT TOWER ──────────────────────────────────────────────
@@ -538,6 +558,7 @@ function upgradeSelected() {
   addLog(`⬆ ${def.name} upgraded to Lv.${t.level}!`, 'log-gold');
   showToast(`${def.name} → Level ${t.level}!`, 'tsuccess');
   renderBoard(); renderUpgradePanel(); updateHUD();
+  scheduleAutoSave();
 }
 
 function sellSelected() {
@@ -554,6 +575,7 @@ function sellSelected() {
   showToast(`Sold for ${sellAmt}🪙`, 'tsuccess');
   G.selectedTower = null;
   renderBoard(); renderTowerSelector(); renderUpgradePanel(); updateHUD();
+  scheduleAutoSave();
 }
 
 // ── WAVE SYSTEM ───────────────────────────────────────────────

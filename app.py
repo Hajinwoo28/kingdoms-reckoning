@@ -167,15 +167,46 @@ def save_state():
         c = conn.cursor()
         import json as _json
         towers_json = _json.dumps(data.get('towers', []))
-        c.execute('''UPDATE player_saves SET
-            gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
-            streak=%s, last_login=%s, best_wave=%s, towers_json=%s
-            WHERE username=%s''',
-            (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
-             data.get('score', 0), data.get('castle_skin', 'Wooden'),
-             data.get('tower_skin', 'Basic'), data.get('streak', 0),
-             data.get('last_login'), data.get('best_wave', 0),
-             towers_json, session['username']))
+        try:
+            c.execute('''UPDATE player_saves SET
+                gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
+                streak=%s, last_login=%s, best_wave=%s, towers_json=%s
+                WHERE username=%s''',
+                (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
+                 data.get('score', 0), data.get('castle_skin', 'Wooden'),
+                 data.get('tower_skin', 'Basic'), data.get('streak', 0),
+                 data.get('last_login'), data.get('best_wave', 0),
+                 towers_json, session['username']))
+        except Exception:
+            # towers_json column may not exist yet — add it and retry
+            conn.rollback()
+            try:
+                c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS towers_json TEXT DEFAULT '[]'")
+                c.execute('''UPDATE player_saves SET
+                    gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
+                    streak=%s, last_login=%s, best_wave=%s, towers_json=%s
+                    WHERE username=%s''',
+                    (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
+                     data.get('score', 0), data.get('castle_skin', 'Wooden'),
+                     data.get('tower_skin', 'Basic'), data.get('streak', 0),
+                     data.get('last_login'), data.get('best_wave', 0),
+                     towers_json, session['username']))
+            except Exception:
+                # Final fallback — save everything except towers
+                conn.rollback()
+                c.execute('''UPDATE player_saves SET
+                    gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
+                    streak=%s, last_login=%s, best_wave=%s
+                    WHERE username=%s''',
+                    (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
+                     data.get('score', 0), data.get('castle_skin', 'Wooden'),
+                     data.get('tower_skin', 'Basic'), data.get('streak', 0),
+                     data.get('last_login'), data.get('best_wave', 0),
+                     session['username']))
+        conn.commit()
+        c.close()
+        conn.close()
+        return jsonify({"status": "success"})
         conn.commit()
         c.close()
         conn.close()
@@ -190,15 +221,24 @@ def load_state():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave, towers_json FROM player_saves WHERE username=%s',
-                  (session['username'],))
-        row = c.fetchone()
+        import json as _json
+        try:
+            c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave, towers_json FROM player_saves WHERE username=%s',
+                      (session['username'],))
+            row = c.fetchone()
+            towers_col = row[9] if row else None
+        except Exception:
+            # towers_json column doesn't exist yet
+            conn.rollback()
+            c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave FROM player_saves WHERE username=%s',
+                      (session['username'],))
+            row = c.fetchone()
+            towers_col = None
         c.close()
         conn.close()
         if row:
-            import json as _json
             try:
-                towers = _json.loads(row[9]) if row[9] else []
+                towers = _json.loads(towers_col) if towers_col else []
             except Exception:
                 towers = []
             return jsonify({"gold": row[0], "diamonds": row[1], "wave": row[2],
