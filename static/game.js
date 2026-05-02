@@ -448,37 +448,140 @@ function showIslandSelect() {
   renderIslandCards();
 }
 
+// Island scene position config
+const ISLAND_POSITIONS = {
+  tundra: { left: '8%', top: '8%', size: 210, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  volcano: { left: '58%', top: '5%', size: 195, floatDur: '4.8s', floatDelay: '-1.8s', zIndex: 5 },
+  jungle: { left: '32%', top: '48%', size: 230, floatDur: '6.0s', floatDelay: '-2.5s', zIndex: 7 },
+  forest: { left: '72%', top: '42%', size: 185, floatDur: '5.2s', floatDelay: '-0.9s', zIndex: 4 },
+};
+
+const ISLAND_TERRAIN = {
+  tundra: {
+    top: ['#C8E6F5', '#A0D4EE', '#DAEEFA'], side: ['#7BBCD4', '#5499B2'],
+    deco: ['🏔️', '❄️', '🌨️', '🧊', '⛄'], groundColor: '#BFE8F8'
+  },
+  volcano: {
+    top: ['#3A1400', '#5C1C00', '#7A2200'], side: ['#290D00', '#1A0800'],
+    deco: ['🌋', '🔥', '💥', '🔥', '🌋'], groundColor: '#4A1800'
+  },
+  jungle: {
+    top: ['#1A6B1A', '#2E8B2E', '#0F5C0F'], side: ['#0A4008', '#063305'],
+    deco: ['🌴', '🌿', '🌺', '🦜', '🌴'], groundColor: '#145C14'
+  },
+  forest: {
+    top: ['#2D1657', '#4A2080', '#1A0C3A'], side: ['#170B2E', '#0D061E'],
+    deco: ['🌲', '🔮', '✨', '🧙', '🌲'], groundColor: '#261244'
+  },
+};
+
 function renderIslandCards() {
   const grid = document.getElementById('island-grid');
-  grid.innerHTML = Object.values(BIOME_DEFS).map(b => `
-    <div class="island-card" onclick="selectBiome('${b.id}')"
-         style="--biome-color:${b.color};--biome-dark:${b.colorDark};--biome-border:${b.border};--biome-bg:${b.colorBg};--biome-grad:${b.gradient}">
-      <div class="ic-glow"></div>
-      <div class="ic-art">${b.art}</div>
-      <div class="ic-badge" style="background:${b.colorBg};border-color:${b.border};color:${b.color}">${b.icon} ${b.name}</div>
-      <p class="ic-tagline">${b.tagline}</p>
-      <div class="ic-difficulty">
-        ${'⭐'.repeat(b.difficulty)}${'☆'.repeat(5 - b.difficulty)}
-        <span>Difficulty</span>
-      </div>
-      <div class="ic-creatures">
-        ${b.enemies.slice(0, 3).map(eid => `<span class="ic-enemy" title="${ENEMY_DEFS[eid]?.name}">${ENEMY_DEFS[eid]?.icon}</span>`).join('')}
-        <span class="ic-enemy-more">+more</span>
-      </div>
-      <div class="ic-reward" style="border-color:${b.border};background:${b.colorBg}">
-        <span class="ic-rwd-icon">${b.reward.icon}</span>
-        <div>
-          <div class="ic-rwd-name">${b.reward.label}</div>
-          <div class="ic-rwd-desc">${b.reward.desc}</div>
+  grid.className = 'island-scene';
+
+  // Build clouds
+  const clouds = Array.from({ length: 9 }, (_, i) => {
+    const top = 5 + (i * 11) % 55;
+    const left = (i * 23 + 7) % 90;
+    const scale = 0.6 + (i % 3) * 0.3;
+    const dur = 18 + (i * 7) % 22;
+    const delay = -(i * 4.3);
+    return `<div class="isc-cloud" style="top:${top}%;left:${left}%;transform:scale(${scale});animation-duration:${dur}s;animation-delay:${delay}s"></div>`;
+  }).join('');
+
+  // Build islands
+  const islands = Object.values(BIOME_DEFS).map(b => {
+    const pos = ISLAND_POSITIONS[b.id];
+    const ter = ISLAND_TERRAIN[b.id];
+    const s = pos.size;
+    const terrainTop = `linear-gradient(160deg, ${ter.top[0]}, ${ter.top[1]} 50%, ${ter.top[2]})`;
+    const cliffTop = ter.side[0];
+    const cliffBot = ter.side[1];
+    const starsHtml = '⭐'.repeat(b.difficulty) + '<span style="opacity:.25">' + '⭐'.repeat(5 - b.difficulty) + '</span>';
+    const decoHtml = ter.deco.map((d, i) => {
+      const dx = 12 + (i * 19) % 72;
+      const dy = 8 + (i * 13) % 42;
+      const fs = 16 + (i % 3) * 8;
+      return `<span class="inode-deco-item" style="left:${dx}%;top:${dy}%;font-size:${fs}px">${d}</span>`;
+    }).join('');
+
+    return `
+    <div class="island-node" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
+         style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--sz:${s}px">
+      <div class="inode-body" style="width:${s}px">
+        <div class="inode-top" style="background:${terrainTop};width:${s}px;height:${Math.round(s * 0.52)}px">
+          <div class="inode-deco-wrap">${decoHtml}</div>
+          <div class="inode-art-emoji">${b.art}</div>
         </div>
+        <div class="inode-cliff" style="width:${Math.round(s * .72)}px;background:linear-gradient(180deg,${cliffTop},${cliffBot});left:${Math.round(s * .14)}px"></div>
+        <div class="inode-cliff-bottom" style="width:${Math.round(s * .72)}px;left:${Math.round(s * .14)}px;background:${cliffBot}"></div>
+        <div class="inode-shadow" style="width:${Math.round(s * .55)}px;left:${Math.round(s * .225)}px"></div>
       </div>
-      <div class="ic-lore">${b.loreText}</div>
-      <button class="ic-select-btn" style="background:linear-gradient(135deg,${b.color},${b.colorDark})">
-        ▶ Enter ${b.name}
-      </button>
+      <div class="inode-nameplate" style="--biome-col:${b.color}">
+        <span class="inode-icon">${b.icon}</span>
+        <span class="inode-name">${b.name}</span>
+        <span class="inode-stars">${starsHtml}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Detail panel (hidden by default)
+  const detailPanel = `
+  <div class="isc-detail-panel" id="isc-detail-panel" style="display:none">
+    <div class="isc-detail-inner">
+      <div class="isc-d-art" id="isc-d-art"></div>
+      <div class="isc-d-name" id="isc-d-name"></div>
+      <div class="isc-d-tag" id="isc-d-tag"></div>
+      <div class="isc-d-diff" id="isc-d-diff"></div>
+      <div class="isc-d-enemies" id="isc-d-enemies"></div>
+      <div class="isc-d-reward" id="isc-d-reward"></div>
+      <div class="isc-d-lore" id="isc-d-lore"></div>
+      <button class="isc-d-enter-btn" id="isc-d-enter-btn">▶ ENTER ISLAND</button>
+      <button class="isc-d-close" onclick="closeIslandDetail()">✕</button>
     </div>
-  `).join('');
+  </div>`;
+
+  grid.innerHTML = clouds + islands + detailPanel;
 }
+
+window.islandNodeClick = function (biomeId) {
+  const b = BIOME_DEFS[biomeId];
+  if (!b) return;
+  const panel = document.getElementById('isc-detail-panel');
+  // Populate panel
+  document.getElementById('isc-d-art').textContent = b.art;
+  document.getElementById('isc-d-art').style.color = b.color;
+  document.getElementById('isc-d-art').style.filter = `drop-shadow(0 0 20px ${b.color})`;
+  document.getElementById('isc-d-name').textContent = b.name;
+  document.getElementById('isc-d-name').style.color = b.color;
+  document.getElementById('isc-d-tag').textContent = b.tagline;
+  document.getElementById('isc-d-diff').innerHTML =
+    '⭐'.repeat(b.difficulty) + '<span style="opacity:.3">' + '⭐'.repeat(5 - b.difficulty) + '</span>' +
+    ' <span style="font-size:11px;opacity:.5;font-family:Cinzel,serif;letter-spacing:.1em">DIFFICULTY</span>';
+  document.getElementById('isc-d-enemies').innerHTML =
+    b.enemies.slice(0, 3).map(eid => `<span title="${ENEMY_DEFS[eid]?.name}" style="font-size:22px">${ENEMY_DEFS[eid]?.icon}</span>`).join('') +
+    '<span style="font-size:12px;opacity:.5;font-family:Cinzel,serif"> +MORE</span>';
+  document.getElementById('isc-d-reward').innerHTML =
+    `<span style="font-size:22px">${b.reward.icon}</span>
+     <div><div style="font-family:Cinzel,serif;font-size:11px;color:#F0C842;font-weight:700">${b.reward.label}</div>
+     <div style="font-size:12px;opacity:.6;font-family:EB Garamond,serif">${b.reward.desc}</div></div>`;
+  document.getElementById('isc-d-lore').textContent = b.loreText;
+
+  const enterBtn = document.getElementById('isc-d-enter-btn');
+  enterBtn.style.background = `linear-gradient(135deg,${b.color},${b.colorDark})`;
+  enterBtn.onclick = () => { closeIslandDetail(); selectBiome(biomeId); };
+
+  panel.style.display = 'flex';
+  panel.style.setProperty('--panel-col', b.color);
+  panel.style.setProperty('--panel-dark', b.colorDark);
+  panel.style.setProperty('--panel-border', b.border);
+  panel.style.setProperty('--panel-bg', b.colorBg);
+};
+
+window.closeIslandDetail = function () {
+  const panel = document.getElementById('isc-detail-panel');
+  if (panel) panel.style.display = 'none';
+};
 
 window.selectBiome = function (biomeId) {
   const biome = BIOME_DEFS[biomeId];
