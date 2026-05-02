@@ -346,6 +346,26 @@ window.continueGame = function () {
   restartGame(true);
 };
 
+window.confirmBackToMenu = function () {
+  document.getElementById('back-to-menu-modal').style.display = 'flex';
+};
+
+window.closeBackToMenuModal = function () {
+  document.getElementById('back-to-menu-modal').style.display = 'none';
+};
+
+window.goBackToMenu = function () {
+  document.getElementById('back-to-menu-modal').style.display = 'none';
+  // Stop any running animation/wave
+  G.gameOver = true;
+  G.isAnimating = false;
+  // Save current state before going back
+  saveState();
+  // Switch screens
+  document.getElementById('game-section').style.display = 'none';
+  showModeSelect();
+};
+
 function restartGame(loginRestore = false) {
   document.getElementById('game-over-modal').style.display = 'none';
   const skin = CASTLE_SKINS[G.castleSkin] || CASTLE_SKINS.Wooden;

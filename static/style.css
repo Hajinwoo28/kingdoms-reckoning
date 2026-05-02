@@ -943,6 +943,19 @@ body {
   background: rgba(34, 211, 238, .08);
 }
 
+.back-menu-btn {
+  background: linear-gradient(135deg, rgba(124, 58, 237, .25), rgba(91, 33, 182, .2));
+  border: 1px solid rgba(124, 58, 237, .5) !important;
+  color: #C4B5FD;
+}
+
+.back-menu-btn:hover {
+  background: linear-gradient(135deg, rgba(124, 58, 237, .45), rgba(91, 33, 182, .35));
+  border-color: rgba(167, 139, 250, .75) !important;
+  color: #EDE9FE;
+  box-shadow: 0 0 14px rgba(124, 58, 237, .4);
+}
+
 .logout-btn:hover {
   background: rgba(220, 38, 38, .2);
   border-color: var(--crimson-l);
@@ -1283,6 +1296,8 @@ body {
   justify-content: center;
   border-radius: 4px !important;
   overflow: visible;
+  background: linear-gradient(135deg, #2D1B0E 0%, #1A0F08 100%) !important;
+  border-color: rgba(120, 60, 20, .35) !important;
 }
 
 .base-cell:hover {

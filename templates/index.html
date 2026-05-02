@@ -3,23 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <script>
-    // Force the page to render at 100% zoom by compensating for browser zoom level
-    (function () {
-      function resetZoom() {
-        var ratio = window.outerWidth / window.innerWidth;
-        if (ratio && ratio !== 1) {
-          document.documentElement.style.zoom = ratio;
-        } else {
-          document.documentElement.style.zoom = '1';
-        }
-      }
-      resetZoom();
-      window.addEventListener('resize', resetZoom);
-    })();
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>⚔️ Kingdom's Reckoning — Tactical Tower Defense</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
@@ -124,6 +108,21 @@
   </div>
 
   <!-- SETTINGS -->
+  <!-- BACK TO MENU CONFIRMATION -->
+  <div id="back-to-menu-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box danger-box">
+      <div class="modal-crest">🏠</div>
+      <h2 class="modal-title danger-title">Return to Main Menu?</h2>
+      <p class="modal-sub">Your current wave progress will be lost.<br>Your save file will be preserved.</p>
+      <div class="modal-btn-row">
+        <button class="btn-modal secondary-btn" onclick="closeBackToMenuModal()">Cancel</button>
+        <button class="btn-modal primary-btn"
+          style="background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 0 18px rgba(124,58,237,.55)"
+          onclick="goBackToMenu()">Yes, Go Back</button>
+      </div>
+    </div>
+  </div>
+
   <div id="settings-modal" class="modal-overlay" style="display:none">
     <div class="modal-box">
       <h2 class="modal-title">⚙️ SETTINGS</h2>
@@ -247,6 +246,7 @@
         <div class="hud-actions">
           <span class="hud-user-label">👤 <span id="display-username"></span></span>
           <button id="btn-admin" class="hud-btn" style="display:none" onclick="openAdminPanel()">ADMIN</button>
+          <button class="hud-btn back-menu-btn" onclick="confirmBackToMenu()" title="Back to Main Menu">🏠 MENU</button>
           <button class="hud-btn" onclick="openLeaderboard()">🏆</button>
           <button class="hud-btn shop-hud-btn" onclick="openShop()">🛒 SHOP</button>
           <button class="hud-btn" onclick="startTutorial()" title="Tutorial">❓</button>
