@@ -145,6 +145,53 @@
   <!-- ══ MAIN APP ══ -->
   <div class="app-wrapper">
 
+    <!-- MODE SELECT SCREEN -->
+    <div id="mode-select-section" class="mode-select-screen" style="display:none">
+      <div class="ms-bg-overlay"></div>
+      <div class="ms-content">
+        <div class="ms-logo">
+          <div class="ms-logo-icon">⚔️</div>
+          <h1 class="ms-title">Kingdom's<br><span class="ms-title-accent">Reckoning</span></h1>
+          <p class="ms-tagline">CHOOSE YOUR DESTINY</p>
+        </div>
+        <div class="ms-cards">
+
+          <!-- STORY MODE -->
+          <div class="ms-card ms-card-story" onclick="selectMode('story')">
+            <div class="ms-card-badge story-badge">STORY MODE</div>
+            <div class="ms-card-art">🏰</div>
+            <h2 class="ms-card-title">Story Mode</h2>
+            <ul class="ms-card-desc">
+              <li>🪙 Start with 80 Gold</li>
+              <li>❤️ 15 Castle HP</li>
+              <li>⚔️ Standard enemy strength</li>
+              <li>📖 Full quest progression</li>
+            </ul>
+            <button class="ms-start-btn story-start-btn">▶ Start a New Game</button>
+          </div>
+
+          <!-- EXTREME MODE -->
+          <div class="ms-card ms-card-extreme" onclick="selectMode('extreme')">
+            <div class="ms-card-badge extreme-badge">EXTREME MODE</div>
+            <div class="ms-card-art">🐉</div>
+            <h2 class="ms-card-title">Extreme Mode</h2>
+            <ul class="ms-card-desc">
+              <li>🪙 Start with 40 Gold only</li>
+              <li>❤️ 10 Castle HP</li>
+              <li>💀 Enemies are 1.75× stronger</li>
+              <li>🏆 2× score multiplier</li>
+            </ul>
+            <button class="ms-start-btn extreme-start-btn">▶ Start a New Game</button>
+          </div>
+
+        </div>
+        <p class="ms-warning">⚠️ Starting a new game will reset your current progress.</p>
+        <button class="ms-continue-btn" id="ms-continue-btn" onclick="continueGame()" style="display:none">
+          ↩ Continue Saved Game
+        </button>
+      </div>
+    </div>
+
     <!-- AUTH SCREEN -->
     <div id="auth-section" class="auth-screen">
       <div class="auth-card">
@@ -179,6 +226,7 @@
           <div class="hud-badge wave-badge">🌊 W<span id="hud-wave">1</span></div>
           <div class="hud-badge score-badge">🏆 <span id="hud-score">0</span></div>
           <div class="hud-badge streak-badge" title="Login streak">🔥 <span id="hud-streak">0</span></div>
+          <div class="hud-badge mode-badge" id="hud-mode-badge" title="Game Mode">⚔️ STORY</div>
         </nav>
         <div class="hud-actions">
           <span class="hud-user-label">👤 <span id="display-username"></span></span>

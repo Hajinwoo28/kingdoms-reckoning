@@ -179,6 +179,7 @@ let G = {
   streak: 0, bestWave: 0,
   dailyChallenges: [], dailyProgress: {},
   abilitiesUsed: 0, towelsSold: 0,
+  gameMode: 'story', // 'story' | 'extreme'
   castleOwned: ['Wooden'], towerSkinOwned: ['Basic'],
   quests: [], questProgress: {},
   selectedTowerType: null, selectedTower: null,
@@ -240,7 +241,7 @@ async function saveGame(silent = false) {
         gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
         castle_skin: G.castleSkin, tower_skin: G.towerSkin,
         streak: G.streak, last_login: today, best_wave: G.bestWave,
-        towers: towersPayload
+        towers: towersPayload, game_mode: G.gameMode
       })
     });
     const data = await res.json();
@@ -275,7 +276,7 @@ async function loadSavedState() {
       G.towerSkin = d.tower_skin || 'Basic';
       G.streak = d.streak || 0;
       G.bestWave = d.best_wave || 0;
-      // Stash towers for restoration after board is created
+      G.gameMode = d.game_mode || 'story';
       G._savedTowers = Array.isArray(d.towers) ? d.towers : [];
     }
   }
@@ -299,24 +300,56 @@ async function openAdminPanel() {
 function closeAdminPanel() { document.getElementById('admin-modal').style.display = 'none'; }
 
 // ── SHOW GAME ─────────────────────────────────────────────────
+let _pendingUsername = null;
+
 function showGame(username) {
+  _pendingUsername = username;
   document.getElementById('auth-section').style.display = 'none';
-  document.getElementById('game-section').style.display = 'flex';
-  document.getElementById('display-username').textContent = username;
+  document.getElementById('game-section').style.display = 'none';
   checkAdminStatus(username);
+
+  // Load state first so we know if a saved game exists
   loadSavedState().then(() => {
     checkDailyStreak();
     initDailyChallenges();
-    restartGame(true); // true = login restore, preserves saved towers
-    const seen = localStorage.getItem('kr_tutorial_done');
-    if (!seen) setTimeout(startTutorial, 800);
+    showModeSelect();
   });
 }
+
+function showModeSelect() {
+  document.getElementById('mode-select-section').style.display = 'flex';
+  // Show "Continue" button only if player has a saved game past wave 1
+  const hasSave = G.wave > 1 || (G._savedTowers && G._savedTowers.length > 0);
+  document.getElementById('ms-continue-btn').style.display = hasSave ? 'block' : 'none';
+}
+
+window.selectMode = function (mode) {
+  G.gameMode = mode;
+  G._savedTowers = []; // new game clears towers
+  G.wave = 1;
+  G.score = 0;
+  G.gold = mode === 'extreme' ? 40 : 80;
+  G.diamonds = 0;
+  document.getElementById('mode-select-section').style.display = 'none';
+  document.getElementById('game-section').style.display = 'flex';
+  document.getElementById('display-username').textContent = _pendingUsername;
+  restartGame(false);
+  const seen = localStorage.getItem('kr_tutorial_done');
+  if (!seen) setTimeout(startTutorial, 800);
+};
+
+window.continueGame = function () {
+  // Restore saved state with existing mode
+  document.getElementById('mode-select-section').style.display = 'none';
+  document.getElementById('game-section').style.display = 'flex';
+  document.getElementById('display-username').textContent = _pendingUsername;
+  restartGame(true);
+};
 
 function restartGame(loginRestore = false) {
   document.getElementById('game-over-modal').style.display = 'none';
   const skin = CASTLE_SKINS[G.castleSkin] || CASTLE_SKINS.Wooden;
-  G.maxHp = skin.maxHp;
+  G.maxHp = G.gameMode === 'extreme' ? Math.max(10, Math.floor(skin.maxHp * 0.67)) : skin.maxHp;
   G.hp = G.maxHp; G.waveStartHp = G.maxHp;
   G.enemies = []; G.spawnIndex = 0;
   G.gameOver = false; G.isAnimating = false; G.frozenTurn = false;
@@ -326,14 +359,12 @@ function restartGame(loginRestore = false) {
   G.dragonKills = 0; G.teslaTowers = 0;
   G.abilitiesUsed = 0; G.towelsSold = 0;
 
-  // On login restore, rehydrate saved towers instead of starting empty
   if (loginRestore && G._savedTowers && G._savedTowers.length > 0) {
     G.towers = G._savedTowers.map(t => ({
       ...t,
-      def: TOWER_DEFS[t.type] // re-attach runtime def reference
+      def: TOWER_DEFS[t.type]
     }));
     G._savedTowers = [];
-    // Recount tesla towers for quest tracking
     G.teslaTowers = G.towers.filter(t => t.type === 'tesla').length;
   } else {
     G.towers = [];
@@ -347,6 +378,7 @@ function restartGame(loginRestore = false) {
   updateHUD();
   setPhase('planning');
   showWavePreview();
+  updateModeBadge();
 }
 
 function initQuests() {
@@ -581,7 +613,7 @@ function sellSelected() {
 // ── WAVE SYSTEM ───────────────────────────────────────────────
 function buildWaveQueue() {
   const groups = getWaveEnemies(G.wave);
-  const hpScale = 1 + (G.wave - 1) * 0.15;
+  const hpScale = (1 + (G.wave - 1) * 0.15) * (G.gameMode === 'extreme' ? 1.75 : 1);
   G.enemiesToSpawn = [];
   groups.forEach(g => {
     const def = ENEMY_DEFS[g.type];
@@ -590,8 +622,8 @@ function buildWaveQueue() {
         id: Date.now() + Math.random(),
         type: g.type, def,
         x: 0, y: PATH_ROW,
-        hp: Math.floor(def.baseHp * hpScale),
-        maxHp: Math.floor(def.baseHp * hpScale),
+        hp: Math.ceil(def.baseHp * hpScale),
+        maxHp: Math.ceil(def.baseHp * hpScale),
         speed: def.speed, reward: def.reward, damage: def.damage,
         frozen: false, frozenTurns: 0,
         kills: 0
@@ -794,21 +826,22 @@ function getTargetsInRange(tower) {
 // ── WAVE COMPLETE ─────────────────────────────────────────────
 async function waveComplete() {
   const goldRwd = 30 + G.wave * 10;
-  const isMilestone = G.wave % 5 === 0;  // milestone every 5 waves (was 10)
+  const isMilestone = G.wave % 5 === 0;
   const diaRwd = 1 + (isMilestone ? (G.wave % 10 === 0 ? 5 : 2) : 0);
-  G.gold += goldRwd; G.diamonds += diaRwd; G.score += G.wave * 50;
+  const scoreMult = G.gameMode === 'extreme' ? 2 : 1;
+  const waveScore = G.wave * 50 * scoreMult;
+  G.gold += goldRwd; G.diamonds += diaRwd; G.score += waveScore;
   if (G.wave > G.bestWave) G.bestWave = G.wave;
   updateQuestProgress('wave');
   updateDailyProgress('wave', G.wave);
 
-  // No damage quest
   if (G.hp === G.waveStartHp) {
     updateQuestProgress('nodmg');
     updateDailyProgress('nodmg');
   }
 
-  addLog(`🏆 Wave ${G.wave} cleared! +${goldRwd}🪙 +${diaRwd}💎`, 'log-wave');
-  showToast(isMilestone ? `🎯 MILESTONE! Wave ${G.wave}! +${diaRwd}💎` : `Wave ${G.wave} cleared! +${goldRwd}🪙 +${diaRwd}💎`, 'tdiamond');
+  addLog(`🏆 Wave ${G.wave} cleared! +${goldRwd}🪙 +${diaRwd}💎 +${waveScore}pts${scoreMult > 1 ? ' (2× Extreme!)' : ''}`, 'log-wave');
+  showToast(isMilestone ? `🎯 MILESTONE! Wave ${G.wave}! +${diaRwd}💎` : `Wave ${G.wave} cleared! +${goldRwd}🪙`, 'tdiamond');
 
   await saveGame();
 
@@ -818,8 +851,10 @@ async function waveComplete() {
   document.getElementById('wcm-rewards').innerHTML = `
     <div class="rwd-item"><span class="ri-icon">🪙</span><span class="ri-val">+${goldRwd}</span><span class="ri-lbl">Gold</span></div>
     <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd}</span><span class="ri-lbl">Diamond${diaRwd > 1 ? 's' : ''}</span></div>
-    <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val">+${G.wave * 50}</span><span class="ri-lbl">Score</span></div>`;
-  document.getElementById('wcm-hint').textContent = isMilestone ? `Milestone bonus! Every 5 waves = extra 💎! Push further!` : '';
+    <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val">+${waveScore}</span><span class="ri-lbl">Score${scoreMult > 1 ? ' ×2' : ''}</span></div>`;
+  document.getElementById('wcm-hint').textContent = G.gameMode === 'extreme'
+    ? `🔥 Extreme Mode — 2× score! Push further!`
+    : (isMilestone ? `Milestone bonus! Every 5 waves = extra 💎!` : '');
   wcm.style.display = 'flex';
 
   G.wave++;
@@ -1628,6 +1663,23 @@ function updateHUD() {
   document.getElementById('hud-wave').textContent = G.wave;
   document.getElementById('hud-score').textContent = G.score;
   updateStreakDisplay();
+  updateModeBadge();
+}
+
+function updateModeBadge() {
+  const badge = document.getElementById('hud-mode-badge');
+  if (!badge) return;
+  if (G.gameMode === 'extreme') {
+    badge.textContent = '🔥 EXTREME';
+    badge.style.background = 'linear-gradient(135deg,rgba(220,38,38,.35),rgba(153,27,27,.25))';
+    badge.style.borderColor = 'rgba(220,38,38,.7)';
+    badge.style.color = '#FCA5A5';
+  } else {
+    badge.textContent = '⚔️ STORY';
+    badge.style.background = 'linear-gradient(135deg,rgba(59,130,246,.2),rgba(29,78,216,.15))';
+    badge.style.borderColor = 'rgba(59,130,246,.5)';
+    badge.style.color = '#93C5FD';
+  }
 }
 
 // ── COMBAT LOG ────────────────────────────────────────────────
