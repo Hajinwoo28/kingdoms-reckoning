@@ -360,7 +360,7 @@ window.goBackToMenu = function () {
   G.gameOver = true;
   G.isAnimating = false;
   // Save current state before going back
-  saveState();
+  saveGame(true);
   // Switch screens
   document.getElementById('game-section').style.display = 'none';
   showModeSelect();
