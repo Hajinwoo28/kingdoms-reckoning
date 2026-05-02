@@ -707,6 +707,66 @@ window.goBackToMenu = function () {
   showModeSelect();
 };
 
+// ── FLOATING ISLAND ENVIRONMENT ───────────────────────────────
+function createCloudLayer() {
+  const wrapper = document.querySelector('.board-wrapper');
+  if (!wrapper) return;
+  wrapper.querySelectorAll('.game-cloud').forEach(c => c.remove());
+  const clouds = [
+    { w: 80, h: 22, top: '8%', dur: 28, delay: 0, opacity: .55 },
+    { w: 110, h: 28, top: '3%', dur: 35, delay: -8, opacity: .45 },
+    { w: 65, h: 18, top: '14%', dur: 22, delay: -14, opacity: .5 },
+    { w: 95, h: 24, top: '6%', dur: 32, delay: -20, opacity: .4 },
+    { w: 55, h: 16, top: '18%', dur: 26, delay: -5, opacity: .35 },
+  ];
+  clouds.forEach(cfg => {
+    const c = document.createElement('div');
+    c.className = 'game-cloud';
+    c.style.cssText = `width:${cfg.w}px;height:${cfg.h}px;top:${cfg.top};opacity:${cfg.opacity};animation-duration:${cfg.dur}s;animation-delay:${cfg.delay}s;`;
+    wrapper.appendChild(c);
+  });
+}
+
+function createMagicParticles() {
+  const wrapper = document.querySelector('.board-wrapper');
+  if (!wrapper) return;
+  wrapper.querySelectorAll('.magic-particle').forEach(p => p.remove());
+  const colors = ['mp-gold', 'mp-cyan', 'mp-pink', 'mp-green', 'mp-white'];
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    const size = 4 + Math.random() * 5;
+    const left = 5 + Math.random() * 90;
+    const bottom = Math.random() * 30;
+    const dur = 3 + Math.random() * 4;
+    const delay = Math.random() * 6;
+    p.className = `magic-particle ${colors[i % colors.length]}`;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${left}%;bottom:${bottom}%;animation-duration:${dur}s;animation-delay:${delay}s;`;
+    wrapper.appendChild(p);
+  }
+}
+
+function createBoardCliffDecor() {
+  const wrapper = document.querySelector('.board-wrapper');
+  if (!wrapper) return;
+  wrapper.querySelectorAll('.board-cliff-body, .board-shadow').forEach(e => e.remove());
+  const cliff = document.createElement('div');
+  cliff.className = 'board-cliff-body';
+  wrapper.appendChild(cliff);
+  const shadow = document.createElement('div');
+  shadow.className = 'board-shadow';
+  wrapper.appendChild(shadow);
+}
+
+function applyBiomeBoardClass() {
+  const wrapper = document.querySelector('.board-wrapper');
+  if (!wrapper) return;
+  // Remove any existing biome class
+  wrapper.className = wrapper.className.replace(/\bboard-biome-\S+/g, '').trim();
+  if (G.gameMode === 'extreme' && G.activeBiome) {
+    wrapper.classList.add(`board-biome-${G.activeBiome.id}`);
+  }
+}
+
 function restartGame(loginRestore = false) {
   document.getElementById('game-over-modal').style.display = 'none';
   const skin = CASTLE_SKINS[G.castleSkin] || CASTLE_SKINS.Wooden;
@@ -740,6 +800,11 @@ function restartGame(loginRestore = false) {
   setPhase('planning');
   showWavePreview();
   updateModeBadge();
+  // Floating island environment effects
+  applyBiomeBoardClass();
+  createCloudLayer();
+  createMagicParticles();
+  createBoardCliffDecor();
 }
 
 function initQuests() {

@@ -4,11 +4,11 @@
 ════════════════════════════════════════════════════ */
 
 :root {
-  --bg: #07061A;
-  --bg2: #0E0C28;
-  --bg3: #15122E;
-  --panel: rgba(11, 9, 30, 0.92);
-  --panel-border: rgba(201, 162, 39, 0.22);
+  --bg: #4AAFE0;
+  --bg2: #3A9BD0;
+  --bg3: #5BC0F0;
+  --panel: rgba(255, 255, 255, 0.18);
+  --panel-border: rgba(255, 255, 255, 0.28);
   --panel-border-b: rgba(201, 162, 39, 0.55);
 
   --gold: #C9A227;
@@ -21,9 +21,9 @@
   --cyan: #22D3EE;
   --cyan-d: #0E7490;
   --violet: #7C3AED;
-  --col-dim: #5A5270;
-  --col-txt: #D5C9B0;
-  --col-muted: #8B7E6A;
+  --col-dim: #5A7A90;
+  --col-txt: #1E3A5F;
+  --col-muted: #4A6A82;
 
   --glow-gold: 0 0 18px rgba(201, 162, 39, 0.55);
   --glow-cyan: 0 0 18px rgba(34, 211, 238, 0.45);
@@ -31,9 +31,9 @@
   --glow-grn: 0 0 18px rgba(16, 185, 129, 0.45);
 
   /* ── Island Nature Palette ─────────────────── */
-  --sky-top: #5BADD4;
-  --sky-mid: #87CEEB;
-  --sky-light: #BDE8F7;
+  --sky-top: #3A9BD0;
+  --sky-mid: #6DBDE8;
+  --sky-light: #ADE2FA;
   --turf: #5ABF2E;
   --turf-l: #7ED644;
   --turf-d: #3D8A15;
@@ -75,19 +75,41 @@ body {
   inset: 0;
   z-index: -3;
   background:
-    radial-gradient(ellipse at 12% 18%, rgba(255, 255, 255, .60) 0%, transparent 22%),
-    radial-gradient(ellipse at 68% 8%, rgba(255, 255, 255, .50) 0%, transparent 18%),
-    radial-gradient(ellipse at 88% 30%, rgba(255, 255, 255, .35) 0%, transparent 16%),
-    radial-gradient(ellipse at 35% 40%, rgba(255, 255, 255, .20) 0%, transparent 14%),
-    radial-gradient(ellipse at 55% 70%, rgba(144, 220, 80, .18) 0%, transparent 35%),
-    linear-gradient(175deg, #5BADD4 0%, #87CEEB 30%, #BDE8F7 55%, #C8F0D8 75%, #A8DFA0 90%, #7ECF3C 100%);
+    radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, .75) 0%, transparent 25%),
+    radial-gradient(ellipse at 75% 5%, rgba(255, 255, 255, .55) 0%, transparent 20%),
+    radial-gradient(ellipse at 90% 25%, rgba(255, 255, 255, .30) 0%, transparent 18%),
+    radial-gradient(ellipse at 40% 35%, rgba(255, 250, 200, .15) 0%, transparent 20%),
+    radial-gradient(ellipse at 50% 85%, rgba(90, 191, 46, .22) 0%, transparent 35%),
+    linear-gradient(175deg, #3A9BD0 0%, #5BADD4 15%, #87CEEB 35%, #BDE8F7 55%, #D0F4E0 72%, #A8DFA0 86%, #7ECF3C 100%);
+}
+
+/* Animated floating clouds background layer */
+.bg-base::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    radial-gradient(ellipse 160px 50px at 15% 12%, rgba(255,255,255,.85) 0%, transparent 100%),
+    radial-gradient(ellipse 200px 55px at 45% 8%, rgba(255,255,255,.70) 0%, transparent 100%),
+    radial-gradient(ellipse 140px 45px at 72% 15%, rgba(255,255,255,.75) 0%, transparent 100%),
+    radial-gradient(ellipse 180px 50px at 88% 6%, rgba(255,255,255,.60) 0%, transparent 100%),
+    radial-gradient(ellipse 120px 40px at 30% 22%, rgba(255,255,255,.50) 0%, transparent 100%);
+  animation: bg-clouds-drift 45s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes bg-clouds-drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(80px); }
 }
 
 .bg-vignette {
   position: fixed;
   inset: 0;
-  z-index: -2;
-  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 20, 50, .28) 100%);
+  z-index: -1;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(20, 80, 140, .15) 100%);
+  pointer-events: none;
 }
 
 /* ── SCROLLBAR ───────────────────────────────── */
@@ -96,11 +118,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg2);
+  background: rgba(255,255,255,.15);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--panel-border-b);
+  background: rgba(90,140,180,.5);
   border-radius: 2px;
 }
 
@@ -127,7 +149,7 @@ body {
 }
 
 .toast {
-  background: rgba(10, 8, 26, .97);
+  background: rgba(255, 255, 255, .92);
   color: var(--col-txt);
   padding: 9px 16px;
   border-radius: 6px;
@@ -137,12 +159,13 @@ body {
   border-left: 4px solid var(--gold);
   max-width: 88vw;
   animation: toastIn .3s ease-out;
-  box-shadow: var(--glow-gold);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12), var(--glow-gold);
+  backdrop-filter: blur(10px);
 }
 
 .toast.terror {
   border-left-color: var(--crimson-l);
-  box-shadow: var(--glow-red);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12), var(--glow-red);
 }
 
 .toast.tsuccess {
@@ -180,8 +203,8 @@ body {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(0, 0, 0, .88);
-  backdrop-filter: blur(8px);
+  background: rgba(20, 80, 140, .45);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,15 +222,16 @@ body {
 }
 
 .modal-box {
-  background: linear-gradient(145deg, var(--bg2) 0%, var(--bg3) 100%);
-  border: 1px solid var(--panel-border-b);
+  background: linear-gradient(145deg, rgba(255,255,255,.92) 0%, rgba(240,248,255,.88) 100%);
+  border: 1.5px solid rgba(255,255,255,.65);
   border-radius: 14px;
   padding: 28px 28px 22px;
   width: 92%;
   max-width: 440px;
-  box-shadow: 0 0 60px rgba(0, 0, 0, .9), var(--glow-gold);
+  box-shadow: 0 16px 60px rgba(0, 0, 0, .18), 0 0 30px rgba(93,173,212,.15);
   text-align: center;
   animation: boxPop .3s cubic-bezier(.34, 1.56, .64, 1);
+  backdrop-filter: blur(16px);
 }
 
 @keyframes boxPop {
@@ -691,15 +715,16 @@ body {
 }
 
 .auth-card {
-  background: linear-gradient(145deg, rgba(14, 12, 35, .97) 0%, rgba(11, 9, 28, .95) 100%);
-  border: 1px solid var(--panel-border-b);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .92) 0%, rgba(240, 248, 255, .88) 100%);
+  border: 1.5px solid rgba(255, 255, 255, .6);
   border-radius: 16px;
   padding: 40px 36px 32px;
   width: 100%;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 0 80px rgba(0, 0, 0, .8), var(--glow-gold);
+  box-shadow: 0 16px 60px rgba(0, 0, 0, .15), 0 0 40px rgba(93, 173, 212, .2);
   animation: cardRise .6s ease-out;
+  backdrop-filter: blur(16px);
 }
 
 @keyframes cardRise {
@@ -758,7 +783,7 @@ body {
 .auth-input {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(0, 0, 0, .6);
+  background: rgba(255, 255, 255, .55);
   border: 1px solid rgba(201, 162, 39, .3);
   border-radius: 8px;
   color: var(--col-txt);
@@ -847,13 +872,14 @@ body {
   justify-content: space-between;
   padding: 5px 10px;
   flex-shrink: 0;
-  background: linear-gradient(180deg, rgba(20, 16, 45, .98) 0%, rgba(14, 12, 35, .95) 100%);
-  border-bottom: 2px solid var(--gold-d);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, .6), 0 0 40px rgba(201, 162, 39, .06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .82) 0%, rgba(240, 250, 255, .75) 100%);
+  border-bottom: 2px solid rgba(93, 173, 212, .4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .08), 0 0 30px rgba(93, 173, 212, .08);
   gap: 6px;
   flex-wrap: nowrap;
   overflow: hidden;
   z-index: 10;
+  backdrop-filter: blur(12px);
 }
 
 .hud-brand {
@@ -892,12 +918,13 @@ body {
   gap: 3px;
   padding: 3px 7px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, .5);
+  background: rgba(255, 255, 255, .55);
   font-weight: 700;
   font-size: 12px;
   border-bottom: 2px solid transparent;
   white-space: nowrap;
   flex-shrink: 0;
+  backdrop-filter: blur(6px);
 }
 
 .hp-badge {
@@ -1004,13 +1031,14 @@ body {
 .side-panel {
   width: 210px;
   flex-shrink: 0;
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, .72);
+  border: 1.5px solid rgba(255, 255, 255, .5);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, .7);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .08);
+  backdrop-filter: blur(14px);
 }
 
 .panel-title {
@@ -1045,8 +1073,8 @@ body {
 }
 
 .quest-card {
-  background: rgba(0, 0, 0, .35);
-  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, .45);
+  border: 1px solid rgba(255, 255, 255, .4);
   border-radius: 8px;
   padding: 9px 10px;
   transition: border .2s;
@@ -1160,9 +1188,10 @@ body {
   gap: 10px;
   padding: 7px 14px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, .4);
-  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, .55);
+  border: 1px solid rgba(255, 255, 255, .45);
   font-size: 12px;
+  backdrop-filter: blur(6px);
   font-weight: 600;
   color: var(--col-muted);
   flex-shrink: 0;
@@ -1221,12 +1250,51 @@ body {
     radial-gradient(ellipse at 15% 20%, rgba(255, 255, 255, .55) 0%, transparent 20%),
     radial-gradient(ellipse at 80% 12%, rgba(255, 255, 255, .40) 0%, transparent 16%),
     linear-gradient(170deg, #6BBDE6 0%, #95D5F0 40%, #B5E8FA 100%);
-  border-radius: 10px;
-  border: 1px solid rgba(93, 173, 212, .40);
-  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  border: 1.5px solid rgba(93, 173, 212, .40);
+  overflow: visible;
   min-height: 0;
   position: relative;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, .15);
+  box-shadow:
+    0 12px 0 0 #8B6C42,
+    0 24px 0 0 #7A5C38,
+    0 32px 0 0 #6A4E30,
+    0 36px 0 0 #5A4228,
+    0 38px 0 0 #4A3620,
+    0 50px 30px -10px rgba(0,0,0,.25);
+}
+
+/* Waterfall effects on board edges */
+.board-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  bottom: -38px;
+  width: 8px;
+  height: 38px;
+  background: linear-gradient(180deg, rgba(34,211,238,.6) 0%, rgba(34,211,238,.15) 100%);
+  border-radius: 0 0 4px 4px;
+  animation: waterfall-flow 1.2s ease-in-out infinite;
+  z-index: 5;
+}
+
+.board-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 30px;
+  bottom: -38px;
+  width: 6px;
+  height: 38px;
+  background: linear-gradient(180deg, rgba(34,211,238,.5) 0%, rgba(34,211,238,.1) 100%);
+  border-radius: 0 0 4px 4px;
+  animation: waterfall-flow 1.5s ease-in-out infinite;
+  animation-delay: -.6s;
+  z-index: 5;
+}
+
+@keyframes waterfall-flow {
+  0%, 100% { opacity: .7; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.1); }
 }
 
 .board {
@@ -1780,10 +1848,11 @@ body {
 .combat-log-wrap {
   flex-shrink: 0;
   height: 44px;
-  background: rgba(0, 0, 0, .5);
+  background: rgba(255, 255, 255, .5);
   border-radius: 7px;
-  border: 1px solid var(--panel-border);
+  border: 1px solid rgba(255, 255, 255, .4);
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 
 .combat-log-scroll {
@@ -1851,9 +1920,10 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 6px 10px;
-  border: 1px solid var(--panel-border);
+  border: 1px solid rgba(255, 255, 255, .4);
   border-radius: 7px;
-  background: rgba(0, 0, 0, .4);
+  background: rgba(255, 255, 255, .45);
+  backdrop-filter: blur(6px);
   cursor: pointer;
   transition: all .18s;
   gap: 1px;
@@ -1993,8 +2063,8 @@ body {
   padding: 8px 10px;
   border-radius: 7px;
   cursor: pointer;
-  background: rgba(0, 0, 0, .35);
-  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, .45);
+  border: 1px solid rgba(255, 255, 255, .4);
   transition: all .18s;
 }
 
@@ -4765,4 +4835,175 @@ body {
 .biome-forest.can-place {
   border-color: rgba(139, 92, 246, .6) !important;
   box-shadow: inset 0 0 5px rgba(139, 92, 246, .2) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FLOATING ISLAND ENVIRONMENT — Magic Particles & Clouds
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── MAGIC PARTICLES ─────────────────────────────────────────── */
+.magic-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  animation: particle-float linear infinite;
+}
+
+@keyframes particle-float {
+  0% { opacity: 0; transform: translateY(0) translateX(0) scale(.5); }
+  15% { opacity: .9; }
+  50% { transform: translateY(-60px) translateX(15px) scale(1); }
+  85% { opacity: .6; }
+  100% { opacity: 0; transform: translateY(-120px) translateX(-10px) scale(.3); }
+}
+
+.mp-gold {
+  background: radial-gradient(circle, #FDE68A 0%, #F59E0B 50%, transparent 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, .7);
+}
+
+.mp-cyan {
+  background: radial-gradient(circle, #A5F3FC 0%, #22D3EE 50%, transparent 100%);
+  box-shadow: 0 0 8px rgba(34, 211, 238, .7);
+}
+
+.mp-pink {
+  background: radial-gradient(circle, #FBCFE8 0%, #EC4899 50%, transparent 100%);
+  box-shadow: 0 0 8px rgba(236, 72, 153, .6);
+}
+
+.mp-green {
+  background: radial-gradient(circle, #BBF7D0 0%, #22C55E 50%, transparent 100%);
+  box-shadow: 0 0 8px rgba(34, 197, 94, .6);
+}
+
+.mp-white {
+  background: radial-gradient(circle, #fff 0%, rgba(255,255,255,.5) 50%, transparent 100%);
+  box-shadow: 0 0 6px rgba(255, 255, 255, .8);
+}
+
+/* ── GAME CLOUDS ─────────────────────────────────────────────── */
+.game-cloud {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, .75);
+  box-shadow:
+    20px -8px 0 6px rgba(255,255,255,.65),
+    40px -4px 0 10px rgba(255,255,255,.55),
+    55px -6px 0 4px rgba(255,255,255,.45);
+  animation: game-cloud-drift linear infinite;
+  opacity: .7;
+}
+
+@keyframes game-cloud-drift {
+  from { transform: translateX(-200px); }
+  to { transform: translateX(calc(100% + 200px)); }
+}
+
+/* ── FLOATING ISLAND CLIFF DECORATION BELOW BOARD ─────────── */
+.board-cliff-body {
+  position: absolute;
+  bottom: -50px;
+  left: 8%;
+  right: 8%;
+  height: 50px;
+  background: linear-gradient(180deg, #8B6C42 0%, #6B5030 50%, #4A3620 100%);
+  border-radius: 0 0 40% 40%;
+  z-index: -1;
+  box-shadow:
+    inset 3px 0 8px rgba(0,0,0,.15),
+    inset -3px 0 8px rgba(0,0,0,.15),
+    0 8px 20px rgba(0,0,0,.2);
+}
+
+.board-cliff-body::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 25%;
+  right: 25%;
+  height: 18px;
+  background: linear-gradient(180deg, #4A3620 0%, #3A2A18 100%);
+  border-radius: 0 0 50% 50%;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+}
+
+.board-shadow {
+  position: absolute;
+  bottom: -85px;
+  left: 15%;
+  right: 15%;
+  height: 20px;
+  background: radial-gradient(ellipse, rgba(0,0,0,.18) 0%, transparent 70%);
+  filter: blur(6px);
+  z-index: -2;
+}
+
+/* ── BIOME BOARD WRAPPER THEMES ─────────────────────────────── */
+.board-biome-tundra {
+  box-shadow:
+    0 12px 0 0 #8BB8CC,
+    0 24px 0 0 #6899AE,
+    0 32px 0 0 #4A7A90,
+    0 36px 0 0 #3A6478,
+    0 38px 0 0 #2A5468,
+    0 50px 30px -10px rgba(0,0,0,.2) !important;
+}
+
+.board-biome-volcano {
+  box-shadow:
+    0 12px 0 0 #5C2200,
+    0 24px 0 0 #4A1800,
+    0 32px 0 0 #380F00,
+    0 36px 0 0 #2C0A00,
+    0 38px 0 0 #1E0600,
+    0 6px 30px 0 rgba(249,115,22,.3),
+    0 50px 30px -10px rgba(0,0,0,.3) !important;
+}
+
+.board-biome-jungle {
+  box-shadow:
+    0 12px 0 0 #5A3A1A,
+    0 24px 0 0 #4A2E12,
+    0 32px 0 0 #3A220C,
+    0 36px 0 0 #2C1808,
+    0 38px 0 0 #1E1004,
+    0 50px 30px -10px rgba(0,0,0,.2) !important;
+}
+
+.board-biome-forest {
+  box-shadow:
+    0 12px 0 0 #3A1F6E,
+    0 24px 0 0 #2A1060,
+    0 32px 0 0 #1E0A48,
+    0 36px 0 0 #140632,
+    0 38px 0 0 #0C0420,
+    0 6px 30px 0 rgba(139,92,246,.2),
+    0 50px 30px -10px rgba(0,0,0,.25) !important;
+}
+
+/* ── SUN RAYS on Island Select ────────────────────────────── */
+.island-select-screen::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 60%;
+  height: 80%;
+  background: radial-gradient(ellipse at 20% 15%,
+    rgba(255, 240, 150, .20) 0%,
+    rgba(255, 220, 100, .08) 30%,
+    transparent 65%);
+  pointer-events: none;
+  z-index: 1;
+  animation: sun-rays 6s ease-in-out infinite alternate;
+}
+
+@keyframes sun-rays {
+  from { opacity: .6; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.08); }
 }
