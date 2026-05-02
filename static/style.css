@@ -3612,3 +3612,215 @@ body {
     width: auto;
   }
 }
+
+/* ════════════════════════════════════════════════════
+   MODE SELECT — VIEWPORT-FIT FIX
+   Prevents clipping at 100 % zoom on 1080p / 900p
+   screens. Uses clamp() + dvh to scale every element
+   proportionally to the available viewport height.
+════════════════════════════════════════════════════ */
+
+/* 1. Let the screen scroll instead of clipping content */
+.mode-select-screen {
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: flex-start;
+  /* let content start at top when it overflows */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 2. Content wrapper: full height, centered when it fits,
+      scrollable when it doesn't */
+.ms-content {
+  min-height: 100dvh;
+  /* at least full viewport */
+  justify-content: center;
+  /* vertically center when there's room */
+  padding: clamp(12px, 2.5vh, 28px) clamp(12px, 2vw, 24px);
+  gap: clamp(12px, 2.2vh, 28px);
+}
+
+/* 3. Logo — shrink icon and title proportionally */
+.ms-logo-icon {
+  font-size: clamp(28px, 4.5vh, 52px);
+}
+
+.ms-title {
+  font-size: clamp(20px, 4vh, 42px);
+  margin: clamp(4px, 0.8vh, 10px) 0 clamp(2px, 0.5vh, 8px);
+}
+
+.ms-tagline {
+  font-size: clamp(9px, 1vh, 12px);
+  letter-spacing: clamp(0.12em, 0.25em, 0.3em);
+}
+
+/* 4. Cards row — let cards shrink on short viewports */
+.ms-cards {
+  gap: clamp(12px, 2vw, 24px);
+}
+
+.ms-card {
+  padding: clamp(14px, 2vh, 26px) clamp(14px, 2vw, 24px) clamp(12px, 1.8vh, 22px);
+  gap: clamp(6px, 1vh, 12px);
+}
+
+/* 5. Card art emoji */
+.ms-card-art {
+  font-size: clamp(36px, 5.5vh, 60px);
+  margin: clamp(2px, 0.4vh, 6px) 0;
+}
+
+/* 6. Card title */
+.ms-card-title {
+  font-size: clamp(15px, 2vh, 22px);
+}
+
+/* 7. Description list items */
+.ms-card-desc {
+  gap: clamp(4px, 0.6vh, 8px);
+}
+
+.ms-card-desc li {
+  font-size: clamp(12px, 1.5vh, 15px);
+  padding: clamp(3px, 0.5vh, 7px) clamp(8px, 1vw, 12px);
+}
+
+/* 8. Start button */
+.ms-start-btn {
+  padding: clamp(9px, 1.4vh, 15px) 0;
+  font-size: clamp(11px, 1.5vh, 15px);
+  margin-top: clamp(4px, 0.6vh, 8px);
+}
+
+/* 9. Warning text + continue button */
+.ms-warning {
+  font-size: clamp(10px, 1.2vh, 13px);
+}
+
+.ms-continue-btn {
+  padding: clamp(8px, 1.2vh, 13px) clamp(20px, 3vw, 36px);
+  font-size: clamp(11px, 1.4vh, 14px);
+}
+
+/* 10. Card badge */
+.ms-card-badge {
+  font-size: clamp(9px, 1vh, 12px);
+  padding: clamp(3px, 0.4vh, 6px) clamp(10px, 1.2vw, 16px);
+}
+
+/* ── Short-viewport override (height ≤ 750px) ──────
+   Kicks in for laptops, 768p screens, and zoomed browsers */
+@media (max-height: 750px) {
+  .ms-content {
+    min-height: unset;
+    justify-content: flex-start;
+    padding-top: 12px;
+    padding-bottom: 16px;
+    gap: 10px;
+  }
+
+  .ms-logo-icon {
+    font-size: 28px;
+  }
+
+  .ms-title {
+    font-size: 22px;
+    margin: 4px 0 2px;
+  }
+
+  .ms-tagline {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+
+  .ms-card {
+    padding: 12px 16px;
+    gap: 6px;
+    border-radius: 12px;
+  }
+
+  .ms-card-badge {
+    font-size: 9px;
+    padding: 3px 10px;
+  }
+
+  .ms-card-art {
+    font-size: 34px;
+    margin: 0;
+  }
+
+  .ms-card-title {
+    font-size: 14px;
+  }
+
+  .ms-card-desc {
+    gap: 4px;
+  }
+
+  .ms-card-desc li {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .ms-start-btn {
+    padding: 8px 0;
+    font-size: 11px;
+    margin-top: 4px;
+    border-radius: 8px;
+  }
+
+  .ms-warning {
+    font-size: 10px;
+  }
+
+  .ms-continue-btn {
+    padding: 8px 20px;
+    font-size: 11px;
+  }
+}
+
+/* ── Very short (≤ 620px height — browser with open keyboard/toolbar) */
+@media (max-height: 620px) {
+
+  /* Collapse logo further */
+  .ms-logo-icon {
+    font-size: 22px;
+  }
+
+  .ms-title {
+    font-size: 18px;
+  }
+
+  /* Cards side-by-side, more compact */
+  .ms-cards {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .ms-card {
+    min-width: 0;
+    flex: 1;
+    padding: 10px 12px;
+    gap: 4px;
+  }
+
+  .ms-card-art {
+    font-size: 26px;
+  }
+
+  .ms-card-title {
+    font-size: 13px;
+  }
+
+  .ms-card-desc li {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  .ms-start-btn {
+    padding: 7px 0;
+    font-size: 10px;
+  }
+}
