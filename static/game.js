@@ -87,7 +87,105 @@ const ENEMY_DEFS = {
   }
 };
 
-// ── CASTLE SKINS ─────────────────────────────────────────────
+// ── BIOME DEFINITIONS (Extreme Mode Island Select) ───────────
+const BIOME_DEFS = {
+  tundra: {
+    id: 'tundra',
+    name: 'Crystal Tundra',
+    tagline: 'Where ice reigns eternal',
+    icon: '❄️',
+    art: '🏔️',
+    color: '#22D3EE',
+    colorDark: '#0E7490',
+    colorBg: 'rgba(34,211,238,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(14,116,144,.35) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(34,211,238,0.5)',
+    difficulty: 3,
+    enemies: ['frost_wraith', 'ice_golem', 'snow_troll', 'blizzard_dragon'],
+    reward: { type: 'frost_core', icon: '💠', label: 'Frost Core ×3', desc: '+20 damage & slow on all towers for this run', gold: 60, dia: 5 },
+    enemyMods: { hpMult: 1.1, spdBonus: 0, dmgMult: 1.2 },
+    loreText: 'Frozen spirits and ancient ice titans guard this glacier island.'
+  },
+  volcano: {
+    id: 'volcano',
+    name: 'Volcanic Inferno',
+    tagline: 'Born of fire and fury',
+    icon: '🌋',
+    art: '🔥',
+    color: '#F97316',
+    colorDark: '#C2410C',
+    colorBg: 'rgba(249,115,22,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(194,65,12,.35) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(249,115,22,0.5)',
+    difficulty: 4,
+    enemies: ['lava_imp', 'magma_brute', 'fire_knight', 'inferno_dragon'],
+    reward: { type: 'ember_shard', icon: '🔥', label: 'Ember Shard ×3', desc: '+35% gold from all kills for this run', gold: 80, dia: 6 },
+    enemyMods: { hpMult: 1.3, spdBonus: 0, dmgMult: 1.5 },
+    loreText: 'Volcanic demons thrive in the molten core of this scorched island.'
+  },
+  jungle: {
+    id: 'jungle',
+    name: 'Tropical Archipelago',
+    tagline: 'Life blooms with danger',
+    icon: '🌴',
+    art: '🏝️',
+    color: '#10B981',
+    colorDark: '#065F46',
+    colorBg: 'rgba(16,185,129,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(6,95,70,.35) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(16,185,129,0.5)',
+    difficulty: 2,
+    enemies: ['vine_sprite', 'jungle_beast', 'poison_troll', 'serpent_dragon'],
+    reward: { type: 'nature_gem', icon: '💚', label: 'Nature Gem ×3', desc: '+3 castle HP restored after each wave', gold: 50, dia: 4 },
+    enemyMods: { hpMult: 0.9, spdBonus: 1, dmgMult: 1.0 },
+    loreText: 'Cunning jungle spirits and venomous beasts lurk in the dense canopy.'
+  },
+  forest: {
+    id: 'forest',
+    name: 'Enchanted Forest',
+    tagline: 'Ancient magic stirs within',
+    icon: '🌲',
+    art: '🧙',
+    color: '#8B5CF6',
+    colorDark: '#5B21B6',
+    colorBg: 'rgba(139,92,246,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(91,33,182,.35) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(139,92,246,0.5)',
+    difficulty: 5,
+    enemies: ['shadow_sprite', 'arcane_knight', 'phantom_troll', 'void_dragon'],
+    reward: { type: 'arcane_rune', icon: '🔮', label: 'Arcane Rune ×3', desc: '+8 diamonds & doubled diamond drops', gold: 100, dia: 8 },
+    enemyMods: { hpMult: 1.5, spdBonus: 0, dmgMult: 1.8 },
+    loreText: 'Ancient sorcerers and void phantoms haunt this mystical realm.'
+  }
+};
+
+// Biome-unique enemy definitions (merged into ENEMY_DEFS at runtime)
+const BIOME_ENEMY_DEFS = {
+  // Tundra
+  frost_wraith: { id: 'frost_wraith', name: 'Frost Wraith', icon: '👻', cssClass: 'en-goblin', baseHp: 20, speed: 2, reward: 9, damage: 1, desc: 'Chilling fast spirit', ability: 'dash', abilityChance: 0.3 },
+  ice_golem: { id: 'ice_golem', name: 'Ice Golem', icon: '🧊', cssClass: 'en-orc', baseHp: 55, speed: 1, reward: 18, damage: 2, desc: 'Frozen tank' },
+  snow_troll: { id: 'snow_troll', name: 'Snow Troll', icon: '🧌', cssClass: 'en-troll', baseHp: 110, speed: 1, reward: 32, damage: 3, desc: 'Regenerates in cold', ability: 'regen', regenAmt: 10 },
+  blizzard_dragon: { id: 'blizzard_dragon', name: 'Blizzard Dragon', icon: '🐲', cssClass: 'en-dragon', baseHp: 460, speed: 1, reward: 130, damage: 9, desc: 'BOSS — ice breath', boss: true, ability: 'breath' },
+  // Volcano
+  lava_imp: { id: 'lava_imp', name: 'Lava Imp', icon: '😈', cssClass: 'en-goblin', baseHp: 22, speed: 2, reward: 10, damage: 1, desc: 'Scorching fast imp', ability: 'dash', abilityChance: 0.3 },
+  magma_brute: { id: 'magma_brute', name: 'Magma Brute', icon: '👹', cssClass: 'en-orc', baseHp: 60, speed: 1, reward: 20, damage: 3, desc: 'Absorbs heat — tough' },
+  fire_knight: { id: 'fire_knight', name: 'Fire Knight', icon: '⚔️', cssClass: 'en-knight', baseHp: 180, speed: 1, reward: 50, damage: 5, desc: 'Armored in lava-iron', ability: 'deflect', deflectChance: 0.35 },
+  inferno_dragon: { id: 'inferno_dragon', name: 'Inferno Dragon', icon: '🔥', cssClass: 'en-dragon', baseHp: 480, speed: 1, reward: 140, damage: 10, desc: 'BOSS — fire storm', boss: true, ability: 'breath' },
+  // Jungle
+  vine_sprite: { id: 'vine_sprite', name: 'Vine Sprite', icon: '🌿', cssClass: 'en-goblin', baseHp: 16, speed: 3, reward: 8, damage: 1, desc: 'Blindingly fast', ability: 'dash', abilityChance: 0.4 },
+  jungle_beast: { id: 'jungle_beast', name: 'Jungle Beast', icon: '🦁', cssClass: 'en-orc', baseHp: 40, speed: 2, reward: 14, damage: 2, desc: 'Fast and fierce' },
+  poison_troll: { id: 'poison_troll', name: 'Poison Troll', icon: '🧌', cssClass: 'en-troll', baseHp: 90, speed: 1, reward: 28, damage: 2, desc: 'Venom regen', ability: 'regen', regenAmt: 6 },
+  serpent_dragon: { id: 'serpent_dragon', name: 'Serpent Dragon', icon: '🐍', cssClass: 'en-dragon', baseHp: 400, speed: 2, reward: 120, damage: 7, desc: 'BOSS — swift serpent', boss: true, ability: 'breath' },
+  // Forest
+  shadow_sprite: { id: 'shadow_sprite', name: 'Shadow Sprite', icon: '🌑', cssClass: 'en-goblin', baseHp: 18, speed: 2, reward: 9, damage: 1, desc: 'Phases through attacks', ability: 'dash', abilityChance: 0.35 },
+  arcane_knight: { id: 'arcane_knight', name: 'Arcane Knight', icon: '🧙', cssClass: 'en-knight', baseHp: 200, speed: 1, reward: 55, damage: 6, desc: 'Magic deflect', ability: 'deflect', deflectChance: 0.40 },
+  phantom_troll: { id: 'phantom_troll', name: 'Phantom Troll', icon: '👾', cssClass: 'en-troll', baseHp: 130, speed: 1, reward: 35, damage: 4, desc: 'Void regen', ability: 'regen', regenAmt: 12 },
+  void_dragon: { id: 'void_dragon', name: 'Void Dragon', icon: '🐉', cssClass: 'en-dragon', baseHp: 520, speed: 1, reward: 150, damage: 11, desc: 'BOSS — void annihilator', boss: true, ability: 'breath' }
+};
+// Merge biome enemies into main ENEMY_DEFS
+Object.assign(ENEMY_DEFS, BIOME_ENEMY_DEFS);
+
+
 const CASTLE_SKINS = {
   Wooden: { name: 'Wooden Keep', icon: '🏰', cssClass: 'castle-wooden', maxHp: 15, cost: 0, currency: 'free', desc: 'Your starting stronghold.' },
   Stone: { name: 'Stone Fortress', icon: '🗼', cssClass: 'castle-stone', maxHp: 30, cost: 600, currency: 'gold', desc: '+15 castle HP. Reinforced battlements.' },
@@ -325,18 +423,82 @@ function showModeSelect() {
 
 window.selectMode = function (mode) {
   G.gameMode = mode;
-  G._savedTowers = []; // new game clears towers
+  G._savedTowers = [];
   G.wave = 1;
   G.score = 0;
   G.gold = mode === 'extreme' ? 40 : 80;
   G.diamonds = 0;
-  document.getElementById('mode-select-section').style.display = 'none';
+  if (mode === 'extreme') {
+    document.getElementById('mode-select-section').style.display = 'none';
+    showIslandSelect();
+  } else {
+    G.activeBiome = null;
+    document.getElementById('mode-select-section').style.display = 'none';
+    document.getElementById('game-section').style.display = 'flex';
+    document.getElementById('display-username').textContent = _pendingUsername;
+    restartGame(false);
+    const seen = localStorage.getItem('kr_tutorial_done');
+    if (!seen) setTimeout(startTutorial, 800);
+  }
+};
+
+function showIslandSelect() {
+  const screen = document.getElementById('island-select-section');
+  screen.style.display = 'flex';
+  renderIslandCards();
+}
+
+function renderIslandCards() {
+  const grid = document.getElementById('island-grid');
+  grid.innerHTML = Object.values(BIOME_DEFS).map(b => `
+    <div class="island-card" onclick="selectBiome('${b.id}')"
+         style="--biome-color:${b.color};--biome-dark:${b.colorDark};--biome-border:${b.border};--biome-bg:${b.colorBg};--biome-grad:${b.gradient}">
+      <div class="ic-glow"></div>
+      <div class="ic-art">${b.art}</div>
+      <div class="ic-badge" style="background:${b.colorBg};border-color:${b.border};color:${b.color}">${b.icon} ${b.name}</div>
+      <p class="ic-tagline">${b.tagline}</p>
+      <div class="ic-difficulty">
+        ${'⭐'.repeat(b.difficulty)}${'☆'.repeat(5 - b.difficulty)}
+        <span>Difficulty</span>
+      </div>
+      <div class="ic-creatures">
+        ${b.enemies.slice(0, 3).map(eid => `<span class="ic-enemy" title="${ENEMY_DEFS[eid]?.name}">${ENEMY_DEFS[eid]?.icon}</span>`).join('')}
+        <span class="ic-enemy-more">+more</span>
+      </div>
+      <div class="ic-reward" style="border-color:${b.border};background:${b.colorBg}">
+        <span class="ic-rwd-icon">${b.reward.icon}</span>
+        <div>
+          <div class="ic-rwd-name">${b.reward.label}</div>
+          <div class="ic-rwd-desc">${b.reward.desc}</div>
+        </div>
+      </div>
+      <div class="ic-lore">${b.loreText}</div>
+      <button class="ic-select-btn" style="background:linear-gradient(135deg,${b.color},${b.colorDark})">
+        ▶ Enter ${b.name}
+      </button>
+    </div>
+  `).join('');
+}
+
+window.selectBiome = function (biomeId) {
+  const biome = BIOME_DEFS[biomeId];
+  if (!biome) return;
+  G.activeBiome = biome;
+  // Apply biome reward passive effects
+  G._biomeReward = biome.reward;
+  document.getElementById('island-select-section').style.display = 'none';
   document.getElementById('game-section').style.display = 'flex';
   document.getElementById('display-username').textContent = _pendingUsername;
   restartGame(false);
-  const seen = localStorage.getItem('kr_tutorial_done');
-  if (!seen) setTimeout(startTutorial, 800);
+  showToast(`${biome.icon} Entering ${biome.name}!`, 'tsuccess');
+  updateModeBadge();
 };
+
+window.backFromIslandSelect = function () {
+  document.getElementById('island-select-section').style.display = 'none';
+  document.getElementById('mode-select-section').style.display = 'flex';
+};
+
 
 window.continueGame = function () {
   // Restore saved state with existing mode
@@ -432,9 +594,11 @@ function createBoard() {
           const castle = document.createElement('div');
           castle.className = `castle-render ${CASTLE_SKINS[G.castleSkin].cssClass}`;
           castle.id = 'castle-render';
-          const emo = document.createElement('span');
-          emo.className = 'cas-emoji';
-          castle.appendChild(emo);
+          const svgWrap = document.createElement('div');
+          svgWrap.className = 'cas-svg-wrap';
+          svgWrap.id = 'cas-svg-wrap';
+          svgWrap.innerHTML = getCastleSVG(G.castleSkin);
+          castle.appendChild(svgWrap);
           const hpBar = document.createElement('div');
           hpBar.className = 'castle-hp-bar';
           const hpFill = document.createElement('div');
@@ -642,18 +806,33 @@ function sellSelected() {
 // ── WAVE SYSTEM ───────────────────────────────────────────────
 function buildWaveQueue() {
   const groups = getWaveEnemies(G.wave);
-  const hpScale = (1 + (G.wave - 1) * 0.15) * (G.gameMode === 'extreme' ? 1.75 : 1);
+  const biome = G.activeBiome;
+  const hpScale = (1 + (G.wave - 1) * 0.15) * (G.gameMode === 'extreme' ? 1.75 : 1) * (biome ? biome.enemyMods.hpMult : 1);
+  const dmgMult = biome ? biome.enemyMods.dmgMult : 1;
+  const spdBonus = biome ? biome.enemyMods.spdBonus : 0;
+
+  // In biome mode, replace enemy types with biome-specific ones
+  const biomeEnemyMap = biome ? {
+    goblin: biome.enemies[0],
+    orc: biome.enemies[1],
+    troll: biome.enemies[2],
+    knight: biome.enemies[1],
+    dragon: biome.enemies[3]
+  } : null;
+
   G.enemiesToSpawn = [];
   groups.forEach(g => {
-    const def = ENEMY_DEFS[g.type];
+    const mappedType = biomeEnemyMap ? (biomeEnemyMap[g.type] || g.type) : g.type;
+    const def = ENEMY_DEFS[mappedType] || ENEMY_DEFS[g.type];
     for (let i = 0; i < g.count; i++) {
       G.enemiesToSpawn.push({
         id: Date.now() + Math.random(),
-        type: g.type, def,
+        type: mappedType, def,
         x: 0, y: PATH_ROW,
         hp: Math.ceil(def.baseHp * hpScale),
         maxHp: Math.ceil(def.baseHp * hpScale),
-        speed: def.speed, reward: def.reward, damage: def.damage,
+        speed: def.speed + spdBonus, reward: def.reward,
+        damage: Math.ceil(def.damage * dmgMult),
         frozen: false, frozenTurns: 0,
         kills: 0
       });
@@ -859,7 +1038,29 @@ async function waveComplete() {
   const diaRwd = 1 + (isMilestone ? (G.wave % 10 === 0 ? 5 : 2) : 0);
   const scoreMult = G.gameMode === 'extreme' ? 2 : 1;
   const waveScore = G.wave * 50 * scoreMult;
-  G.gold += goldRwd; G.diamonds += diaRwd; G.score += waveScore;
+
+  // Biome reward bonuses
+  const biome = G.activeBiome;
+  let biomeGold = 0, biomeDia = 0, biomeHp = 0, biomeExtraLine = '';
+  if (biome) {
+    if (biome.id === 'volcano') {
+      // +35% gold from kills already applied; add bonus wave gold
+      biomeGold = Math.floor(goldRwd * 0.35);
+      biomeExtraLine = `<div class="rwd-item"><span class="ri-icon">${biome.reward.icon}</span><span class="ri-val">+${biomeGold}</span><span class="ri-lbl">Ember Bonus</span></div>`;
+    } else if (biome.id === 'jungle') {
+      biomeHp = 3;
+      G.hp = Math.min(G.maxHp, G.hp + biomeHp);
+      biomeExtraLine = `<div class="rwd-item"><span class="ri-icon">${biome.reward.icon}</span><span class="ri-val">+${biomeHp} HP</span><span class="ri-lbl">Nature Heal</span></div>`;
+    } else if (biome.id === 'forest') {
+      biomeDia = diaRwd; // double diamond drops
+      biomeExtraLine = `<div class="rwd-item"><span class="ri-icon">${biome.reward.icon}</span><span class="ri-val">+${biomeDia}💎</span><span class="ri-lbl">Arcane Bonus</span></div>`;
+    } else if (biome.id === 'tundra') {
+      biomeGold = biome.reward.gold > 0 ? 5 : 0;
+      biomeExtraLine = `<div class="rwd-item"><span class="ri-icon">${biome.reward.icon}</span><span class="ri-val">Frost Slow</span><span class="ri-lbl">Active</span></div>`;
+    }
+  }
+
+  G.gold += goldRwd + biomeGold; G.diamonds += diaRwd + biomeDia; G.score += waveScore;
   if (G.wave > G.bestWave) G.bestWave = G.wave;
   updateQuestProgress('wave');
   updateDailyProgress('wave', G.wave);
@@ -869,21 +1070,23 @@ async function waveComplete() {
     updateDailyProgress('nodmg');
   }
 
-  addLog(`🏆 Wave ${G.wave} cleared! +${goldRwd}🪙 +${diaRwd}💎 +${waveScore}pts${scoreMult > 1 ? ' (2× Extreme!)' : ''}`, 'log-wave');
-  showToast(isMilestone ? `🎯 MILESTONE! Wave ${G.wave}! +${diaRwd}💎` : `Wave ${G.wave} cleared! +${goldRwd}🪙`, 'tdiamond');
+  addLog(`🏆 Wave ${G.wave} cleared! +${goldRwd + biomeGold}🪙 +${diaRwd + biomeDia}💎 +${waveScore}pts${scoreMult > 1 ? ' (2× Extreme!)' : ''}`, 'log-wave');
+  showToast(isMilestone ? `🎯 MILESTONE! Wave ${G.wave}! +${diaRwd + biomeDia}💎` : `Wave ${G.wave} cleared! +${goldRwd + biomeGold}🪙`, 'tdiamond');
 
   await saveGame();
 
   const wcm = document.getElementById('wave-complete-modal');
-  document.getElementById('wcm-icon').textContent = isMilestone ? '🏆' : '⚔️';
+  document.getElementById('wcm-icon').textContent = isMilestone ? '🏆' : (biome ? biome.icon : '⚔️');
   document.getElementById('wcm-title').textContent = isMilestone ? `MILESTONE: WAVE ${G.wave}!` : `Wave ${G.wave} Cleared!`;
   document.getElementById('wcm-rewards').innerHTML = `
-    <div class="rwd-item"><span class="ri-icon">🪙</span><span class="ri-val">+${goldRwd}</span><span class="ri-lbl">Gold</span></div>
-    <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd}</span><span class="ri-lbl">Diamond${diaRwd > 1 ? 's' : ''}</span></div>
-    <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val">+${waveScore}</span><span class="ri-lbl">Score${scoreMult > 1 ? ' ×2' : ''}</span></div>`;
-  document.getElementById('wcm-hint').textContent = G.gameMode === 'extreme'
-    ? `🔥 Extreme Mode — 2× score! Push further!`
-    : (isMilestone ? `Milestone bonus! Every 5 waves = extra 💎!` : '');
+    <div class="rwd-item"><span class="ri-icon">🪙</span><span class="ri-val">+${goldRwd + biomeGold}</span><span class="ri-lbl">Gold</span></div>
+    <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd + biomeDia}</span><span class="ri-lbl">Diamond${diaRwd + biomeDia > 1 ? 's' : ''}</span></div>
+    <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val">+${waveScore}</span><span class="ri-lbl">Score${scoreMult > 1 ? ' ×2' : ''}</span></div>
+    ${biomeExtraLine}`;
+  document.getElementById('wcm-hint').textContent = biome
+    ? `${biome.icon} ${biome.name} — ${biome.reward.desc}`
+    : (G.gameMode === 'extreme' ? `🔥 Extreme Mode — 2× score! Push further!`
+      : (isMilestone ? `Milestone bonus! Every 5 waves = extra 💎!` : ''));
   wcm.style.display = 'flex';
 
   G.wave++;
@@ -983,6 +1186,400 @@ window.castRepair = function () {
 };
 
 // ── RENDER BOARD ──────────────────────────────────────────────
+function getCastleSVG(skinKey) {
+  const castles = {
+    Wooden: `<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <!-- Base ground -->
+      <rect x="0" y="82" width="80" height="8" rx="2" fill="#3D1F08" opacity="0.6"/>
+      <!-- Left tower -->
+      <rect x="2" y="22" width="18" height="62" rx="1" fill="#7A3810"/>
+      <!-- battlements left -->
+      <rect x="2" y="14" width="4" height="10" rx="1" fill="#7A3810"/>
+      <rect x="8" y="14" width="4" height="10" rx="1" fill="#7A3810"/>
+      <rect x="14" y="14" width="4" height="10" rx="1" fill="#7A3810"/>
+      <!-- wood grain left -->
+      <line x1="5" y1="26" x2="18" y2="26" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="5" y1="34" x2="18" y2="34" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="5" y1="42" x2="18" y2="42" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="5" y1="50" x2="18" y2="50" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="5" y1="58" x2="18" y2="58" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <!-- window left -->
+      <rect x="7" y="30" width="7" height="9" rx="1" fill="#1A0A03"/>
+      <line x1="10" y1="30" x2="10" y2="39" stroke="#A0622A" stroke-width="0.8" opacity="0.6"/>
+      <!-- Right tower -->
+      <rect x="60" y="22" width="18" height="62" rx="1" fill="#7A3810"/>
+      <!-- battlements right -->
+      <rect x="60" y="14" width="4" height="10" rx="1" fill="#7A3810"/>
+      <rect x="66" y="14" width="4" height="10" rx="1" fill="#7A3810"/>
+      <rect x="72" y="14" width="4" height="10" rx="1" fill="#7A3810"/>
+      <!-- wood grain right -->
+      <line x1="62" y1="26" x2="76" y2="26" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="62" y1="34" x2="76" y2="34" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="62" y1="42" x2="76" y2="42" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="62" y1="50" x2="76" y2="50" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <line x1="62" y1="58" x2="76" y2="58" stroke="#5C2A0A" stroke-width="1" opacity="0.7"/>
+      <!-- window right -->
+      <rect x="66" y="30" width="7" height="9" rx="1" fill="#1A0A03"/>
+      <line x1="69" y1="30" x2="69" y2="39" stroke="#A0622A" stroke-width="0.8" opacity="0.6"/>
+      <!-- Center wall -->
+      <rect x="18" y="34" width="44" height="50" rx="1" fill="#9B4A14"/>
+      <!-- center battlements -->
+      <rect x="18" y="26" width="5" height="10" rx="1" fill="#9B4A14"/>
+      <rect x="26" y="26" width="5" height="10" rx="1" fill="#9B4A14"/>
+      <rect x="34" y="26" width="5" height="10" rx="1" fill="#9B4A14"/>
+      <rect x="42" y="26" width="5" height="10" rx="1" fill="#9B4A14"/>
+      <rect x="51" y="26" width="5" height="10" rx="1" fill="#9B4A14"/>
+      <rect x="57" y="26" width="5" height="10" rx="1" fill="#9B4A14"/>
+      <!-- wood grain center -->
+      <line x1="20" y1="42" x2="60" y2="42" stroke="#7A3810" stroke-width="1" opacity="0.5"/>
+      <line x1="20" y1="54" x2="60" y2="54" stroke="#7A3810" stroke-width="1" opacity="0.5"/>
+      <line x1="20" y1="66" x2="60" y2="66" stroke="#7A3810" stroke-width="1" opacity="0.5"/>
+      <!-- Gate arch -->
+      <rect x="30" y="60" width="20" height="24" rx="2" fill="#1A0A03"/>
+      <ellipse cx="40" cy="60" rx="10" ry="6" fill="#1A0A03"/>
+      <!-- gate bars -->
+      <line x1="34" y1="60" x2="34" y2="84" stroke="#3D1800" stroke-width="1.5"/>
+      <line x1="38" y1="60" x2="38" y2="84" stroke="#3D1800" stroke-width="1.5"/>
+      <line x1="42" y1="60" x2="42" y2="84" stroke="#3D1800" stroke-width="1.5"/>
+      <line x1="46" y1="60" x2="46" y2="84" stroke="#3D1800" stroke-width="1.5"/>
+      <line x1="30" y1="68" x2="50" y2="68" stroke="#3D1800" stroke-width="1"/>
+      <line x1="30" y1="74" x2="50" y2="74" stroke="#3D1800" stroke-width="1"/>
+      <!-- Center windows -->
+      <rect x="22" y="40" width="8" height="10" rx="1" fill="#1A0A03"/>
+      <rect x="50" y="40" width="8" height="10" rx="1" fill="#1A0A03"/>
+      <!-- Flag -->
+      <line x1="40" y1="2" x2="40" y2="20" stroke="#6B3A1F" stroke-width="1.5"/>
+      <polygon points="40,2 54,7 40,12" fill="#DC2626"/>
+      <!-- Torch glow -->
+      <circle cx="26" cy="36" r="2" fill="#F59E0B" opacity="0.8"/>
+      <circle cx="54" cy="36" r="2" fill="#F59E0B" opacity="0.8"/>
+    </svg>`,
+
+    Stone: `<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <!-- Base -->
+      <rect x="0" y="82" width="80" height="8" rx="2" fill="#1F2937" opacity="0.7"/>
+      <!-- Left tower -->
+      <rect x="2" y="20" width="19" height="64" rx="1" fill="#4B5563"/>
+      <!-- stone texture left -->
+      <rect x="3" y="25" width="8" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="13" y="25" width="7" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="3" y="32" width="5" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="10" y="32" width="9" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="3" y="39" width="10" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="15" y="39" width="5" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <!-- battlements left -->
+      <rect x="2" y="12" width="4" height="10" rx="1" fill="#6B7280"/>
+      <rect x="8" y="12" width="4" height="10" rx="1" fill="#6B7280"/>
+      <rect x="15" y="12" width="4" height="10" rx="1" fill="#6B7280"/>
+      <!-- window left -->
+      <rect x="6" y="48" width="9" height="13" rx="1" fill="#0F172A"/>
+      <ellipse cx="10" cy="48" rx="4" ry="3" fill="#0F172A"/>
+      <!-- Right tower -->
+      <rect x="59" y="20" width="19" height="64" rx="1" fill="#4B5563"/>
+      <!-- stone texture right -->
+      <rect x="60" y="25" width="8" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="70" y="25" width="7" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="60" y="32" width="9" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="71" y="32" width="6" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="62" y="39" width="10" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <rect x="74" y="39" width="4" height="5" rx="0.5" fill="#374151" opacity="0.8"/>
+      <!-- battlements right -->
+      <rect x="59" y="12" width="4" height="10" rx="1" fill="#6B7280"/>
+      <rect x="66" y="12" width="4" height="10" rx="1" fill="#6B7280"/>
+      <rect x="73" y="12" width="4" height="10" rx="1" fill="#6B7280"/>
+      <!-- window right -->
+      <rect x="65" y="48" width="9" height="13" rx="1" fill="#0F172A"/>
+      <ellipse cx="69" cy="48" rx="4" ry="3" fill="#0F172A"/>
+      <!-- Center wall -->
+      <rect x="19" y="32" width="42" height="52" rx="1" fill="#6B7280"/>
+      <!-- stone texture center -->
+      <rect x="20" y="35" width="12" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="34" y="35" width="14" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="50" y="35" width="10" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="20" y="43" width="8" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="30" y="43" width="10" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="42" y="43" width="18" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="20" y="51" width="14" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="36" y="51" width="8" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <rect x="46" y="51" width="14" height="6" rx="0.5" fill="#4B5563" opacity="0.7"/>
+      <!-- center battlements -->
+      <rect x="19" y="24" width="5" height="10" rx="1" fill="#6B7280"/>
+      <rect x="27" y="24" width="5" height="10" rx="1" fill="#6B7280"/>
+      <rect x="35" y="24" width="5" height="10" rx="1" fill="#6B7280"/>
+      <rect x="43" y="24" width="5" height="10" rx="1" fill="#6B7280"/>
+      <rect x="51" y="24" width="5" height="10" rx="1" fill="#6B7280"/>
+      <rect x="56" y="24" width="5" height="10" rx="1" fill="#6B7280"/>
+      <!-- Gate -->
+      <rect x="30" y="58" width="20" height="26" rx="1" fill="#0F172A"/>
+      <ellipse cx="40" cy="58" rx="10" ry="7" fill="#0F172A"/>
+      <!-- portcullis bars -->
+      <line x1="34" y1="58" x2="34" y2="84" stroke="#1E293B" stroke-width="2"/>
+      <line x1="38" y1="58" x2="38" y2="84" stroke="#1E293B" stroke-width="2"/>
+      <line x1="42" y1="58" x2="42" y2="84" stroke="#1E293B" stroke-width="2"/>
+      <line x1="46" y1="58" x2="46" y2="84" stroke="#1E293B" stroke-width="2"/>
+      <line x1="30" y1="66" x2="50" y2="66" stroke="#1E293B" stroke-width="1.5"/>
+      <line x1="30" y1="74" x2="50" y2="74" stroke="#1E293B" stroke-width="1.5"/>
+      <!-- side windows -->
+      <rect x="21" y="44" width="7" height="12" rx="1" fill="#0F172A"/>
+      <ellipse cx="24" cy="44" rx="3" ry="2.5" fill="#0F172A"/>
+      <rect x="52" y="44" width="7" height="12" rx="1" fill="#0F172A"/>
+      <ellipse cx="55" cy="44" rx="3" ry="2.5" fill="#0F172A"/>
+      <!-- Banner -->
+      <line x1="40" y1="2" x2="40" y2="18" stroke="#9CA3AF" stroke-width="1.5"/>
+      <polygon points="40,4 52,8 40,13" fill="#1D4ED8"/>
+      <!-- Torch -->
+      <circle cx="28" cy="33" r="2" fill="#F59E0B" opacity="0.9"/>
+      <circle cx="52" cy="33" r="2" fill="#F59E0B" opacity="0.9"/>
+    </svg>`,
+
+    Crystal: `<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs>
+        <linearGradient id="crySpire" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#E0F7FF"/>
+          <stop offset="40%" stop-color="#67E8F9"/>
+          <stop offset="100%" stop-color="#0891B2"/>
+        </linearGradient>
+        <linearGradient id="cryBody" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#A5F3FC"/>
+          <stop offset="60%" stop-color="#0EA5E9"/>
+          <stop offset="100%" stop-color="#075985"/>
+        </linearGradient>
+        <filter id="crystalGlowF">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Base platform -->
+      <ellipse cx="40" cy="84" rx="34" ry="5" fill="#083344" opacity="0.7"/>
+      <rect x="8" y="74" width="64" height="12" rx="3" fill="#0C4A6E" opacity="0.9"/>
+      <!-- Small crystal clusters left -->
+      <polygon points="8,74 12,50 16,74" fill="url(#crySpire)" opacity="0.5"/>
+      <polygon points="12,74 15,60 18,74" fill="url(#crySpire)" opacity="0.6"/>
+      <!-- Small crystal clusters right -->
+      <polygon points="64,74 68,50 72,74" fill="url(#crySpire)" opacity="0.5"/>
+      <polygon points="62,74 65,60 68,74" fill="url(#crySpire)" opacity="0.6"/>
+      <!-- Left flanking spire -->
+      <polygon points="18,74 23,30 28,74" fill="url(#cryBody)" opacity="0.85"/>
+      <polygon points="19,74 23,30 24,74" fill="#E0F7FF" opacity="0.25"/>
+      <!-- Right flanking spire -->
+      <polygon points="52,74 57,30 62,74" fill="url(#cryBody)" opacity="0.85"/>
+      <polygon points="57,30 58,74 62,74" fill="#E0F7FF" opacity="0.25"/>
+      <!-- Main central spire (tall) -->
+      <polygon points="32,74 40,2 48,74" fill="url(#crySpire)" filter="url(#crystalGlowF)"/>
+      <!-- Crystal facets main spire -->
+      <polygon points="32,74 40,2 36,74" fill="#E0F7FF" opacity="0.35"/>
+      <polygon points="40,2 44,74 48,74" fill="#0C4A6E" opacity="0.3"/>
+      <!-- Secondary left spire -->
+      <polygon points="24,74 30,18 36,74" fill="url(#cryBody)" opacity="0.9"/>
+      <polygon points="25,74 30,18 31,74" fill="#E0F7FF" opacity="0.3"/>
+      <!-- Secondary right spire -->
+      <polygon points="44,74 50,18 56,74" fill="url(#cryBody)" opacity="0.9"/>
+      <polygon points="50,18 51,74 56,74" fill="#0C4A6E" opacity="0.3"/>
+      <!-- Crystal palace base domes -->
+      <ellipse cx="22" cy="74" rx="9" ry="5" fill="#0891B2" opacity="0.7"/>
+      <ellipse cx="58" cy="74" rx="9" ry="5" fill="#0891B2" opacity="0.7"/>
+      <ellipse cx="40" cy="74" rx="14" ry="6" fill="#0C4A6E" opacity="0.9"/>
+      <!-- Gate arch -->
+      <rect x="33" y="62" width="14" height="18" rx="1" fill="#042030"/>
+      <ellipse cx="40" cy="62" rx="7" ry="5" fill="#042030"/>
+      <!-- Glow orbs on spire tips -->
+      <circle cx="40" cy="4" r="2.5" fill="#E0F7FF" opacity="0.95" filter="url(#crystalGlowF)"/>
+      <circle cx="30" cy="20" r="1.5" fill="#BAE6FD" opacity="0.9"/>
+      <circle cx="50" cy="20" r="1.5" fill="#BAE6FD" opacity="0.9"/>
+      <circle cx="23" cy="32" r="1" fill="#BAE6FD" opacity="0.8"/>
+      <circle cx="57" cy="32" r="1" fill="#BAE6FD" opacity="0.8"/>
+      <!-- Sparkles -->
+      <circle cx="15" cy="55" r="1" fill="#E0F7FF" opacity="0.7"/>
+      <circle cx="65" cy="48" r="1" fill="#E0F7FF" opacity="0.7"/>
+      <circle cx="10" cy="65" r="0.8" fill="#BAE6FD" opacity="0.6"/>
+      <circle cx="70" cy="60" r="0.8" fill="#BAE6FD" opacity="0.6"/>
+    </svg>`,
+
+    Infernal: `<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs>
+        <linearGradient id="infWall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7C2D12"/>
+          <stop offset="100%" stop-color="#431407"/>
+        </linearGradient>
+        <linearGradient id="infSpire" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FCD34D"/>
+          <stop offset="30%" stop-color="#F97316"/>
+          <stop offset="100%" stop-color="#7C2D12"/>
+        </linearGradient>
+        <filter id="fireGlow">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Lava base -->
+      <rect x="0" y="80" width="80" height="10" rx="2" fill="#431407"/>
+      <ellipse cx="20" cy="80" rx="8" ry="3" fill="#DC2626" opacity="0.6"/>
+      <ellipse cx="60" cy="80" rx="8" ry="3" fill="#DC2626" opacity="0.6"/>
+      <!-- Left tower -->
+      <rect x="2" y="24" width="18" height="58" rx="1" fill="url(#infWall)"/>
+      <!-- obsidian bands left -->
+      <rect x="2" y="30" width="18" height="3" fill="#1A0A04" opacity="0.8"/>
+      <rect x="2" y="42" width="18" height="3" fill="#1A0A04" opacity="0.8"/>
+      <rect x="2" y="54" width="18" height="3" fill="#1A0A04" opacity="0.8"/>
+      <!-- demon spire left -->
+      <polygon points="2,24 11,4 20,24" fill="url(#infSpire)" filter="url(#fireGlow)"/>
+      <polygon points="4,24 11,8 13,24" fill="#FCD34D" opacity="0.25"/>
+      <!-- crenels left (spiked) -->
+      <polygon points="2,24 5,16 8,24" fill="#431407"/>
+      <polygon points="8,24 11,14 14,24" fill="#431407"/>
+      <polygon points="14,24 17,16 20,24" fill="#431407"/>
+      <!-- glowing window left -->
+      <rect x="6" y="44" width="8" height="11" rx="1" fill="#7C2D12"/>
+      <ellipse cx="10" cy="44" rx="4" ry="3" fill="#7C2D12"/>
+      <rect x="7" y="45" width="6" height="9" rx="1" fill="#FCD34D" opacity="0.4"/>
+      <!-- Right tower -->
+      <rect x="60" y="24" width="18" height="58" rx="1" fill="url(#infWall)"/>
+      <!-- obsidian bands right -->
+      <rect x="60" y="30" width="18" height="3" fill="#1A0A04" opacity="0.8"/>
+      <rect x="60" y="42" width="18" height="3" fill="#1A0A04" opacity="0.8"/>
+      <rect x="60" y="54" width="18" height="3" fill="#1A0A04" opacity="0.8"/>
+      <!-- demon spire right -->
+      <polygon points="60,24 69,4 78,24" fill="url(#infSpire)" filter="url(#fireGlow)"/>
+      <polygon points="67,24 69,8 71,24" fill="#FCD34D" opacity="0.25"/>
+      <!-- crenels right (spiked) -->
+      <polygon points="60,24 63,16 66,24" fill="#431407"/>
+      <polygon points="66,24 69,14 72,24" fill="#431407"/>
+      <polygon points="72,24 75,16 78,24" fill="#431407"/>
+      <!-- glowing window right -->
+      <rect x="66" y="44" width="8" height="11" rx="1" fill="#7C2D12"/>
+      <ellipse cx="70" cy="44" rx="4" ry="3" fill="#7C2D12"/>
+      <rect x="67" y="45" width="6" height="9" rx="1" fill="#FCD34D" opacity="0.4"/>
+      <!-- Central citadel -->
+      <rect x="18" y="36" width="44" height="46" rx="1" fill="url(#infWall)"/>
+      <!-- obsidian bands center -->
+      <rect x="18" y="42" width="44" height="3" fill="#1A0A04" opacity="0.7"/>
+      <rect x="18" y="54" width="44" height="3" fill="#1A0A04" opacity="0.7"/>
+      <rect x="18" y="66" width="44" height="3" fill="#1A0A04" opacity="0.7"/>
+      <!-- Center spiked battlements -->
+      <polygon points="18,36 22,24 26,36" fill="#431407"/>
+      <polygon points="26,36 30,24 34,36" fill="#431407"/>
+      <polygon points="34,36 38,22 42,36" fill="#431407"/>
+      <polygon points="42,36 46,24 50,36" fill="#431407"/>
+      <polygon points="50,36 54,24 58,36" fill="#431407"/>
+      <polygon points="58,36 62,24 62,36" fill="#431407"/>
+      <!-- Main center spire -->
+      <polygon points="30,36 40,0 50,36" fill="url(#infSpire)" filter="url(#fireGlow)"/>
+      <polygon points="32,36 40,4 42,36" fill="#FCD34D" opacity="0.3"/>
+      <!-- Gate of hellfire -->
+      <rect x="30" y="58" width="20" height="24" rx="1" fill="#0D0503"/>
+      <ellipse cx="40" cy="58" rx="10" ry="7" fill="#0D0503"/>
+      <!-- lava glow in gate -->
+      <ellipse cx="40" cy="75" rx="7" ry="3" fill="#DC2626" opacity="0.5"/>
+      <!-- side windows glowing -->
+      <rect x="20" y="44" width="8" height="11" rx="1" fill="#FCD34D" opacity="0.25"/>
+      <rect x="52" y="44" width="8" height="11" rx="1" fill="#FCD34D" opacity="0.25"/>
+      <!-- Fire glow orbs -->
+      <circle cx="40" cy="2" r="3" fill="#FCD34D" opacity="0.9" filter="url(#fireGlow)"/>
+      <circle cx="11" cy="6" r="2" fill="#F97316" opacity="0.85" filter="url(#fireGlow)"/>
+      <circle cx="69" cy="6" r="2" fill="#F97316" opacity="0.85" filter="url(#fireGlow)"/>
+      <!-- floating embers -->
+      <circle cx="14" cy="50" r="1" fill="#FCD34D" opacity="0.7"/>
+      <circle cx="66" cy="44" r="1" fill="#FCD34D" opacity="0.7"/>
+      <circle cx="22" cy="32" r="0.8" fill="#F97316" opacity="0.6"/>
+      <circle cx="58" cy="28" r="0.8" fill="#F97316" opacity="0.6"/>
+    </svg>`,
+
+    Celestial: `<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs>
+        <linearGradient id="celBody" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8B5CF6"/>
+          <stop offset="60%" stop-color="#6D28D9"/>
+          <stop offset="100%" stop-color="#2E1065"/>
+        </linearGradient>
+        <linearGradient id="celGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FEF3C7"/>
+          <stop offset="50%" stop-color="#F59E0B"/>
+          <stop offset="100%" stop-color="#B45309"/>
+        </linearGradient>
+        <radialGradient id="celAura" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#DDD6FE" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="celGlow">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Aura halo -->
+      <ellipse cx="40" cy="45" rx="38" ry="42" fill="url(#celAura)"/>
+      <!-- Base cloud platform -->
+      <ellipse cx="40" cy="84" rx="34" ry="5" fill="#4C1D95" opacity="0.5"/>
+      <rect x="8" y="76" width="64" height="10" rx="5" fill="#5B21B6" opacity="0.7"/>
+      <!-- Gold trim base -->
+      <rect x="10" y="74" width="60" height="3" rx="1" fill="url(#celGold)" opacity="0.8"/>
+      <!-- Left column -->
+      <rect x="4" y="36" width="14" height="42" rx="2" fill="url(#celBody)"/>
+      <rect x="3" y="34" width="16" height="4" rx="1" fill="url(#celGold)" opacity="0.9"/>
+      <!-- celestial spire left -->
+      <polygon points="4,36 11,6 18,36" fill="url(#celBody)" filter="url(#celGlow)"/>
+      <polygon points="5,36 11,10 12,36" fill="#DDD6FE" opacity="0.3"/>
+      <circle cx="11" cy="6" r="2.5" fill="#FEF3C7" opacity="0.95" filter="url(#celGlow)"/>
+      <!-- stars on left spire -->
+      <circle cx="9" cy="20" r="0.8" fill="#FEF3C7" opacity="0.8"/>
+      <circle cx="13" cy="26" r="0.8" fill="#FEF3C7" opacity="0.8"/>
+      <!-- gold ring left column -->
+      <rect x="4" y="52" width="14" height="2.5" rx="1" fill="url(#celGold)" opacity="0.8"/>
+      <rect x="4" y="60" width="14" height="2.5" rx="1" fill="url(#celGold)" opacity="0.8"/>
+      <!-- window left -->
+      <rect x="7" y="40" width="8" height="11" rx="2" fill="#1E0A3C"/>
+      <ellipse cx="11" cy="40" rx="4" ry="3" fill="#1E0A3C"/>
+      <circle cx="11" cy="46" r="2.5" fill="#A78BFA" opacity="0.7"/>
+      <!-- Right column -->
+      <rect x="62" y="36" width="14" height="42" rx="2" fill="url(#celBody)"/>
+      <rect x="61" y="34" width="16" height="4" rx="1" fill="url(#celGold)" opacity="0.9"/>
+      <!-- celestial spire right -->
+      <polygon points="62,36 69,6 76,36" fill="url(#celBody)" filter="url(#celGlow)"/>
+      <polygon points="68,36 69,10 70,36" fill="#DDD6FE" opacity="0.3"/>
+      <circle cx="69" cy="6" r="2.5" fill="#FEF3C7" opacity="0.95" filter="url(#celGlow)"/>
+      <circle cx="67" cy="20" r="0.8" fill="#FEF3C7" opacity="0.8"/>
+      <circle cx="71" cy="26" r="0.8" fill="#FEF3C7" opacity="0.8"/>
+      <rect x="62" y="52" width="14" height="2.5" rx="1" fill="url(#celGold)" opacity="0.8"/>
+      <rect x="62" y="60" width="14" height="2.5" rx="1" fill="url(#celGold)" opacity="0.8"/>
+      <rect x="65" y="40" width="8" height="11" rx="2" fill="#1E0A3C"/>
+      <ellipse cx="69" cy="40" rx="4" ry="3" fill="#1E0A3C"/>
+      <circle cx="69" cy="46" r="2.5" fill="#A78BFA" opacity="0.7"/>
+      <!-- Central throne hall -->
+      <rect x="16" y="38" width="48" height="40" rx="2" fill="url(#celBody)"/>
+      <rect x="14" y="35" width="52" height="5" rx="1" fill="url(#celGold)" opacity="0.9"/>
+      <!-- gold rings center -->
+      <rect x="16" y="52" width="48" height="2.5" rx="1" fill="url(#celGold)" opacity="0.7"/>
+      <rect x="16" y="62" width="48" height="2.5" rx="1" fill="url(#celGold)" opacity="0.7"/>
+      <!-- Center grand spire -->
+      <polygon points="26,38 40,0 54,38" fill="url(#celBody)" filter="url(#celGlow)"/>
+      <polygon points="28,38 40,4 42,38" fill="#DDD6FE" opacity="0.35"/>
+      <!-- twin secondary spires -->
+      <polygon points="16,38 24,12 32,38" fill="url(#celBody)" opacity="0.9"/>
+      <polygon points="18,38 24,16 25,38" fill="#DDD6FE" opacity="0.25"/>
+      <polygon points="48,38 56,12 64,38" fill="url(#celBody)" opacity="0.9"/>
+      <polygon points="56,12 57,38 64,38" fill="#DDD6FE" opacity="0.25"/>
+      <!-- Glowing orbs on spires -->
+      <circle cx="40" cy="2" r="3" fill="#FEF3C7" opacity="1" filter="url(#celGlow)"/>
+      <circle cx="24" cy="14" r="2" fill="#FEF3C7" opacity="0.9" filter="url(#celGlow)"/>
+      <circle cx="56" cy="14" r="2" fill="#FEF3C7" opacity="0.9" filter="url(#celGlow)"/>
+      <!-- Grand gate -->
+      <rect x="30" y="56" width="20" height="22" rx="2" fill="#1E0A3C"/>
+      <ellipse cx="40" cy="56" rx="10" ry="7" fill="#1E0A3C"/>
+      <!-- arcane symbol in gate -->
+      <circle cx="40" cy="64" r="5" fill="#3B1266" opacity="0.8"/>
+      <circle cx="40" cy="64" r="3" fill="#7C3AED" opacity="0.6"/>
+      <circle cx="40" cy="64" r="1.5" fill="#DDD6FE" opacity="0.8"/>
+      <!-- Floating stars -->
+      <circle cx="8" cy="40" r="1" fill="#FEF3C7" opacity="0.9"/>
+      <circle cx="72" cy="35" r="1" fill="#FEF3C7" opacity="0.9"/>
+      <circle cx="6" cy="55" r="0.8" fill="#DDD6FE" opacity="0.7"/>
+      <circle cx="74" cy="58" r="0.8" fill="#DDD6FE" opacity="0.7"/>
+      <circle cx="12" cy="70" r="0.8" fill="#DDD6FE" opacity="0.6"/>
+      <circle cx="68" cy="72" r="0.8" fill="#DDD6FE" opacity="0.6"/>
+    </svg>`
+  };
+  return castles[skinKey] || castles.Wooden;
+}
+
 function getTowerSVG(type) {
   const svgs = {
     archer: `<svg viewBox="0 0 40 56" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
@@ -1381,6 +1978,8 @@ function applyCastleSkin() {
   const cr = document.getElementById('castle-render');
   if (cr) {
     cr.className = `castle-render ${skin.cssClass}`;
+    const svgWrap = document.getElementById('cas-svg-wrap');
+    if (svgWrap) svgWrap.innerHTML = getCastleSVG(G.castleSkin);
   }
   updateCastleHpBar();
 }

@@ -1317,105 +1317,90 @@ body {
   position: absolute;
   inset: -2px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   border-radius: 5px;
   z-index: 8;
   transition: all .3s;
+  overflow: hidden;
 }
 
-.castle-render .cas-emoji {
-  font-size: clamp(18px, 3.5vw, 30px);
-  filter: drop-shadow(0 0 6px rgba(201, 162, 39, .8));
+.cas-svg-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Castle skins */
+.cas-svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Castle skin border/glow — backgrounds now transparent (SVG handles visuals) */
 .castle-wooden {
-  background: radial-gradient(circle, #92400E, #451A03);
   border: 2px solid #FBBF24;
-  box-shadow: var(--glow-gold), inset 0 0 10px rgba(0, 0, 0, .5);
-}
-
-.castle-wooden .cas-emoji::after {
-  content: '🏰';
-  font-size: clamp(18px, 3.5vw, 30px);
+  box-shadow: var(--glow-gold), inset 0 0 8px rgba(0, 0, 0, .4);
+  background: transparent;
 }
 
 .castle-stone {
-  background: radial-gradient(circle, #6B7280, #1F2937);
   border: 2px solid #D1D5DB;
-  box-shadow: 0 0 14px rgba(200, 200, 220, .4), inset 0 0 10px rgba(0, 0, 0, .5);
-}
-
-.castle-stone .cas-emoji::after {
-  content: '🗼';
-  font-size: clamp(18px, 3.5vw, 30px);
+  box-shadow: 0 0 14px rgba(200, 200, 220, .4), inset 0 0 8px rgba(0, 0, 0, .4);
+  background: transparent;
 }
 
 .castle-crystal {
-  background: radial-gradient(circle, #0891B2, #083344);
   border: 2px solid #67E8F9;
-  box-shadow: var(--glow-cyan), inset 0 0 12px rgba(103, 232, 249, .2);
+  box-shadow: var(--glow-cyan), inset 0 0 12px rgba(103, 232, 249, .15);
+  background: transparent;
   animation: crystalGlow 2s ease-in-out infinite alternate;
-}
-
-.castle-crystal .cas-emoji::after {
-  content: '💠';
-  font-size: clamp(18px, 3.5vw, 30px);
 }
 
 @keyframes crystalGlow {
   from {
-    box-shadow: var(--glow-cyan);
+    box-shadow: 0 0 14px rgba(34, 211, 238, .5);
   }
 
   to {
-    box-shadow: 0 0 30px rgba(34, 211, 238, .7);
+    box-shadow: 0 0 30px rgba(34, 211, 238, .85);
   }
 }
 
 .castle-infernal {
-  background: radial-gradient(circle, #7C2D12, #431407);
   border: 2px solid #F97316;
-  box-shadow: 0 0 18px rgba(249, 115, 22, .55), inset 0 0 10px rgba(0, 0, 0, .5);
+  box-shadow: 0 0 18px rgba(249, 115, 22, .6), inset 0 0 10px rgba(0, 0, 0, .5);
+  background: transparent;
   animation: infernoGlow 1.2s ease-in-out infinite alternate;
-}
-
-.castle-infernal .cas-emoji::after {
-  content: '🔥';
-  font-size: clamp(18px, 3.5vw, 30px);
 }
 
 @keyframes infernoGlow {
   from {
-    box-shadow: 0 0 12px rgba(249, 115, 22, .4);
+    box-shadow: 0 0 12px rgba(249, 115, 22, .45);
   }
 
   to {
-    box-shadow: 0 0 28px rgba(249, 115, 22, .8);
+    box-shadow: 0 0 28px rgba(249, 115, 22, .9);
   }
 }
 
 .castle-celestial {
-  background: radial-gradient(circle, #6D28D9, #1E1B4B);
   border: 2px solid #A78BFA;
-  box-shadow: 0 0 22px rgba(167, 139, 250, .6), inset 0 0 12px rgba(167, 139, 250, .15);
+  box-shadow: 0 0 22px rgba(167, 139, 250, .6), inset 0 0 12px rgba(167, 139, 250, .1);
+  background: transparent;
   animation: celestialGlow 2.5s ease-in-out infinite alternate;
-}
-
-.castle-celestial .cas-emoji::after {
-  content: '✨';
-  font-size: clamp(18px, 3.5vw, 30px);
 }
 
 @keyframes celestialGlow {
   from {
-    filter: brightness(1);
+    box-shadow: 0 0 16px rgba(167, 139, 250, .5);
   }
 
   to {
-    filter: brightness(1.3);
-    box-shadow: 0 0 35px rgba(167, 139, 250, .8);
+    box-shadow: 0 0 36px rgba(167, 139, 250, .9);
+    filter: brightness(1.15);
   }
 }
 
@@ -1504,30 +1489,81 @@ body {
   animation: teslaZap .8s ease-in-out infinite;
 }
 
-/* Tower skin variants */
+/* ── TOWER SKIN VARIANTS ─────────────────── */
+/* Basic — default, no override */
+
+/* Plasma Core — cyan electric tint */
 .skin-Plasma .tw-archer,
 .skin-Plasma .tw-mage,
 .skin-Plasma .tw-cannon,
 .skin-Plasma .tw-frost,
 .skin-Plasma .tw-tesla {
-  filter: drop-shadow(0 0 10px rgba(34, 211, 238, .8)) hue-rotate(150deg);
+  filter: hue-rotate(155deg) saturate(1.6) brightness(1.15) drop-shadow(0 0 8px rgba(34, 211, 238, .9));
+  animation: plasmaPulse 1.8s ease-in-out infinite;
 }
 
+@keyframes plasmaPulse {
+
+  0%,
+  100% {
+    filter: hue-rotate(155deg) saturate(1.6) brightness(1.15) drop-shadow(0 0 6px rgba(34, 211, 238, .7));
+  }
+
+  50% {
+    filter: hue-rotate(155deg) saturate(2.0) brightness(1.3) drop-shadow(0 0 16px rgba(34, 211, 238, 1));
+  }
+}
+
+/* Shadow Weave — desaturated obsidian with white rim glow */
 .skin-Shadow .tw-archer,
 .skin-Shadow .tw-mage,
 .skin-Shadow .tw-cannon,
 .skin-Shadow .tw-frost,
 .skin-Shadow .tw-tesla {
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, .5)) saturate(0) brightness(1.4);
+  filter: saturate(0.1) brightness(0.7) contrast(1.3) drop-shadow(0 0 10px rgba(180, 130, 255, .8));
+  animation: shadowPulse 2.5s ease-in-out infinite;
 }
 
+@keyframes shadowPulse {
+
+  0%,
+  100% {
+    filter: saturate(0.1) brightness(0.7) contrast(1.3) drop-shadow(0 0 6px rgba(180, 130, 255, .6));
+  }
+
+  50% {
+    filter: saturate(0.15) brightness(0.85) contrast(1.4) drop-shadow(0 0 18px rgba(200, 160, 255, 1));
+  }
+}
+
+/* Infernal Forge — orange-red fire with flicker */
 .skin-Infernal .tw-archer,
 .skin-Infernal .tw-mage,
 .skin-Infernal .tw-cannon,
 .skin-Infernal .tw-frost,
 .skin-Infernal .tw-tesla {
-  filter: drop-shadow(0 0 10px rgba(249, 115, 22, .9)) hue-rotate(320deg) saturate(1.5);
+  filter: hue-rotate(320deg) saturate(2) brightness(1.05) drop-shadow(0 0 10px rgba(249, 115, 22, .95));
+  animation: infernalFlicker 1s ease-in-out infinite;
 }
+
+@keyframes infernalFlicker {
+  0% {
+    filter: hue-rotate(320deg) saturate(2) brightness(1.0) drop-shadow(0 0 8px rgba(249, 115, 22, .8));
+  }
+
+  40% {
+    filter: hue-rotate(330deg) saturate(2.2) brightness(1.15) drop-shadow(0 0 18px rgba(252, 150, 50, 1));
+  }
+
+  70% {
+    filter: hue-rotate(315deg) saturate(1.8) brightness(0.95) drop-shadow(0 0 6px rgba(200, 80, 10, .7));
+  }
+
+  100% {
+    filter: hue-rotate(320deg) saturate(2) brightness(1.0) drop-shadow(0 0 8px rgba(249, 115, 22, .8));
+  }
+}
+
 
 @keyframes magePulse {
 
@@ -2880,6 +2916,27 @@ body {
   transform: translateY(-2px);
 }
 
+.ms-logout-btn {
+  background: transparent;
+  border: none;
+  color: rgba(180, 160, 140, .45);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .18s ease;
+  text-transform: uppercase;
+}
+
+.ms-logout-btn:hover {
+  color: #F87171;
+  background: rgba(220, 38, 38, .1);
+  border: 1px solid rgba(220, 38, 38, .3);
+}
+
 /* ── HUD MODE BADGE ───────────────────────── */
 .mode-badge {
   font-size: 10px;
@@ -3853,5 +3910,313 @@ body {
   .ms-start-btn {
     padding: 7px 0;
     font-size: 10px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ISLAND / BIOME SELECT SCREEN
+═══════════════════════════════════════════════════════════ */
+.island-select-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  z-index: 80;
+  background: radial-gradient(ellipse at 50% 0%, rgba(120, 40, 10, .55) 0%, rgba(7, 6, 26, 1) 65%);
+  -webkit-overflow-scrolling: touch;
+}
+
+.is-bg-layer {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(249, 115, 22, .08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, .08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.is-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  padding: 32px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── HEADER ── */
+.is-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.is-back-btn {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .15);
+  color: rgba(210, 200, 180, .7);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .18s;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.is-back-btn:hover {
+  background: rgba(255, 255, 255, .12);
+  color: #F0C842;
+  border-color: rgba(240, 200, 66, .4);
+}
+
+.is-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.is-pre {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: #F97316;
+  text-shadow: 0 0 10px rgba(249, 115, 22, .6);
+}
+
+.is-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(22px, 4vw, 38px);
+  font-weight: 900;
+  color: #F0C842;
+  text-shadow: 0 0 24px rgba(240, 200, 66, .5);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.is-sub {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  color: rgba(210, 200, 180, .65);
+  margin: 0;
+}
+
+/* ── ISLAND GRID ── */
+.island-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* ── ISLAND CARD ── */
+.island-card {
+  position: relative;
+  background: rgba(10, 8, 28, .88);
+  border: 1.5px solid var(--biome-border, rgba(255, 255, 255, .15));
+  border-radius: 18px;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  backdrop-filter: blur(16px);
+}
+
+.island-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--biome-grad);
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.island-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, .5), 0 0 30px var(--biome-color, rgba(255, 200, 0, .15));
+  border-color: var(--biome-color, rgba(255, 200, 0, .6));
+}
+
+.island-card:hover::before {
+  opacity: 1;
+}
+
+/* art */
+.ic-art {
+  font-size: 52px;
+  line-height: 1;
+  text-align: center;
+  filter: drop-shadow(0 0 18px var(--biome-color, rgba(255, 200, 0, .5)));
+  transition: transform .2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.island-card:hover .ic-art {
+  transform: scale(1.12);
+}
+
+/* name badge */
+.ic-badge {
+  align-self: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid;
+  position: relative;
+  z-index: 1;
+}
+
+/* tagline */
+.ic-tagline {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: rgba(210, 200, 180, .7);
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+
+/* difficulty stars */
+.ic-difficulty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #F0C842;
+  position: relative;
+  z-index: 1;
+}
+
+.ic-difficulty span {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: rgba(210, 200, 180, .5);
+  letter-spacing: .08em;
+}
+
+/* creature icons */
+.ic-creatures {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.ic-enemy {
+  font-size: 20px;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, .8));
+}
+
+.ic-enemy-more {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: rgba(180, 160, 140, .5);
+  letter-spacing: .05em;
+}
+
+/* reward box */
+.ic-reward {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid;
+  position: relative;
+  z-index: 1;
+}
+
+.ic-rwd-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ic-rwd-name {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #F0C842;
+  letter-spacing: .04em;
+}
+
+.ic-rwd-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  color: rgba(210, 200, 180, .65);
+  margin-top: 2px;
+}
+
+/* lore */
+.ic-lore {
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  color: rgba(180, 160, 140, .5);
+  font-style: italic;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* enter button */
+.ic-select-btn {
+  width: 100%;
+  padding: 11px 0;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+
+.ic-select-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+}
+
+/* mobile */
+@media (max-width: 600px) {
+  .island-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .is-content {
+    padding: 20px 14px 36px;
+  }
+
+  .is-title {
+    font-size: 22px;
   }
 }

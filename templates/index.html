@@ -3,15 +3,108 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>⚔️ Kingdom's Reckoning — Tactical Tower Defense</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* ── PORTRAIT ROTATION OVERLAY ─────────────────────────── */
+    #rotate-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: radial-gradient(ellipse at 50% 40%, rgba(60, 20, 5, .85) 0%, rgba(7, 6, 26, 1) 70%);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    #rotate-overlay.show {
+      display: flex;
+    }
+
+    .ro-icon {
+      font-size: 64px;
+      animation: rotatePulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes rotatePulse {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      50% {
+        transform: rotate(90deg);
+      }
+    }
+
+    .ro-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #F0C842;
+      letter-spacing: .1em;
+      text-align: center;
+    }
+
+    .ro-sub {
+      font-family: 'EB Garamond', serif;
+      font-size: 16px;
+      color: rgba(210, 200, 180, .65);
+      text-align: center;
+      max-width: 260px;
+    }
+
+    .ro-phone {
+      font-size: 48px;
+      transform: rotate(90deg);
+      filter: drop-shadow(0 0 14px rgba(240, 200, 66, .6));
+    }
+  </style>
 </head>
 
 <body>
+  <!-- PORTRAIT MODE OVERLAY (mobile only) -->
+  <div id="rotate-overlay">
+    <div class="ro-phone">📱</div>
+    <div class="ro-icon">🔄</div>
+    <div class="ro-title">Rotate Your Device</div>
+    <div class="ro-sub">Kingdom's Reckoning plays best in landscape mode</div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay = document.getElementById('rotate-overlay');
+
+      function isMobile() {
+        return /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Tablet/i.test(navigator.userAgent)
+          || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) // iPadOS
+          || window.innerWidth <= 1024;
+      }
+
+      function checkOrientation() {
+        if (!isMobile()) { overlay.classList.remove('show'); return; }
+        var portrait = window.innerHeight > window.innerWidth;
+        overlay.classList.toggle('show', portrait);
+      }
+
+      checkOrientation();
+      window.addEventListener('resize', checkOrientation);
+      window.addEventListener('orientationchange', function () {
+        setTimeout(checkOrientation, 120); // wait for browser to finish rotating
+      });
+    })();
+  </script>
+
   <div class="bg-base"></div>
   <div class="bg-vignette"></div>
   <div id="vfx-overlay"></div>
@@ -204,6 +297,7 @@
         <button class="ms-continue-btn" id="ms-continue-btn" onclick="continueGame()" style="display:none">
           ↩ Continue Saved Game
         </button>
+        <button class="ms-logout-btn" onclick="logout()">⇤ Logout</button>
       </div>
     </div>
 
@@ -222,6 +316,22 @@
           </div>
           <p id="auth-message" class="auth-msg"></p>
         </div>
+      </div>
+    </div>
+
+    <!-- ISLAND / BIOME SELECT (Extreme Mode) -->
+    <div id="island-select-section" class="island-select-screen" style="display:none">
+      <div class="is-bg-layer"></div>
+      <div class="is-content">
+        <div class="is-header">
+          <button class="is-back-btn" onclick="backFromIslandSelect()">← Back</button>
+          <div class="is-title-wrap">
+            <div class="is-pre">🔥 EXTREME MODE</div>
+            <h1 class="is-title">Choose Your Island</h1>
+            <p class="is-sub">Each island holds unique creatures, challenges &amp; exclusive rewards</p>
+          </div>
+        </div>
+        <div class="island-grid" id="island-grid"></div>
       </div>
     </div>
 
