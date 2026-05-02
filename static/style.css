@@ -2649,24 +2649,27 @@ body {
 /* ── CARDS ────────────────────────────────── */
 .ms-cards {
   display: flex;
-  gap: 24px;
+  flex: 1;
+  gap: clamp(16px, 2.5vw, 28px);
   flex-wrap: wrap;
   justify-content: center;
+  align-items: stretch;
   width: 100%;
 }
 
 .ms-card {
   flex: 1;
-  min-width: 260px;
-  max-width: 400px;
+  min-width: 280px;
+  max-width: 420px;
   background: rgba(12, 10, 30, .85);
   border: 1.5px solid rgba(255, 255, 255, .1);
   border-radius: 16px;
-  padding: clamp(18px, 3vh, 32px) clamp(18px, 2.5vw, 28px) clamp(16px, 2.5vh, 28px);
+  padding: clamp(20px, 3.5vh, 48px) clamp(18px, 2.5vw, 32px) clamp(18px, 3vh, 42px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(8px, 1.2vh, 14px);
+  justify-content: space-between;
+  gap: clamp(10px, 1.8vh, 22px);
   cursor: pointer;
   transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   backdrop-filter: blur(12px);
@@ -2732,10 +2735,10 @@ body {
 
 /* ── CARD ART ─────────────────────────────── */
 .ms-card-art {
-  font-size: 56px;
+  font-size: clamp(48px, 8vh, 88px);
   line-height: 1;
   filter: drop-shadow(0 0 16px rgba(255, 255, 255, .25));
-  margin: 4px 0;
+  margin: clamp(2px, 0.5vh, 8px) 0;
   transition: transform .2s ease;
 }
 
@@ -2747,7 +2750,7 @@ body {
 /* ── CARD TITLE ───────────────────────────── */
 .ms-card-title {
   font-family: 'Cinzel', serif;
-  font-size: 20px;
+  font-size: clamp(18px, 2.8vh, 32px);
   font-weight: 700;
   color: #F0C842;
   letter-spacing: .04em;
@@ -2760,16 +2763,18 @@ body {
   padding: 0;
   margin: 0;
   width: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: clamp(6px, 1vh, 12px);
+  justify-content: center;
 }
 
 .ms-card-desc li {
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: clamp(14px, 1.8vh, 20px);
   color: rgba(210, 205, 190, .85);
-  padding: 5px 10px;
+  padding: clamp(6px, 1vh, 14px) clamp(10px, 1.2vw, 16px);
   background: rgba(255, 255, 255, .04);
   border-radius: 6px;
   border-left: 2px solid rgba(255, 255, 255, .12);
@@ -2786,15 +2791,15 @@ body {
 /* ── START BUTTON ─────────────────────────── */
 .ms-start-btn {
   width: 100%;
-  padding: 13px 0;
+  padding: clamp(12px, 1.8vh, 22px) 0;
   border: none;
   border-radius: 10px;
   font-family: 'Cinzel', serif;
-  font-size: 14px;
+  font-size: clamp(13px, 1.8vh, 18px);
   font-weight: 700;
   letter-spacing: .08em;
   cursor: pointer;
-  margin-top: 6px;
+  margin-top: clamp(4px, 0.8vh, 10px);
   transition: transform .15s ease, box-shadow .15s ease;
 }
 
@@ -3662,6 +3667,7 @@ body {
 .ms-card {
   padding: clamp(16px, 2.8vh, 34px) clamp(16px, 2.2vw, 28px) clamp(14px, 2.4vh, 30px);
   gap: clamp(8px, 1.2vh, 14px);
+  justify-content: space-between;
 }
 
 /* 5. Card art emoji */
