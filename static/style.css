@@ -826,29 +826,31 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 14px;
+  padding: 5px 10px;
   flex-shrink: 0;
   background: linear-gradient(180deg, rgba(20, 16, 45, .98) 0%, rgba(14, 12, 35, .95) 100%);
   border-bottom: 2px solid var(--gold-d);
   box-shadow: 0 4px 24px rgba(0, 0, 0, .6), 0 0 40px rgba(201, 162, 39, .06);
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow: hidden;
   z-index: 10;
 }
 
 .hud-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .hud-crest {
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .hud-game-name {
   font-family: 'Cinzel Decorative', cursive;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 900;
   color: var(--gold-l);
   text-shadow: var(--glow-gold);
@@ -858,22 +860,25 @@ body {
 
 .hud-stats {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 4px;
+  flex-wrap: nowrap;
   justify-content: center;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .hud-badge {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 11px;
+  gap: 3px;
+  padding: 3px 7px;
   border-radius: 6px;
   background: rgba(0, 0, 0, .5);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   border-bottom: 2px solid transparent;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .hp-badge {
@@ -905,26 +910,30 @@ body {
 .hud-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 4px;
+  flex-wrap: nowrap;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .hud-user-label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--col-muted);
+  white-space: nowrap;
 }
 
 .hud-btn {
-  padding: 5px 10px;
+  padding: 4px 8px;
   border: 1px solid var(--panel-border);
   background: rgba(255, 255, 255, .06);
   color: var(--col-txt);
   border-radius: 5px;
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: 10px;
   cursor: pointer;
   transition: all .15s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .hud-btn:hover {
@@ -3003,7 +3012,7 @@ body {
     flex-wrap: wrap;
   }
 
-  /* Hide the brand crest on very small screens to save space */
+  /* Hide the brand on mobile to save space */
   .hud-brand {
     display: none;
   }
@@ -3014,6 +3023,7 @@ body {
     width: 100%;
     justify-content: center;
     gap: 3px;
+    flex-wrap: wrap;
   }
 
   .hud-badge {
