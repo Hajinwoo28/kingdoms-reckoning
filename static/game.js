@@ -448,96 +448,163 @@ function showIslandSelect() {
   renderIslandCards();
 }
 
-// Island scene position config
+// Island scene position config — positions relative to viewport (fixed scene)
 const ISLAND_POSITIONS = {
-  tundra: { left: '8%', top: '8%', size: 210, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  volcano: { left: '58%', top: '5%', size: 195, floatDur: '4.8s', floatDelay: '-1.8s', zIndex: 5 },
-  jungle: { left: '32%', top: '48%', size: 230, floatDur: '6.0s', floatDelay: '-2.5s', zIndex: 7 },
-  forest: { left: '72%', top: '42%', size: 185, floatDur: '5.2s', floatDelay: '-0.9s', zIndex: 4 },
+  tundra: { left: '4%', top: '13%', w: 290, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  jungle: { left: '28%', top: '10%', w: 330, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  volcano: { left: '57%', top: '14%', w: 270, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  forest: { left: '73%', top: '11%', w: 250, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
 };
 
+// Terrain cap color, cliff rock colors, decorative emoji sets, cliff stripe colors
 const ISLAND_TERRAIN = {
   tundra: {
-    top: ['#C8E6F5', '#A0D4EE', '#DAEEFA'], side: ['#7BBCD4', '#5499B2'],
-    deco: ['🏔️', '❄️', '🌨️', '🧊', '⛄'], groundColor: '#BFE8F8'
-  },
-  volcano: {
-    top: ['#3A1400', '#5C1C00', '#7A2200'], side: ['#290D00', '#1A0800'],
-    deco: ['🌋', '🔥', '💥', '🔥', '🌋'], groundColor: '#4A1800'
+    capColors: ['#E8F7FF', '#C5E9F7', '#A8D8EE'],
+    cliffColors: ['#8BB8CC', '#6899AE', '#4A7A90', '#3A6478'],
+    cliffStripe: 'rgba(255,255,255,.08)',
+    rimColor: '#B0D8EC',
+    deco: [
+      { e: '🏔️', x: 14, y: 10, s: 36 },
+      { e: '⛄', x: 48, y: 16, s: 28 },
+      { e: '❄️', x: 72, y: 8, s: 22 },
+      { e: '🧊', x: 30, y: 30, s: 20 },
+      { e: '🌨️', x: 60, y: 25, s: 18 },
+      { e: '❄️', x: 80, y: 30, s: 16 },
+    ]
   },
   jungle: {
-    top: ['#1A6B1A', '#2E8B2E', '#0F5C0F'], side: ['#0A4008', '#063305'],
-    deco: ['🌴', '🌿', '🌺', '🦜', '🌴'], groundColor: '#145C14'
+    capColors: ['#3DB838', '#28A022', '#1A8018'],
+    cliffColors: ['#5A3A1A', '#4A2E12', '#3A220C', '#2C1808'],
+    cliffStripe: 'rgba(255,200,100,.06)',
+    rimColor: '#2E8B1C',
+    deco: [
+      { e: '🌴', x: 10, y: 8, s: 40 },
+      { e: '🌺', x: 35, y: 20, s: 26 },
+      { e: '🌴', x: 62, y: 6, s: 38 },
+      { e: '🌿', x: 50, y: 28, s: 22 },
+      { e: '🦜', x: 78, y: 14, s: 24 },
+      { e: '🌸', x: 22, y: 32, s: 20 },
+    ]
+  },
+  volcano: {
+    capColors: ['#2C0E00', '#4A1800', '#6B2200'],
+    cliffColors: ['#3D1200', '#2E0D00', '#1F0800', '#120500'],
+    cliffStripe: 'rgba(255,80,0,.08)',
+    rimColor: '#5C1A00',
+    deco: [
+      { e: '🌋', x: 12, y: 4, s: 44 },
+      { e: '🔥', x: 48, y: 12, s: 32 },
+      { e: '💥', x: 68, y: 6, s: 26 },
+      { e: '🔥', x: 30, y: 26, s: 22 },
+      { e: '🌋', x: 72, y: 24, s: 20 },
+      { e: '💨', x: 52, y: 30, s: 18 },
+    ]
   },
   forest: {
-    top: ['#2D1657', '#4A2080', '#1A0C3A'], side: ['#170B2E', '#0D061E'],
-    deco: ['🌲', '🔮', '✨', '🧙', '🌲'], groundColor: '#261244'
+    capColors: ['#3A1F6E', '#522E9A', '#2A1450'],
+    cliffColors: ['#2A1060', '#1E0A48', '#140632', '#0C0420'],
+    cliffStripe: 'rgba(160,100,255,.08)',
+    rimColor: '#4A2888',
+    deco: [
+      { e: '🌲', x: 8, y: 6, s: 38 },
+      { e: '🔮', x: 40, y: 14, s: 30 },
+      { e: '🌲', x: 66, y: 8, s: 36 },
+      { e: '✨', x: 52, y: 28, s: 22 },
+      { e: '🧙', x: 24, y: 18, s: 28 },
+      { e: '⭐', x: 78, y: 26, s: 18 },
+    ]
   },
 };
+
+function buildIslandHTML(b) {
+  const pos = ISLAND_POSITIONS[b.id];
+  const ter = ISLAND_TERRAIN[b.id];
+  const w = pos.w;
+  const capH = Math.round(w * 0.44);  // terrain cap height
+  const cliffH = Math.round(w * 0.38); // cliff body height
+  const tipH = Math.round(w * 0.12);   // bottom tip
+
+  const capGrad = `radial-gradient(ellipse at 40% 35%, ${ter.capColors[0]} 0%, ${ter.capColors[1]} 55%, ${ter.capColors[2]} 100%)`;
+  const cliffGrad = `linear-gradient(180deg, ${ter.cliffColors[0]} 0%, ${ter.cliffColors[1]} 35%, ${ter.cliffColors[2]} 70%, ${ter.cliffColors[3]} 100%)`;
+
+  const decoHtml = ter.deco.map(d =>
+    `<span class="inode-deco-item" style="left:${d.x}%;top:${d.y}%;font-size:${d.s}px">${d.e}</span>`
+  ).join('');
+
+  const starsHtml = '⭐'.repeat(b.difficulty) +
+    `<span style="opacity:.22">${'⭐'.repeat(5 - b.difficulty)}</span>`;
+
+  return `
+  <div class="island-node" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
+       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex}">
+
+    <!-- terrain cap -->
+    <div class="inode-cap" style="width:${w}px;height:${capH}px;background:${capGrad};border-color:${ter.rimColor}">
+      <div class="inode-cap-shine"></div>
+      <div class="inode-deco-wrap">${decoHtml}</div>
+    </div>
+
+    <!-- cliff body — trapezoidal rock face -->
+    <div class="inode-cliff-body" style="width:${Math.round(w * .84)}px;height:${cliffH}px;background:${cliffGrad};margin-left:${Math.round(w * .08)}px">
+      <div class="inode-cliff-stripe" style="background:${ter.cliffStripe}"></div>
+      <div class="inode-cliff-stripe" style="left:20%;background:${ter.cliffStripe}"></div>
+      <div class="inode-cliff-stripe" style="left:40%;background:${ter.cliffStripe}"></div>
+      <div class="inode-cliff-stripe" style="left:62%;background:${ter.cliffStripe}"></div>
+      <div class="inode-cliff-stripe" style="left:80%;background:${ter.cliffStripe}"></div>
+      <!-- horizontal crack lines -->
+      <div class="inode-crack" style="top:30%;background:rgba(0,0,0,.18)"></div>
+      <div class="inode-crack" style="top:62%;background:rgba(0,0,0,.14)"></div>
+    </div>
+
+    <!-- bottom tip — tapered pointed base -->
+    <div class="inode-cliff-tip" style="width:${Math.round(w * .52)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .24)}px"></div>
+
+    <!-- ground shadow -->
+    <div class="inode-shadow" style="width:${Math.round(w * .62)}px;margin-left:${Math.round(w * .19)}px"></div>
+
+    <!-- nameplate -->
+    <div class="inode-nameplate" style="--biome-col:${b.color}">
+      <span class="inode-np-icon">${b.icon}</span>
+      <span class="inode-np-name">${b.name}</span>
+      <span class="inode-np-stars">${starsHtml}</span>
+    </div>
+  </div>`;
+}
 
 function renderIslandCards() {
   const grid = document.getElementById('island-grid');
   grid.className = 'island-scene';
 
-  // Build clouds
-  const clouds = Array.from({ length: 9 }, (_, i) => {
-    const top = 5 + (i * 11) % 55;
-    const left = (i * 23 + 7) % 90;
-    const scale = 0.6 + (i % 3) * 0.3;
-    const dur = 18 + (i * 7) % 22;
-    const delay = -(i * 4.3);
-    return `<div class="isc-cloud" style="top:${top}%;left:${left}%;transform:scale(${scale});animation-duration:${dur}s;animation-delay:${delay}s"></div>`;
-  }).join('');
+  // Clouds at varied heights & speeds
+  const cloudData = [
+    { t: 6, l: 3, sx: 1.4, sy: 0.9, dur: 28, delay: 0 },
+    { t: 18, l: 22, sx: 0.8, sy: 0.7, dur: 22, delay: -8 },
+    { t: 3, l: 44, sx: 1.1, sy: 0.8, dur: 35, delay: -15 },
+    { t: 22, l: 60, sx: 0.7, sy: 0.6, dur: 20, delay: -5 },
+    { t: 8, l: 78, sx: 1.3, sy: 1.0, dur: 30, delay: -20 },
+    { t: 30, l: 10, sx: 0.6, sy: 0.5, dur: 18, delay: -10 },
+    { t: 14, l: 85, sx: 0.9, sy: 0.8, dur: 25, delay: -3 },
+    { t: 35, l: 50, sx: 0.5, sy: 0.5, dur: 16, delay: -12 },
+  ];
+  const clouds = cloudData.map(c =>
+    `<div class="isc-cloud" style="top:${c.t}%;left:${c.l}%;transform:scaleX(${c.sx}) scaleY(${c.sy});animation-duration:${c.dur}s;animation-delay:${c.delay}s"></div>`
+  ).join('');
 
-  // Build islands
-  const islands = Object.values(BIOME_DEFS).map(b => {
-    const pos = ISLAND_POSITIONS[b.id];
-    const ter = ISLAND_TERRAIN[b.id];
-    const s = pos.size;
-    const terrainTop = `linear-gradient(160deg, ${ter.top[0]}, ${ter.top[1]} 50%, ${ter.top[2]})`;
-    const cliffTop = ter.side[0];
-    const cliffBot = ter.side[1];
-    const starsHtml = '⭐'.repeat(b.difficulty) + '<span style="opacity:.25">' + '⭐'.repeat(5 - b.difficulty) + '</span>';
-    const decoHtml = ter.deco.map((d, i) => {
-      const dx = 12 + (i * 19) % 72;
-      const dy = 8 + (i * 13) % 42;
-      const fs = 16 + (i % 3) * 8;
-      return `<span class="inode-deco-item" style="left:${dx}%;top:${dy}%;font-size:${fs}px">${d}</span>`;
-    }).join('');
+  const islands = Object.values(BIOME_DEFS).map(buildIslandHTML).join('');
 
-    return `
-    <div class="island-node" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
-         style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--sz:${s}px">
-      <div class="inode-body" style="width:${s}px">
-        <div class="inode-top" style="background:${terrainTop};width:${s}px;height:${Math.round(s * 0.52)}px">
-          <div class="inode-deco-wrap">${decoHtml}</div>
-          <div class="inode-art-emoji">${b.art}</div>
-        </div>
-        <div class="inode-cliff" style="width:${Math.round(s * .72)}px;background:linear-gradient(180deg,${cliffTop},${cliffBot});left:${Math.round(s * .14)}px"></div>
-        <div class="inode-cliff-bottom" style="width:${Math.round(s * .72)}px;left:${Math.round(s * .14)}px;background:${cliffBot}"></div>
-        <div class="inode-shadow" style="width:${Math.round(s * .55)}px;left:${Math.round(s * .225)}px"></div>
-      </div>
-      <div class="inode-nameplate" style="--biome-col:${b.color}">
-        <span class="inode-icon">${b.icon}</span>
-        <span class="inode-name">${b.name}</span>
-        <span class="inode-stars">${starsHtml}</span>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Detail panel (hidden by default)
+  // Detail panel
   const detailPanel = `
   <div class="isc-detail-panel" id="isc-detail-panel" style="display:none">
-    <div class="isc-detail-inner">
+    <div class="isc-detail-inner" id="isc-detail-inner">
+      <button class="isc-d-close" onclick="closeIslandDetail()">✕</button>
       <div class="isc-d-art" id="isc-d-art"></div>
       <div class="isc-d-name" id="isc-d-name"></div>
-      <div class="isc-d-tag" id="isc-d-tag"></div>
+      <div class="isc-d-tag"  id="isc-d-tag"></div>
       <div class="isc-d-diff" id="isc-d-diff"></div>
       <div class="isc-d-enemies" id="isc-d-enemies"></div>
-      <div class="isc-d-reward" id="isc-d-reward"></div>
-      <div class="isc-d-lore" id="isc-d-lore"></div>
+      <div class="isc-d-reward"  id="isc-d-reward"></div>
+      <div class="isc-d-lore"   id="isc-d-lore"></div>
       <button class="isc-d-enter-btn" id="isc-d-enter-btn">▶ ENTER ISLAND</button>
-      <button class="isc-d-close" onclick="closeIslandDetail()">✕</button>
     </div>
   </div>`;
 
