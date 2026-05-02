@@ -758,6 +758,11 @@ function createBoard() {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       cell.dataset.x = x; cell.dataset.y = y;
+      // Extreme mode: apply biome-specific tile class + deterministic per-tile variant
+      if (G.gameMode === 'extreme' && G.activeBiome) {
+        cell.classList.add(`biome-${G.activeBiome.id}`);
+        cell.dataset.tv = (x * 3 + y * 7 + x * y) % 5;
+      }
       if (y === PATH_ROW) {
         if (x === GRID_W - 1) {
           cell.classList.add('base-cell');
@@ -1049,7 +1054,7 @@ async function executeTurn() {
 
   // Spawn next enemy from queue
   if (G.spawnIndex < G.enemiesToSpawn.length) {
-    G.enemies.push({ ...G.enemiesToSpawn[G.spawnIndex], justSpawned: true });
+    G.enemies.push({ ...G.enemiesToSpawn[G.spawnIndex] });
     G.spawnIndex++;
   }
 
@@ -1132,7 +1137,6 @@ async function executeTurn() {
   if (!G.frozenTurn) {
     const toRemove = [];
     G.enemies.forEach(e => {
-      if (e.justSpawned) { e.justSpawned = false; return; } // don't move on spawn turn — prevents 1-tile gap
       if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; return; }
       // Troll regeneration
       if (e.def.ability === 'regen' && e.hp < e.maxHp && e.hp > 0) {

@@ -4476,3 +4476,293 @@ body {
     font-size: 15px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   EXTREME MODE — BIOME TILE THEMING
+   Each biome has 5 tile variants (data-tv 0–4) so no two
+   adjacent tiles look identical.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── TUNDRA: Crystal ice tiles ─────────────────────────────── */
+.biome-tundra.cell {
+  background: linear-gradient(155deg, #CCE8F5 0%, #94C8E4 55%, #5BAED4 100%);
+  border-color: rgba(74, 157, 184, .5);
+}
+
+.biome-tundra.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #D4F1FF 0%, #A8DCEF 55%, #7AB8D6 100%);
+}
+
+.biome-tundra.cell[data-tv="1"] {
+  background: linear-gradient(170deg, #B8DFEE 0%, #7ABCDC 55%, #4E9EC0 100%);
+}
+
+.biome-tundra.cell[data-tv="2"] {
+  background: linear-gradient(140deg, #E8F7FF 0%, #BFDFEF 55%, #88C0D8 100%);
+}
+
+.biome-tundra.cell[data-tv="3"] {
+  background: linear-gradient(155deg, #8DCAE2 0%, #5AACCF 55%, #3A8AAE 100%);
+}
+
+.biome-tundra.cell[data-tv="4"] {
+  background: linear-gradient(165deg, #C2E0F0 0%, #88C4E0 55%, #52A8CE 100%);
+}
+
+.biome-tundra.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(155deg, #E8F9FF 0%, #BEE8FA 55%, #8AC8E8 100%);
+  border-color: rgba(34, 211, 238, .8);
+  box-shadow: inset 0 0 8px rgba(34, 211, 238, .25), 0 0 6px rgba(34, 211, 238, .35);
+}
+
+.biome-tundra.path-cell {
+  background: linear-gradient(155deg, #EBF6FC 0%, #C8E4F0 55%, #A0CCE4 100%) !important;
+  border-color: rgba(160, 204, 228, .5) !important;
+}
+
+.biome-tundra.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #F0F8FD 0%, #D0E8F4 55%, #A8D4EC 100%) !important;
+}
+
+.biome-tundra.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #DCF0FA 0%, #B8DCF0 55%, #90C4E0 100%) !important;
+}
+
+.biome-tundra.path-cell[data-tv="2"] {
+  background: linear-gradient(140deg, #F4FBFF 0%, #D8EDFA 55%, #AACCE4 100%) !important;
+}
+
+.biome-tundra.path-cell[data-tv="3"] {
+  background: linear-gradient(155deg, #C8E0EE 0%, #A0C8E0 55%, #78B0D0 100%) !important;
+}
+
+.biome-tundra.path-cell[data-tv="4"] {
+  background: linear-gradient(165deg, #E4F2FA 0%, #C0DCF0 55%, #98C4E4 100%) !important;
+}
+
+.biome-tundra.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 42%, rgba(200, 240, 255, .18) 42%, rgba(200, 240, 255, .18) 58%) !important;
+}
+
+.biome-tundra.base-cell {
+  background: linear-gradient(155deg, #D4EEFA 0%, #A8D8F0 55%, #78B8E0 100%) !important;
+  border-color: rgba(34, 211, 238, .6) !important;
+}
+
+.biome-tundra.can-place {
+  border-color: rgba(34, 211, 238, .6) !important;
+  box-shadow: inset 0 0 5px rgba(34, 211, 238, .2) !important;
+}
+
+/* ── VOLCANO: Scorched lava-rock tiles ─────────────────────── */
+.biome-volcano.cell {
+  background: linear-gradient(155deg, #4A1800 0%, #380F00 55%, #240900 100%);
+  border-color: rgba(180, 60, 0, .5);
+}
+
+.biome-volcano.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #581E00 0%, #441400 55%, #2E0C00 100%);
+}
+
+.biome-volcano.cell[data-tv="1"] {
+  background: linear-gradient(170deg, #3C1000 0%, #2C0A00 55%, #1C0500 100%);
+}
+
+.biome-volcano.cell[data-tv="2"] {
+  background: linear-gradient(140deg, #5C2400 0%, #481800 55%, #321200 100%);
+}
+
+.biome-volcano.cell[data-tv="3"] {
+  background: linear-gradient(155deg, #320C00 0%, #240800 55%, #180400 100%);
+}
+
+.biome-volcano.cell[data-tv="4"] {
+  background: linear-gradient(165deg, #501A00 0%, #3C1200 55%, #280A00 100%);
+}
+
+.biome-volcano.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(155deg, #742800 0%, #5C1E00 55%, #3E1400 100%);
+  border-color: rgba(249, 115, 22, .75);
+  box-shadow: inset 0 0 10px rgba(249, 115, 22, .3), 0 0 8px rgba(220, 60, 0, .4);
+}
+
+.biome-volcano.path-cell {
+  background: linear-gradient(155deg, #6A2200 0%, #501800 55%, #381000 100%) !important;
+  border-color: rgba(249, 115, 22, .4) !important;
+}
+
+.biome-volcano.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #7A2A00 0%, #5C1E00 55%, #401400 100%) !important;
+}
+
+.biome-volcano.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #5A1C00 0%, #441400 55%, #2E0E00 100%) !important;
+}
+
+.biome-volcano.path-cell[data-tv="2"] {
+  background: linear-gradient(140deg, #842E00 0%, #641E00 55%, #461400 100%) !important;
+}
+
+.biome-volcano.path-cell[data-tv="3"] {
+  background: linear-gradient(155deg, #501600 0%, #3C1000 55%, #280A00 100%) !important;
+}
+
+.biome-volcano.path-cell[data-tv="4"] {
+  background: linear-gradient(165deg, #702400 0%, #541A00 55%, #381200 100%) !important;
+}
+
+.biome-volcano.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 42%, rgba(249, 115, 22, .12) 42%, rgba(249, 115, 22, .12) 58%) !important;
+}
+
+.biome-volcano.base-cell {
+  background: linear-gradient(155deg, #6A2200 0%, #501800 55%, #381000 100%) !important;
+  border-color: rgba(249, 115, 22, .6) !important;
+}
+
+.biome-volcano.can-place {
+  border-color: rgba(249, 115, 22, .6) !important;
+  box-shadow: inset 0 0 5px rgba(249, 115, 22, .2) !important;
+}
+
+/* ── JUNGLE: Tropical verdant tiles ────────────────────────── */
+.biome-jungle.cell {
+  background: linear-gradient(155deg, #48C03A 0%, #2C9C1A 55%, #187A0C 100%);
+  border-color: rgba(24, 122, 12, .55);
+}
+
+.biome-jungle.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #58C844 0%, #3CAA24 55%, #22880E 100%);
+}
+
+.biome-jungle.cell[data-tv="1"] {
+  background: linear-gradient(170deg, #38A82E 0%, #208C14 55%, #0E6A08 100%);
+}
+
+.biome-jungle.cell[data-tv="2"] {
+  background: linear-gradient(140deg, #5ED04A 0%, #40B428 55%, #269218 100%);
+}
+
+.biome-jungle.cell[data-tv="3"] {
+  background: linear-gradient(155deg, #2A9022 0%, #167408 55%, #0A5404 100%);
+}
+
+.biome-jungle.cell[data-tv="4"] {
+  background: linear-gradient(165deg, #50BC3E 0%, #36A020 55%, #1E8010 100%);
+}
+
+.biome-jungle.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(155deg, #70E055 0%, #50C030 55%, #30A018 100%);
+  border-color: rgba(72, 216, 48, .75);
+  box-shadow: inset 0 0 8px rgba(72, 200, 48, .25), 0 0 6px rgba(50, 180, 30, .35);
+}
+
+.biome-jungle.path-cell {
+  background: linear-gradient(155deg, #7A4820 0%, #5C3412 55%, #3C2008 100%) !important;
+  border-color: rgba(90, 60, 20, .5) !important;
+}
+
+.biome-jungle.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #8A5228 0%, #6A3C18 55%, #481E0C 100%) !important;
+}
+
+.biome-jungle.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #6A3C18 0%, #4E2C0C 55%, #321806 100%) !important;
+}
+
+.biome-jungle.path-cell[data-tv="2"] {
+  background: linear-gradient(140deg, #945830 0%, #724018 55%, #50280A 100%) !important;
+}
+
+.biome-jungle.path-cell[data-tv="3"] {
+  background: linear-gradient(155deg, #5E3410 0%, #462408 55%, #2E1604 100%) !important;
+}
+
+.biome-jungle.path-cell[data-tv="4"] {
+  background: linear-gradient(165deg, #804C22 0%, #623614 55%, #421E08 100%) !important;
+}
+
+.biome-jungle.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 42%, rgba(120, 80, 20, .15) 42%, rgba(120, 80, 20, .15) 58%) !important;
+}
+
+.biome-jungle.base-cell {
+  background: linear-gradient(155deg, #7A4820 0%, #5C3412 55%, #3C2008 100%) !important;
+  border-color: rgba(16, 185, 129, .55) !important;
+}
+
+.biome-jungle.can-place {
+  border-color: rgba(16, 185, 129, .6) !important;
+  box-shadow: inset 0 0 5px rgba(16, 185, 129, .2) !important;
+}
+
+/* ── FOREST (Enchanted): Arcane purple tiles ────────────────── */
+.biome-forest.cell {
+  background: linear-gradient(155deg, #3E1A74 0%, #2C1058 55%, #1A0840 100%);
+  border-color: rgba(139, 92, 246, .45);
+}
+
+.biome-forest.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #4A2280 0%, #361468 55%, #220C4E 100%);
+}
+
+.biome-forest.cell[data-tv="1"] {
+  background: linear-gradient(170deg, #321260 0%, #240C4A 55%, #160634 100%);
+}
+
+.biome-forest.cell[data-tv="2"] {
+  background: linear-gradient(140deg, #52288A 0%, #3E1870 55%, #2A1054 100%);
+}
+
+.biome-forest.cell[data-tv="3"] {
+  background: linear-gradient(155deg, #280E5A 0%, #1C0844 55%, #10042E 100%);
+}
+
+.biome-forest.cell[data-tv="4"] {
+  background: linear-gradient(165deg, #441E78 0%, #321264 55%, #200A4A 100%);
+}
+
+.biome-forest.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(155deg, #6030A8 0%, #4C1E8C 55%, #361070 100%);
+  border-color: rgba(167, 139, 250, .8);
+  box-shadow: inset 0 0 10px rgba(139, 92, 246, .3), 0 0 8px rgba(109, 40, 217, .4);
+}
+
+.biome-forest.path-cell {
+  background: linear-gradient(155deg, #2A1260 0%, #1E0A48 55%, #140632 100%) !important;
+  border-color: rgba(139, 92, 246, .4) !important;
+}
+
+.biome-forest.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #321468 0%, #241050 55%, #160838 100%) !important;
+}
+
+.biome-forest.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #220E54 0%, #180840 55%, #0E042C 100%) !important;
+}
+
+.biome-forest.path-cell[data-tv="2"] {
+  background: linear-gradient(140deg, #3A186E 0%, #2A1058 55%, #1C0840 100%) !important;
+}
+
+.biome-forest.path-cell[data-tv="3"] {
+  background: linear-gradient(155deg, #1E0C4E 0%, #14083C 55%, #0C0428 100%) !important;
+}
+
+.biome-forest.path-cell[data-tv="4"] {
+  background: linear-gradient(165deg, #2E1464 0%, #200E4C 55%, #140836 100%) !important;
+}
+
+.biome-forest.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 42%, rgba(160, 100, 255, .1) 42%, rgba(160, 100, 255, .1) 58%) !important;
+}
+
+.biome-forest.base-cell {
+  background: linear-gradient(155deg, #2A1260 0%, #1E0A48 55%, #140632 100%) !important;
+  border-color: rgba(139, 92, 246, .65) !important;
+}
+
+.biome-forest.can-place {
+  border-color: rgba(139, 92, 246, .6) !important;
+  box-shadow: inset 0 0 5px rgba(139, 92, 246, .2) !important;
+}
