@@ -3,7 +3,23 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <script>
+    // Force the page to render at 100% zoom by compensating for browser zoom level
+    (function () {
+      function resetZoom() {
+        var ratio = window.outerWidth / window.innerWidth;
+        if (ratio && ratio !== 1) {
+          document.documentElement.style.zoom = ratio;
+        } else {
+          document.documentElement.style.zoom = '1';
+        }
+      }
+      resetZoom();
+      window.addEventListener('resize', resetZoom);
+    })();
+  </script>
   <title>⚔️ Kingdom's Reckoning — Tactical Tower Defense</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
