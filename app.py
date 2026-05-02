@@ -10,7 +10,6 @@ import secrets
 
 load_dotenv()
 
-# templates/ and static/ are in the same folder as this file (project root)
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 _secret = os.getenv("SECRET_KEY")
@@ -19,11 +18,24 @@ if not _secret:
     print("[WARNING] SECRET_KEY not set — sessions will reset on every cold start.")
 app.secret_key = _secret
 
+# ── Vercel-safe session cookie settings ───────────────────────
+# SameSite=None + Secure is required when the API and frontend are
+# on the same Vercel domain served over HTTPS.
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=True,       # HTTPS only (Vercel always HTTPS)
+    SESSION_COOKIE_SAMESITE='None',   # Required for cross-origin fetch on Vercel
+    SESSION_COOKIE_NAME='kr_session',
+    PERMANENT_SESSION_LIFETIME=60 * 60 * 24 * 30,  # 30 days
+)
+
+# ── Rate limiter — use memory (Vercel) or Redis if env var set ─
+_limiter_uri = os.getenv("REDIS_URL", "memory://")
 limiter = Limiter(
     get_remote_address,
     app=app,
     default_limits=[],
-    storage_uri="memory://"
+    storage_uri=_limiter_uri
 )
 
 DATABASE_URL = os.getenv("DATABASE_URL")
