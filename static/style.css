@@ -2591,10 +2591,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
-  padding: 24px 16px;
-  max-width: 860px;
+  justify-content: center;
+  gap: clamp(16px, 2.5vh, 32px);
+  padding: clamp(16px, 3vh, 32px) clamp(12px, 2vw, 24px);
+  max-width: 920px;
   width: 100%;
+  min-height: 100vh;
 }
 
 /* ── LOGO ─────────────────────────────────── */
@@ -2603,7 +2605,7 @@ body {
 }
 
 .ms-logo-icon {
-  font-size: 48px;
+  font-size: clamp(36px, 6vh, 60px);
   filter: drop-shadow(0 0 18px rgba(240, 200, 66, .7));
   animation: msIconPulse 2.5s ease-in-out infinite alternate;
 }
@@ -2656,15 +2658,15 @@ body {
 .ms-card {
   flex: 1;
   min-width: 260px;
-  max-width: 360px;
+  max-width: 400px;
   background: rgba(12, 10, 30, .85);
   border: 1.5px solid rgba(255, 255, 255, .1);
   border-radius: 16px;
-  padding: 24px 22px 20px;
+  padding: clamp(18px, 3vh, 32px) clamp(18px, 2.5vw, 28px) clamp(16px, 2.5vh, 28px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: clamp(8px, 1.2vh, 14px);
   cursor: pointer;
   transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   backdrop-filter: blur(12px);
@@ -3621,94 +3623,91 @@ body {
    proportionally to the available viewport height.
 ════════════════════════════════════════════════════ */
 
-/* 1. Let the screen scroll instead of clipping content */
+/* 1. Let the screen scroll if content overflows on very small screens */
 .mode-select-screen {
   overflow-y: auto;
   overflow-x: hidden;
-  align-items: flex-start;
-  /* let content start at top when it overflows */
+  align-items: center;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 2. Content wrapper: full height, centered when it fits,
-      scrollable when it doesn't */
+/* 2. Content wrapper: fill viewport, center content */
 .ms-content {
   min-height: 100dvh;
-  /* at least full viewport */
   justify-content: center;
-  /* vertically center when there's room */
-  padding: clamp(12px, 2.5vh, 28px) clamp(12px, 2vw, 24px);
-  gap: clamp(12px, 2.2vh, 28px);
+  padding: clamp(12px, 3vh, 36px) clamp(12px, 2vw, 24px);
+  gap: clamp(14px, 2.5vh, 32px);
 }
 
-/* 3. Logo — shrink icon and title proportionally */
+/* 3. Logo — scale proportionally to viewport */
 .ms-logo-icon {
-  font-size: clamp(28px, 4.5vh, 52px);
+  font-size: clamp(32px, 5.5vh, 64px);
 }
 
 .ms-title {
-  font-size: clamp(20px, 4vh, 42px);
-  margin: clamp(4px, 0.8vh, 10px) 0 clamp(2px, 0.5vh, 8px);
+  font-size: clamp(22px, 4.5vh, 48px);
+  margin: clamp(4px, 0.8vh, 12px) 0 clamp(2px, 0.5vh, 8px);
 }
 
 .ms-tagline {
-  font-size: clamp(9px, 1vh, 12px);
+  font-size: clamp(9px, 1.1vh, 13px);
   letter-spacing: clamp(0.12em, 0.25em, 0.3em);
 }
 
-/* 4. Cards row — let cards shrink on short viewports */
+/* 4. Cards row */
 .ms-cards {
-  gap: clamp(12px, 2vw, 24px);
+  gap: clamp(14px, 2.5vw, 28px);
 }
 
 .ms-card {
-  padding: clamp(14px, 2vh, 26px) clamp(14px, 2vw, 24px) clamp(12px, 1.8vh, 22px);
-  gap: clamp(6px, 1vh, 12px);
+  padding: clamp(16px, 2.8vh, 34px) clamp(16px, 2.2vw, 28px) clamp(14px, 2.4vh, 30px);
+  gap: clamp(8px, 1.2vh, 14px);
 }
 
 /* 5. Card art emoji */
 .ms-card-art {
-  font-size: clamp(36px, 5.5vh, 60px);
-  margin: clamp(2px, 0.4vh, 6px) 0;
+  font-size: clamp(40px, 6.5vh, 72px);
+  margin: clamp(2px, 0.5vh, 8px) 0;
 }
 
 /* 6. Card title */
 .ms-card-title {
-  font-size: clamp(15px, 2vh, 22px);
+  font-size: clamp(16px, 2.2vh, 24px);
 }
 
 /* 7. Description list items */
 .ms-card-desc {
-  gap: clamp(4px, 0.6vh, 8px);
+  gap: clamp(5px, 0.8vh, 10px);
 }
 
 .ms-card-desc li {
-  font-size: clamp(12px, 1.5vh, 15px);
-  padding: clamp(3px, 0.5vh, 7px) clamp(8px, 1vw, 12px);
+  font-size: clamp(12px, 1.6vh, 16px);
+  padding: clamp(4px, 0.6vh, 8px) clamp(8px, 1vw, 14px);
 }
 
 /* 8. Start button */
 .ms-start-btn {
-  padding: clamp(9px, 1.4vh, 15px) 0;
-  font-size: clamp(11px, 1.5vh, 15px);
-  margin-top: clamp(4px, 0.6vh, 8px);
+  padding: clamp(10px, 1.6vh, 18px) 0;
+  font-size: clamp(12px, 1.6vh, 16px);
+  margin-top: clamp(4px, 0.8vh, 10px);
 }
 
 /* 9. Warning text + continue button */
 .ms-warning {
-  font-size: clamp(10px, 1.2vh, 13px);
+  font-size: clamp(10px, 1.3vh, 14px);
 }
 
 .ms-continue-btn {
-  padding: clamp(8px, 1.2vh, 13px) clamp(20px, 3vw, 36px);
-  font-size: clamp(11px, 1.4vh, 14px);
+  padding: clamp(10px, 1.4vh, 16px) clamp(24px, 4vw, 44px);
+  font-size: clamp(12px, 1.5vh, 15px);
 }
 
 /* 10. Card badge */
 .ms-card-badge {
-  font-size: clamp(9px, 1vh, 12px);
-  padding: clamp(3px, 0.4vh, 6px) clamp(10px, 1.2vw, 16px);
+  font-size: clamp(9px, 1.1vh, 13px);
+  padding: clamp(3px, 0.5vh, 7px) clamp(10px, 1.5vw, 18px);
 }
+
 
 /* ── Short-viewport override (height ≤ 750px) ──────
    Kicks in for laptops, 768p screens, and zoomed browsers */
