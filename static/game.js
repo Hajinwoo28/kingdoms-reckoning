@@ -359,7 +359,16 @@ window.goBackToMenu = function () {
   // Stop any running animation/wave
   G.gameOver = true;
   G.isAnimating = false;
-  // Save current state before going back
+  // Preserve towers in memory so continueGame can restore them
+  G._savedTowers = G.towers.map(t => ({
+    x: t.x, y: t.y, type: t.type,
+    level: t.level, upgrades: t.upgrades,
+    damage: t.damage, range: t.range,
+    chainCount: t.chainCount || 0,
+    splashRange: t.splashRange || 1,
+    kills: t.kills || 0
+  }));
+  // Save to server
   saveGame(true);
   // Switch screens
   document.getElementById('game-section').style.display = 'none';
