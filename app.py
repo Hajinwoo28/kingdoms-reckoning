@@ -1,5 +1,5 @@
 # app.py — Kingdom's Reckoning (Vercel Edition)
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template, session, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -11,6 +11,14 @@ import secrets
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+
+# ── Explicit static file route (required for Vercel) ──────────
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    response = send_from_directory(app.static_folder, filename)
+    # Cache static assets for 7 days on Vercel's CDN edge
+    response.headers['Cache-Control'] = 'public, max-age=604800, immutable'
+    return response
 
 _secret = os.getenv("SECRET_KEY")
 if not _secret:
