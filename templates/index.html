@@ -243,7 +243,7 @@
       <div class="game-layout">
 
         <!-- LEFT: SIDE QUESTS + DAILY -->
-        <aside class="side-panel quests-panel">
+        <aside class="side-panel quests-panel" id="quests-panel">
           <div class="quest-panel-tabs">
             <button class="qp-tab active" id="qtab-quests" onclick="switchQuestTab('quests')">📜 QUESTS</button>
             <button class="qp-tab" id="qtab-daily" onclick="switchQuestTab('daily')">📅 DAILY</button>
@@ -294,7 +294,7 @@
         </main>
 
         <!-- RIGHT: TOWER PANEL -->
-        <aside class="side-panel towers-panel">
+        <aside class="side-panel towers-panel" id="towers-panel">
           <h3 class="panel-title"><span class="pt-icon">🗼</span>TOWER COMMAND</h3>
           <div id="tower-selector" class="tower-selector"></div>
           <div id="tower-info-box" class="tower-info-box">
@@ -317,10 +317,112 @@
         </aside>
 
       </div>
+
+      <!--
+        ══════════════════════════════════════════════
+        MOBILE BOTTOM NAV
+        Visible only on ≤640px via responsive.css.
+        Tapping a panel button slides it in as a drawer;
+        tapping the active button (or the backdrop) closes it.
+        ══════════════════════════════════════════════
+      -->
+      <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile navigation">
+        <button class="mob-nav-btn" id="mob-btn-quests" onclick="toggleMobilePanel('quests')" aria-label="Quests panel">
+          <span class="mob-nav-ico">📜</span>
+          <span>QUESTS</span>
+        </button>
+        <button class="mob-nav-btn" id="mob-btn-board" onclick="closeMobilePanels()" aria-label="Game board">
+          <span class="mob-nav-ico">⚔️</span>
+          <span>BOARD</span>
+        </button>
+        <button class="mob-nav-btn" id="mob-btn-towers" onclick="toggleMobilePanel('towers')"
+          aria-label="Tower command panel">
+          <span class="mob-nav-ico">🗼</span>
+          <span>TOWERS</span>
+        </button>
+      </nav>
+
+      <!-- Backdrop — tapping closes the active panel -->
+      <div class="panel-backdrop" id="panel-backdrop" onclick="closeMobilePanels()"></div>
+
     </div><!-- /game-section -->
   </div><!-- /app-wrapper -->
 
   <script src="{{ url_for('static', filename='game.js') }}"></script>
+
+  <!-- ══ MOBILE PANEL CONTROLLER ══
+       Tiny, self-contained script that handles
+       the drawer open/close logic for mobile.
+       No dependencies on game.js internals.
+  -->
+  <script>
+    (function () {
+      var activePanel = null;
+
+      var panels = {
+        quests: document.getElementById('quests-panel'),
+        towers: document.getElementById('towers-panel')
+      };
+      var btns = {
+        quests: document.getElementById('mob-btn-quests'),
+        board: document.getElementById('mob-btn-board'),
+        towers: document.getElementById('mob-btn-towers')
+      };
+      var backdrop = document.getElementById('panel-backdrop');
+      var boardBtn = btns.board;
+
+      function openPanel(name) {
+        if (!panels[name]) return;
+        // Close any previously open panel first
+        if (activePanel && activePanel !== name) {
+          panels[activePanel].classList.remove('panel-open');
+          btns[activePanel] && btns[activePanel].classList.remove('mob-active');
+        }
+        activePanel = name;
+        panels[name].classList.add('panel-open');
+        btns[name] && btns[name].classList.add('mob-active');
+        boardBtn.classList.remove('mob-active');
+        backdrop.classList.add('active');
+      }
+
+      function closePanel() {
+        if (activePanel && panels[activePanel]) {
+          panels[activePanel].classList.remove('panel-open');
+          btns[activePanel] && btns[activePanel].classList.remove('mob-active');
+        }
+        activePanel = null;
+        backdrop.classList.remove('active');
+        boardBtn.classList.add('mob-active');
+      }
+
+      // Expose to inline onclick handlers in the HTML
+      window.toggleMobilePanel = function (name) {
+        if (activePanel === name) {
+          closePanel();
+        } else {
+          openPanel(name);
+        }
+      };
+
+      window.closeMobilePanels = function () {
+        closePanel();
+      };
+
+      // Default active button: Board
+      if (boardBtn) boardBtn.classList.add('mob-active');
+
+      // Close panels when a modal opens (prevents z-index stacking issues)
+      document.addEventListener('modalOpen', function () {
+        closeMobilePanels();
+      });
+
+      // Close panels on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && activePanel) closeMobilePanels();
+      });
+    })();
+  </script>
+
 </body>
 
 </html>

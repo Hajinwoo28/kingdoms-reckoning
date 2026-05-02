@@ -2874,3 +2874,741 @@ body {
     font-size: 28px;
   }
 }
+
+/* ════════════════════════════════════════════════════
+   Kingdom's Reckoning — Responsive Overrides
+   Link this AFTER style.css in index.html:
+   <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}">
+════════════════════════════════════════════════════ */
+
+/* ── Hide mobile-only elements on desktop ──────── */
+.mobile-bottom-nav,
+.panel-backdrop {
+  display: none;
+}
+
+/* ══════════════════════════════════════════════════
+   TABLET  (641px – 1024px)
+   Side panels narrow; HUD tightens up
+══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+
+  /* Shrink panels so the board has breathing room */
+  .side-panel {
+    width: 178px;
+  }
+
+  /* Drop the verbose game title from the HUD brand */
+  .hud-game-name {
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Tighten HUD badges */
+  .hud-badge {
+    padding: 3px 8px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  /* Slightly smaller HUD buttons */
+  .hud-btn {
+    padding: 4px 9px;
+    font-size: 10px;
+  }
+
+  /* Compress execute button */
+  .execute-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   NARROW TABLET  (≤ 860px)
+   Hide the game brand text; keep crest icon
+══════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+
+  .hud-game-name {
+    display: none;
+  }
+
+  .hud-user-label {
+    display: none;
+  }
+
+  /* Mode badge + streak badge take up rare HUD space — hide on tablet */
+  .mode-badge,
+  .streak-badge {
+    display: none;
+  }
+
+  .side-panel {
+    width: 158px;
+  }
+
+  /* Tighter phase strip text */
+  .phase-strip {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  /* Tower card icon + name only */
+  .tc-desc {
+    display: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   MOBILE  (≤ 640px)
+   Single-column layout; panels become slide-in drawers
+══════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* ── HTML / BODY ───────────────────────────── */
+  html,
+  body {
+    /* Allow body scroll so mobile browser chrome doesn't clip UI */
+    overflow: hidden;
+  }
+
+  /* ── TOP HUD ───────────────────────────────── */
+  .top-hud {
+    padding: 5px 8px;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+
+  /* Hide the brand crest on very small screens to save space */
+  .hud-brand {
+    display: none;
+  }
+
+  /* Stats row takes full width, centered */
+  .hud-stats {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .hud-badge {
+    padding: 2px 6px;
+    font-size: 10px;
+    gap: 2px;
+    border-radius: 5px;
+  }
+
+  /* Keep only essential stats visible in HUD */
+  .score-badge {
+    display: none;
+  }
+
+  /* Actions row */
+  .hud-actions {
+    order: 1;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .hud-btn {
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+
+  /* Hide the text label for the shop button; emoji is enough */
+  .shop-hud-btn {
+    font-size: 0;
+    /* hide text */
+    padding: 5px 8px;
+  }
+
+  .shop-hud-btn::before {
+    content: '🛒';
+    font-size: 14px;
+  }
+
+  /* ── GAME LAYOUT: single column ────────────── */
+  .game-layout {
+    flex-direction: column;
+    padding: 4px 4px 0;
+    gap: 4px;
+    /* Leave room for the fixed bottom nav bar */
+    padding-bottom: 56px;
+    overflow: visible;
+  }
+
+  /* ── SIDE PANELS → slide-in drawers ─────────── */
+  .side-panel {
+    /* Pull panels out of normal flow */
+    position: fixed;
+    top: 0;
+    bottom: 56px;
+    /* above the mobile nav bar */
+    width: min(88vw, 290px);
+    z-index: 1500;
+    border-radius: 0;
+    /* Start off-screen */
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+
+  /* Quest / left panel slides in from the left */
+  .quests-panel {
+    left: 0;
+    border-radius: 0 12px 12px 0;
+    transform: translateX(-100%);
+  }
+
+  .quests-panel.panel-open {
+    transform: translateX(0);
+  }
+
+  /* Tower / right panel slides in from the right */
+  .towers-panel {
+    right: 0;
+    left: auto;
+    border-radius: 12px 0 0 12px;
+    transform: translateX(100%);
+  }
+
+  .towers-panel.panel-open {
+    transform: translateX(0);
+  }
+
+  /* ── GAME CENTER: fills remaining space ──────── */
+  .game-center {
+    flex: 1;
+    min-height: 0;
+    /* Ensure the center fills the viewport height minus HUD + bottom nav */
+    height: calc(100dvh - var(--hud-h, 72px) - 56px);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* ── BOARD ───────────────────────────────────── */
+  .board-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .board {
+    /* Let the board fill the wrapper naturally */
+    max-height: min(100%, 56vw);
+    aspect-ratio: 10 / 7;
+    padding: 3px;
+    gap: 1px;
+  }
+
+  /* ── COMBAT LOG ──────────────────────────────── */
+  .combat-log-wrap {
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  .combat-log-scroll {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* ── PHASE STRIP ─────────────────────────────── */
+  .phase-strip {
+    padding: 4px 8px;
+    font-size: 10px;
+    gap: 6px;
+  }
+
+  /* ── ABILITY BAR ─────────────────────────────── */
+  .ability-bar {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 5px 4px;
+    background: rgba(0, 0, 0, .55);
+    border-top: 1px solid var(--panel-border);
+    border-radius: 8px 8px 0 0;
+    flex-shrink: 0;
+  }
+
+  .abilities-group {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    flex-wrap: nowrap;
+  }
+
+  .ab-btn {
+    padding: 5px 4px;
+    min-width: 0;
+    flex: 1;
+    gap: 0;
+  }
+
+  .ab-ico {
+    font-size: 16px;
+  }
+
+  .ab-n {
+    font-size: 7px;
+    letter-spacing: 0.4px;
+  }
+
+  .ab-c {
+    font-size: 8px;
+  }
+
+  .right-actions {
+    flex-direction: row;
+    margin-left: 0;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .fast-row {
+    font-size: 10px;
+    gap: 5px;
+  }
+
+  .execute-btn {
+    flex: 1;
+    padding: 9px 12px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    gap: 5px;
+  }
+
+  /* ── PANEL BACKDROP ──────────────────────────── */
+  .panel-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    bottom: 56px;
+    background: rgba(0, 0, 0, .68);
+    z-index: 1499;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: backdropFade .22s ease-out;
+  }
+
+  @keyframes backdropFade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .panel-backdrop.active {
+    display: block;
+  }
+
+  /* ── MOBILE BOTTOM NAV ───────────────────────── */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    z-index: 1600;
+    background: linear-gradient(180deg, rgba(14, 12, 35, .98) 0%, rgba(7, 6, 26, 1) 100%);
+    border-top: 2px solid var(--gold-d);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, .6);
+    align-items: stretch;
+  }
+
+  .mob-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: none;
+    border-right: 1px solid var(--panel-border);
+    background: transparent;
+    color: var(--col-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mob-nav-btn:last-child {
+    border-right: none;
+  }
+
+  .mob-nav-btn:active {
+    background: rgba(201, 162, 39, .08);
+  }
+
+  .mob-nav-btn.mob-active {
+    color: var(--gold-l);
+    background: rgba(201, 162, 39, .1);
+    border-top: 2px solid var(--gold);
+    margin-top: -2px;
+  }
+
+  .mob-nav-ico {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  /* ── MODALS on mobile ───────────────────────── */
+  .modal-overlay {
+    align-items: flex-end;
+    /* modals slide up from bottom on mobile */
+    padding-bottom: 56px;
+    /* above bottom nav */
+  }
+
+  .modal-box {
+    padding: 20px 16px 18px;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+    animation: modalSlideUp .28s cubic-bezier(.34, 1.56, .64, 1);
+  }
+
+  @keyframes modalSlideUp {
+    from {
+      transform: translateY(60px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Re-enable scrolling inside the shop on mobile */
+  .shop-content-area {
+    max-height: 46vh;
+  }
+
+  .modal-title {
+    font-size: 17px;
+  }
+
+  .modal-crest {
+    font-size: 40px;
+    margin-bottom: 6px;
+  }
+
+  .modal-btn-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-modal {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  /* Shop tabs scroll horizontally */
+  .shop-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    justify-content: flex-start;
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .shop-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shop-tab {
+    white-space: nowrap;
+    padding: 7px 12px;
+    flex-shrink: 0;
+  }
+
+  /* ── AUTH SCREEN on mobile ──────────────────── */
+  .auth-card {
+    padding: 28px 18px 22px;
+    margin: 12px;
+    max-width: calc(100vw - 24px);
+    border-radius: 14px;
+  }
+
+  .auth-game-title {
+    font-size: 22px;
+  }
+
+  .auth-emblem {
+    font-size: 44px;
+    margin-bottom: 8px;
+  }
+
+  .auth-tagline {
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .auth-input {
+    padding: 11px 14px;
+    font-size: 12px;
+  }
+
+  .btn-auth-primary,
+  .btn-auth-secondary {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  /* ── MODE SELECT on mobile ──────────────────── */
+  .ms-content {
+    gap: 16px;
+    padding: 16px 12px;
+  }
+
+  .ms-logo-icon {
+    font-size: 36px;
+  }
+
+  .ms-cards {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ms-card {
+    min-width: unset;
+    max-width: unset;
+    padding: 18px 16px 16px;
+  }
+
+  .ms-card-art {
+    font-size: 40px;
+  }
+
+  .ms-card-title {
+    font-size: 16px;
+  }
+
+  .ms-card-desc li {
+    font-size: 13px;
+  }
+
+  .ms-continue-btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 24px;
+  }
+
+  /* ── TOWER PANEL on mobile ──────────────────── */
+  .tower-selector {
+    padding: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+
+  .tower-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    padding: 8px 6px;
+  }
+
+  .tower-card:hover:not(.tc-disabled) {
+    transform: none;
+    /* disable horizontal slide on mobile */
+  }
+
+  .tc-cost {
+    font-size: 9px;
+  }
+
+  /* ── UPGRADE PANEL on mobile ────────────────── */
+  .upgrade-panel {
+    margin: 0 6px 6px;
+  }
+
+  .up-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .up-action-row {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  /* ── LEADERBOARD on mobile ──────────────────── */
+  .lb-list {
+    max-height: 44vh;
+  }
+
+  /* ── TOAST on mobile ────────────────────────── */
+  #toast-container {
+    top: auto;
+    bottom: 64px;
+    /* above bottom nav */
+    right: 8px;
+    left: 8px;
+    align-items: stretch;
+  }
+
+  .toast {
+    max-width: 100%;
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   VERY SMALL  (≤ 380px — iPhone SE, Galaxy A series)
+══════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+
+  .hud-badge {
+    padding: 2px 4px;
+    font-size: 9px;
+  }
+
+  .dia-badge {
+    display: none;
+    /* drop diamonds badge — gold + HP still show */
+  }
+
+  .ab-btn {
+    padding: 4px 2px;
+  }
+
+  .ab-n {
+    display: none;
+    /* icon + cost only on tiny screens */
+  }
+
+  .execute-btn {
+    padding: 8px 8px;
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+
+  .modal-title {
+    font-size: 15px;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   TOUCH / POINTER optimisations
+   Larger tap targets; remove hover-only transforms
+══════════════════════════════════════════════════ */
+@media (hover: none) and (pointer: coarse) {
+
+  /* Remove translateY hover lifts — they linger on touch */
+  .btn-modal:hover,
+  .ms-start-btn:hover,
+  .ms-continue-btn:hover,
+  .execute-btn:hover,
+  .ab-btn:hover,
+  .si-btn:hover,
+  .shop-tab:hover,
+  .hud-btn:hover {
+    transform: none;
+  }
+
+  /* Increase minimum tap target to 44px (WCAG 2.5.5) */
+  .hud-btn,
+  .mob-nav-btn,
+  .btn-modal,
+  .si-btn,
+  .q-claim-btn {
+    min-height: 44px;
+  }
+
+  /* Remove :hover border/glow effects that look stuck on mobile */
+  .tower-card:hover:not(.tc-disabled) {
+    border-color: var(--panel-border);
+    transform: none;
+  }
+
+  .cell:hover:not(.path-cell):not(.base-cell) {
+    box-shadow: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   LANDSCAPE MOBILE  (short height, wide width)
+══════════════════════════════════════════════════ */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+
+  /* Collapse the HUD to a single tight row */
+  .top-hud {
+    flex-wrap: nowrap;
+    padding: 3px 8px;
+  }
+
+  .hud-stats {
+    flex-wrap: nowrap;
+    order: unset;
+    width: auto;
+  }
+
+  .hud-actions {
+    order: unset;
+    width: auto;
+    flex-wrap: nowrap;
+  }
+
+  /* Use the full width for the board in landscape */
+  .game-layout {
+    flex-direction: row;
+    padding-bottom: 48px;
+  }
+
+  /* Re-show side panels as narrow overlays */
+  .side-panel {
+    width: 140px;
+    position: relative;
+    transform: none !important;
+    /* override slide-in; always visible in landscape */
+    top: auto;
+    bottom: auto;
+    border-radius: 10px;
+  }
+
+  .panel-backdrop {
+    display: none !important;
+  }
+
+  .mobile-bottom-nav {
+    height: 48px;
+  }
+
+  /* Board: fill remaining height in landscape */
+  .board-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .board {
+    max-height: min(100%, 80vw);
+  }
+
+  /* Ability bar horizontal */
+  .ability-bar {
+    flex-wrap: nowrap;
+  }
+
+  .right-actions {
+    width: auto;
+  }
+}
