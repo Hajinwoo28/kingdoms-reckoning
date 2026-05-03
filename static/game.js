@@ -746,19 +746,32 @@ window.backFromStageSelect = function () {
 };
 
 // Island scene position config — positions relative to viewport (fixed scene)
+const ISLAND_POSITIONS = {
+  tundra: { left: '4%', top: '13%', w: 290, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  jungle: { left: '28%', top: '10%', w: 330, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  volcano: { left: '57%', top: '14%', w: 270, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  forest: { left: '73%', top: '11%', w: 250, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+};
+
 function getIslandPositions() {
   const vw = window.innerWidth;
-  if (vw <= 640) {
-    // Mobile: 2×2 grid, islands ~45% smaller
+  if (vw <= 480) {
     return {
-      tundra: { left: '2%', top: '7%', w: 148, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '49%', top: '4%', w: 165, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '3%', top: '50%', w: 138, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '52%', top: '48%', w: 128, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      tundra: { left: '2%', top: '6%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '50%', top: '3%', w: 148, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '3%', top: '50%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '53%', top: '48%', w: 114, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+    };
+  }
+  if (vw <= 640) {
+    return {
+      tundra: { left: '2%', top: '8%', w: 155, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '50%', top: '5%', w: 175, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '3%', top: '52%', w: 145, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '54%', top: '50%', w: 135, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
     };
   }
   if (vw <= 960) {
-    // Tablet: slightly smaller, same row layout
     return {
       tundra: { left: '2%', top: '14%', w: 200, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
       jungle: { left: '24%', top: '10%', w: 230, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
@@ -766,20 +779,8 @@ function getIslandPositions() {
       forest: { left: '72%', top: '12%', w: 175, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
     };
   }
-  // Desktop
-  return {
-    tundra: { left: '4%', top: '13%', w: 290, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-    jungle: { left: '28%', top: '10%', w: 330, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-    volcano: { left: '57%', top: '14%', w: 270, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-    forest: { left: '73%', top: '11%', w: 250, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-  };
+  return ISLAND_POSITIONS;
 }
-const ISLAND_POSITIONS = {
-  tundra: { left: '4%', top: '13%', w: 290, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  jungle: { left: '28%', top: '10%', w: 330, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-  volcano: { left: '57%', top: '14%', w: 270, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-  forest: { left: '73%', top: '11%', w: 250, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-};
 
 // Terrain cap color, cliff rock colors, decorative emoji sets, cliff stripe colors
 const ISLAND_TERRAIN = {
@@ -1286,8 +1287,10 @@ function _biomeBaseGlow(b, tipW, tipH) {
 // ═══════════════════════════════════════════════════════════════
 
 function buildIslandHTML(b) {
-  const pos = getIslandPositions()[b.id];
+  const pos = (typeof getIslandPositions === 'function' ? getIslandPositions() : ISLAND_POSITIONS)[b.id];
   const ter = ISLAND_TERRAIN[b.id];
+  const isMobile = window.innerWidth <= 640;
+  const decoScale = isMobile ? 0.55 : 1;
   const w = pos.w;
   const capH = Math.round(w * 0.44);
   const cliffH = Math.round(w * 0.38);
@@ -1301,8 +1304,6 @@ function buildIslandHTML(b) {
   const capGrad = `radial-gradient(ellipse at 40% 35%, ${ter.capColors[0]} 0%, ${ter.capColors[1]} 55%, ${ter.capColors[2]} 100%)`;
   const cliffGrad = `linear-gradient(180deg, ${ter.cliffColors[0]} 0%, ${ter.cliffColors[1]} 35%, ${ter.cliffColors[2]} 70%, ${ter.cliffColors[3]} 100%)`;
 
-  const isMobile = window.innerWidth <= 640;
-  const decoScale = isMobile ? 0.58 : 1;
   const decoHtml = ter.deco.map((d, i) =>
     `<span class="inode-deco-item" style="left:${d.x}%;top:${d.y}%;font-size:${Math.round(d.s * decoScale)}px;animation-delay:${(i * 0.55).toFixed(2)}s">${d.e}</span>`
   ).join('');

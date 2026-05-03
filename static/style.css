@@ -839,68 +839,6 @@ body {
   margin-top: 4px;
 }
 
-/* ── AUTH CARD: Mobile ─────────────────────────── */
-@media (max-width: 640px) {
-  .auth-screen {
-    align-items: center;
-    padding: 12px;
-  }
-
-  .auth-card {
-    padding: 22px 18px 18px;
-    max-width: 92vw;
-    border-radius: 12px;
-  }
-
-  .auth-emblem {
-    font-size: 38px;
-    margin-bottom: 6px;
-  }
-
-  .auth-game-title {
-    font-size: 20px;
-    margin-bottom: 4px;
-  }
-
-  .auth-tagline {
-    font-size: 9px;
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-  }
-
-  .auth-input {
-    padding: 10px 12px;
-    font-size: 12px;
-    background: rgba(0, 0, 0, .75) !important;
-    appearance: none;
-    color: var(--col-txt) !important;
-    border-radius: 8px;
-  }
-
-  .auth-input::placeholder {
-    color: rgba(200, 170, 80, .55) !important;
-  }
-
-  .auth-form {
-    gap: 8px;
-  }
-
-  .btn-auth-primary,
-  .btn-auth-secondary {
-    padding: 10px 8px;
-    font-size: 11px;
-  }
-
-  .auth-btn-row {
-    gap: 7px;
-    margin-top: 2px;
-  }
-
-  .auth-msg {
-    font-size: 11px;
-  }
-}
-
 /* ════════════════════════════════════════════
    GAME SCREEN
 ════════════════════════════════════════════ */
@@ -5191,39 +5129,6 @@ body {
   .isc-d-name {
     font-size: 15px;
   }
-
-  /* Detail panel full-width on mobile */
-  .isc-detail-panel {
-    left: 4% !important;
-    right: 4% !important;
-    bottom: 10px !important;
-    top: auto !important;
-    transform: none !important;
-    width: auto !important;
-    max-height: 55vh;
-    overflow-y: auto;
-  }
-
-  .inode-nameplate {
-    padding: 5px 12px 4px;
-    min-width: 90px;
-  }
-
-  .inode-np-name {
-    font-size: 9px;
-  }
-
-  .inode-np-tagline {
-    font-size: 8px;
-  }
-
-  .inode-np-stars {
-    font-size: 9px;
-  }
-
-  .inode-np-icon {
-    font-size: 16px;
-  }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -7839,5 +7744,571 @@ body {
   /* Hud buttons: slightly larger touch zone */
   .hud-btn {
     min-height: 36px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   COMPREHENSIVE MOBILE FIX  — ≤ 640px
+   Fixes: login card size, HUD button overflow, board layout,
+          side-panel drawer, ability bar, execute button,
+          island detail panel, modal positioning
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* ── AUTH / LOGIN ──────────────────────────────────────────── */
+  .auth-screen {
+    align-items: center;
+    justify-content: center;
+    padding: 10px 12px;
+    overflow-y: auto;
+  }
+
+  .auth-card {
+    padding: 18px 16px 16px !important;
+    max-width: 88vw !important;
+    width: 88vw !important;
+    border-radius: 12px !important;
+    margin: auto !important;
+    box-shadow: 0 0 40px rgba(0, 0, 0, .7), var(--glow-gold) !important;
+  }
+
+  .auth-emblem {
+    font-size: 32px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .auth-game-title {
+    font-size: 16px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .auth-tagline {
+    font-size: 7px !important;
+    letter-spacing: 1.8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .auth-form {
+    gap: 7px !important;
+  }
+
+  .auth-input {
+    padding: 9px 11px !important;
+    font-size: 11px !important;
+    background: rgba(0, 0, 0, .8) !important;
+    appearance: none !important;
+    color: var(--col-txt) !important;
+    border-radius: 7px !important;
+  }
+
+  .auth-input::placeholder {
+    color: rgba(200, 170, 80, .5) !important;
+  }
+
+  .auth-btn-row {
+    gap: 6px !important;
+    margin-top: 2px !important;
+  }
+
+  .btn-auth-primary,
+  .btn-auth-secondary {
+    padding: 9px 6px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.8px !important;
+    border-radius: 6px !important;
+  }
+
+  .auth-msg {
+    font-size: 10px !important;
+    margin-top: 3px !important;
+    min-height: 16px !important;
+  }
+
+  /* ── TOP HUD ────────────────────────────────────────────────── */
+  .top-hud {
+    padding: 3px 6px !important;
+    gap: 2px !important;
+    min-height: 44px !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  .hud-brand {
+    display: none !important;
+  }
+
+  .score-badge,
+  .streak-badge,
+  .mode-badge {
+    display: none !important;
+  }
+
+  .hud-stats {
+    gap: 2px !important;
+    flex-shrink: 1 !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+  }
+
+  .hud-badge {
+    padding: 2px 5px !important;
+    font-size: 10px !important;
+    gap: 2px !important;
+    white-space: nowrap !important;
+  }
+
+  /* HUD action buttons — icon-only, no text overflow */
+  .hud-actions {
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .hud-btn {
+    padding: 4px 6px !important;
+    font-size: 9px !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap !important;
+    min-width: 0 !important;
+  }
+
+  /* MENU btn — icon only */
+  .menu-hud-btn {
+    font-size: 0 !important;
+    padding: 5px 7px !important;
+  }
+
+  .menu-hud-btn::before {
+    content: '🏠';
+    font-size: 14px !important;
+  }
+
+  /* SHOP btn — icon only */
+  .shop-hud-btn {
+    font-size: 0 !important;
+    padding: 5px 7px !important;
+  }
+
+  .shop-hud-btn::before {
+    content: '🛒';
+    font-size: 14px !important;
+  }
+
+  /* LOGOUT btn — icon only */
+  .logout-btn {
+    font-size: 0 !important;
+    padding: 5px 7px !important;
+  }
+
+  .logout-btn::before {
+    content: '⇤';
+    font-size: 13px !important;
+  }
+
+  /* Help + Settings small */
+  .help-btn,
+  .settings-btn {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+  }
+
+  /* ── GAME LAYOUT ────────────────────────────────────────────── */
+  .game-layout {
+    flex-direction: column !important;
+    padding: 3px 3px 0 !important;
+    padding-bottom: calc(56px + var(--sab, 0px)) !important;
+    gap: 3px !important;
+    overflow: visible !important;
+  }
+
+  /* ── SIDE PANELS — full-height drawers ──────────────────────── */
+  .side-panel {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: calc(56px + var(--sab, 0px)) !important;
+    width: min(86vw, 280px) !important;
+    z-index: 1500 !important;
+    border-radius: 0 !important;
+    transform: translateX(-110%) !important;
+    transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow-y: auto !important;
+  }
+
+  .quests-panel {
+    left: 0 !important;
+    border-radius: 0 12px 12px 0 !important;
+    transform: translateX(-110%) !important;
+  }
+
+  .quests-panel.panel-open {
+    transform: translateX(0) !important;
+  }
+
+  .towers-panel {
+    right: 0 !important;
+    left: auto !important;
+    border-radius: 12px 0 0 12px !important;
+    transform: translateX(110%) !important;
+  }
+
+  .towers-panel.panel-open {
+    transform: translateX(0) !important;
+  }
+
+  /* ── GAME CENTER ────────────────────────────────────────────── */
+  .game-center {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: calc(100dvh - 44px - 56px - var(--sab, 0px)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+    width: 100% !important;
+  }
+
+  /* ── BOARD ──────────────────────────────────────────────────── */
+  .board-wrapper {
+    flex: 1 !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .board {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: min(100%, 58vw) !important;
+    aspect-ratio: 10 / 6 !important;
+    padding: 2px !important;
+    gap: 1px !important;
+  }
+
+  /* ── PHASE STRIP ────────────────────────────────────────────── */
+  .phase-strip {
+    padding: 3px 6px !important;
+    font-size: 9px !important;
+    gap: 5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── COMBAT LOG ─────────────────────────────────────────────── */
+  .combat-log-wrap {
+    height: 32px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .combat-log-scroll {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+
+  /* ── ABILITY BAR ────────────────────────────────────────────── */
+  .ability-bar {
+    flex-wrap: nowrap !important;
+    gap: 3px !important;
+    padding: 4px 4px !important;
+    background: rgba(0, 0, 0, .6) !important;
+    border-top: 1px solid var(--panel-border) !important;
+    border-radius: 8px 8px 0 0 !important;
+    flex-shrink: 0 !important;
+    align-items: center !important;
+  }
+
+  .abilities-group {
+    display: flex !important;
+    gap: 3px !important;
+    flex: 1 !important;
+    flex-wrap: nowrap !important;
+    min-width: 0 !important;
+  }
+
+  .ab-btn {
+    padding: 5px 3px !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+    gap: 0 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .ab-ico {
+    font-size: 15px !important;
+  }
+
+  .ab-n {
+    font-size: 6px !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  .ab-c {
+    font-size: 8px !important;
+  }
+
+  /* ── RIGHT ACTIONS (FAST + EXECUTE) ────────────────────────── */
+  .right-actions {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex-shrink: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .fast-row {
+    font-size: 9px !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+  }
+
+  .execute-btn {
+    flex: 1 !important;
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.4px !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+  }
+
+  /* ── MOBILE BOTTOM NAV ──────────────────────────────────────── */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: calc(56px + var(--sab, 0px)) !important;
+    padding-bottom: var(--sab, 0px) !important;
+    z-index: 1600 !important;
+    background: linear-gradient(180deg, rgba(14, 12, 35, .98) 0%, rgba(7, 6, 26, 1) 100%) !important;
+    border-top: 2px solid var(--gold-d) !important;
+  }
+
+  .mob-nav-btn {
+    flex: 1 !important;
+    font-size: 8px !important;
+    gap: 2px !important;
+  }
+
+  .mob-nav-ico {
+    font-size: 20px !important;
+  }
+
+  /* ── PANEL BACKDROP ─────────────────────────────────────────── */
+  .panel-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    bottom: calc(56px + var(--sab, 0px)) !important;
+    background: rgba(0, 0, 0, .65) !important;
+    z-index: 1499 !important;
+    backdrop-filter: blur(3px) !important;
+  }
+
+  /* ── MODALS ─────────────────────────────────────────────────── */
+  .modal-overlay {
+    align-items: flex-end !important;
+    padding-bottom: calc(56px + var(--sab, 0px)) !important;
+  }
+
+  .modal-box {
+    padding: 18px 14px 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px 16px 0 0 !important;
+    border-bottom: none !important;
+    max-height: 82vh !important;
+    overflow-y: auto !important;
+  }
+
+  .modal-title {
+    font-size: 16px !important;
+  }
+
+  .modal-crest {
+    font-size: 36px !important;
+  }
+
+  .shop-content-area {
+    max-height: 44vh !important;
+  }
+
+  .shop-tabs {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    scrollbar-width: none !important;
+  }
+
+  .shop-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .shop-tab {
+    white-space: nowrap !important;
+    padding: 6px 10px !important;
+    flex-shrink: 0 !important;
+    font-size: 10px !important;
+  }
+
+  .modal-btn-row {
+    flex-wrap: wrap !important;
+    gap: 7px !important;
+  }
+
+  .btn-modal {
+    padding: 9px 12px !important;
+    font-size: 11px !important;
+  }
+
+  /* ── TOWER PANEL ────────────────────────────────────────────── */
+  .tower-selector {
+    padding: 6px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 5px !important;
+  }
+
+  .tower-card {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 4px !important;
+    padding: 8px 5px !important;
+  }
+
+  .tc-cost {
+    font-size: 9px !important;
+  }
+
+  /* ── UPGRADE PANEL ──────────────────────────────────────────── */
+  .upgrade-panel {
+    margin: 0 5px 5px !important;
+  }
+
+  .up-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .up-action-row {
+    flex-direction: row !important;
+    gap: 5px !important;
+  }
+
+  /* ── ISLAND SELECT ──────────────────────────────────────────── */
+  .isc-detail-panel {
+    left: 4% !important;
+    right: 4% !important;
+    bottom: 10px !important;
+    top: auto !important;
+    transform: none !important;
+    width: auto !important;
+    max-height: 58vh !important;
+    overflow-y: auto !important;
+  }
+
+  .isc-detail-inner {
+    padding: 18px 14px 16px !important;
+  }
+
+  .isc-d-name {
+    font-size: 15px !important;
+  }
+
+  .inode-nameplate {
+    padding: 4px 10px 3px !important;
+    min-width: 80px !important;
+  }
+
+  .inode-np-name {
+    font-size: 8px !important;
+  }
+
+  .inode-np-tagline {
+    font-size: 7px !important;
+  }
+
+  .inode-np-stars {
+    font-size: 8px !important;
+  }
+
+  .inode-np-icon {
+    font-size: 14px !important;
+  }
+
+  .is-title {
+    font-size: 16px !important;
+  }
+
+  .is-header {
+    padding: 9px 12px 7px !important;
+  }
+
+  /* ── TOAST ──────────────────────────────────────────────────── */
+  #toast-container {
+    top: auto !important;
+    bottom: calc(64px + var(--sab, 0px)) !important;
+    right: 8px !important;
+    left: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .toast {
+    max-width: 100% !important;
+    font-size: 11px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* ── LEADERBOARD ────────────────────────────────────────────── */
+  .lb-list {
+    max-height: 42vh !important;
+  }
+
+  /* ── TAP OPTIMISATIONS ──────────────────────────────────────── */
+  button,
+  .cell,
+  .ab-btn,
+  .mob-nav-btn,
+  .hud-btn,
+  .tower-card {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+}
+
+/* ── VERY SMALL (≤ 380px) ─────────────────────────────────── */
+@media (max-width: 380px) {
+  .auth-card {
+    padding: 14px 12px 13px !important;
+  }
+
+  .auth-game-title {
+    font-size: 13px !important;
+  }
+
+  .auth-emblem {
+    font-size: 26px !important;
+  }
+
+  .auth-input {
+    padding: 8px 9px !important;
+    font-size: 10px !important;
+  }
+
+  .dia-badge {
+    display: none !important;
+  }
+
+  .wave-badge {
+    font-size: 9px !important;
+  }
+
+  .tower-selector {
+    grid-template-columns: 1fr !important;
+  }
+
+  .execute-btn {
+    font-size: 9px !important;
+    padding: 6px 5px !important;
+    letter-spacing: 0 !important;
   }
 }
