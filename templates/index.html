@@ -3,17 +3,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16.png') }}">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Kingdom's Reckoning">
-  <meta name="theme-color" content="#ffd700">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -96,24 +85,25 @@
     (function () {
       var overlay = document.getElementById('rotate-overlay');
 
-      function isSmallPhone() {
-        // Only nudge rotation on true phones (short physical dimension < ~700px)
-        var shortSide = Math.min(screen.width, screen.height);
-        return shortSide < 500 &&
-          (/Mobi|Android|iPhone|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)
-            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+      function isMobile() {
+        return /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Tablet/i.test(navigator.userAgent)
+          || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) // iPadOS
+          || window.innerWidth <= 1024;
       }
 
       function checkOrientation() {
-        if (!isSmallPhone()) { overlay.classList.remove('show'); return; }
+        if (!isMobile()) { overlay.classList.remove('show'); return; }
         var portrait = window.innerHeight > window.innerWidth;
+        // Don't block tablets (short side >= 600px) in portrait — they have enough room
+        var shortSide = Math.min(window.innerWidth, window.innerHeight);
+        if (shortSide >= 600) { overlay.classList.remove('show'); return; }
         overlay.classList.toggle('show', portrait);
       }
 
       checkOrientation();
       window.addEventListener('resize', checkOrientation);
       window.addEventListener('orientationchange', function () {
-        setTimeout(checkOrientation, 120);
+        setTimeout(checkOrientation, 120); // wait for browser to finish rotating
       });
     })();
   </script>
@@ -689,6 +679,23 @@
     })();
   </script>
 
+
+  <script>
+    /* ── HUD height measurement — keeps --hud-h CSS var accurate ── */
+    (function () {
+      function measureHud() {
+        var hud = document.querySelector('.top-hud');
+        if (hud) {
+          var h = hud.getBoundingClientRect().height;
+          document.documentElement.style.setProperty('--hud-h', h + 'px');
+        }
+      }
+      measureHud();
+      window.addEventListener('resize', measureHud);
+      // Re-measure after fonts load
+      document.fonts && document.fonts.ready && document.fonts.ready.then(measureHud);
+    })();
+  </script>
 </body>
 
 </html>
