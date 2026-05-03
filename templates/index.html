@@ -15,7 +15,7 @@
   <meta name="apple-mobile-web-app-title" content="Kingdom's Reckoning">
   <meta name="theme-color" content="#ffd700">
   <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <title>⚔️ Kingdom's Reckoning — Tactical Tower Defense</title>
@@ -96,14 +96,16 @@
     (function () {
       var overlay = document.getElementById('rotate-overlay');
 
-      function isMobile() {
-        return /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Tablet/i.test(navigator.userAgent)
-          || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) // iPadOS
-          || window.innerWidth <= 1024;
+      function isSmallPhone() {
+        // Only nudge rotation on true phones (short physical dimension < ~700px)
+        var shortSide = Math.min(screen.width, screen.height);
+        return shortSide < 500 &&
+          (/Mobi|Android|iPhone|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)
+            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
       }
 
       function checkOrientation() {
-        if (!isMobile()) { overlay.classList.remove('show'); return; }
+        if (!isSmallPhone()) { overlay.classList.remove('show'); return; }
         var portrait = window.innerHeight > window.innerWidth;
         overlay.classList.toggle('show', portrait);
       }
@@ -111,7 +113,7 @@
       checkOrientation();
       window.addEventListener('resize', checkOrientation);
       window.addEventListener('orientationchange', function () {
-        setTimeout(checkOrientation, 120); // wait for browser to finish rotating
+        setTimeout(checkOrientation, 120);
       });
     })();
   </script>
