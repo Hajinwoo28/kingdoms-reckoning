@@ -813,56 +813,526 @@ const ISLAND_TERRAIN = {
   },
 };
 
+// ═══════════════════════════════════════════════════════════════
+//  BIOME PARTICLE ENGINE — canvas-based per-island particle FX
+// ═══════════════════════════════════════════════════════════════
+
+const BIOME_PARTICLES = {
+
+  // ── CRYSTAL TUNDRA — swirling snowflakes + ice crystal glints ──
+  tundra: {
+    count: 42,
+    create(cw, ch) {
+      const type = Math.random() < 0.70 ? 'snow' : 'crystal';
+      return {
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        size: type === 'snow' ? Math.random() * 5 + 2 : Math.random() * 3 + 1.5,
+        speedX: (Math.random() - 0.5) * 0.55,
+        speedY: Math.random() * 0.75 + 0.25,
+        opacity: Math.random() * 0.6 + 0.3,
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 1.8,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.025 + 0.008,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX + Math.sin(p.phase) * 0.45;
+      p.y += p.speedY;
+      p.rotation += p.rotSpeed;
+      p.opacity = p.type === 'crystal'
+        ? 0.4 + Math.abs(Math.sin(p.phase * 2)) * 0.6
+        : 0.35 + Math.sin(p.phase) * 0.2;
+      if (p.y > ch + 10) { p.y = -12; p.x = Math.random() * cw; }
+      if (p.x < -20) p.x = cw + 20;
+      if (p.x > cw + 20) p.x = -20;
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      if (p.type === 'snow') {
+        // 6-armed snowflake
+        ctx.strokeStyle = 'rgba(200,240,255,0.92)';
+        ctx.lineWidth = p.size * 0.22;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < 6; i++) {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(0, -p.size);
+          // tiny cross branches
+          ctx.moveTo(-p.size * 0.35, -p.size * 0.55);
+          ctx.lineTo(p.size * 0.35, -p.size * 0.55);
+          ctx.stroke();
+          ctx.rotate(Math.PI / 3);
+        }
+        // centre dot
+        ctx.fillStyle = 'rgba(220,248,255,0.95)';
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size * 0.18, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // diamond glint
+        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size * 2.2);
+        g.addColorStop(0, 'rgba(180,240,255,1)');
+        g.addColorStop(0.4, 'rgba(100,210,255,0.6)');
+        g.addColorStop(1, 'rgba(60,180,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(0, -p.size * 2.2);
+        ctx.lineTo(p.size * 0.5, 0);
+        ctx.lineTo(0, p.size * 2.2);
+        ctx.lineTo(-p.size * 0.5, 0);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── VOLCANIC INFERNO — rising embers + ash + lava sparks ──
+  volcano: {
+    count: 52,
+    create(cw, ch) {
+      const type = Math.random() < 0.55 ? 'ember' : Math.random() < 0.6 ? 'ash' : 'spark';
+      return {
+        x: cw * 0.15 + Math.random() * cw * 0.70,
+        y: ch * 0.45 + Math.random() * ch * 0.45,
+        size: type === 'ember' ? Math.random() * 4.5 + 1.5
+          : type === 'spark' ? Math.random() * 2 + 0.8
+            : Math.random() * 5 + 2,
+        speedX: (Math.random() - 0.5) * 1.1,
+        speedY: -(Math.random() * 1.6 + 0.6),
+        life: Math.random(),
+        decay: Math.random() * 0.006 + 0.004,
+        wobble: Math.random() * 0.12 + 0.04,
+        phase: Math.random() * Math.PI * 2,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += 0.06;
+      p.x += p.speedX + Math.sin(p.phase) * p.wobble;
+      p.y += p.speedY;
+      p.speedY += 0.008; // gravity slow-down
+      p.life -= p.decay;
+      if (p.life <= 0 || p.y < -30) {
+        p.x = cw * 0.15 + Math.random() * cw * 0.70;
+        p.y = ch * 0.55 + Math.random() * ch * 0.35;
+        p.life = 0.7 + Math.random() * 0.3;
+        p.speedY = -(Math.random() * 1.6 + 0.6);
+        p.speedX = (Math.random() - 0.5) * 1.1;
+      }
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life * 0.9);
+      if (p.type === 'ember') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.5);
+        g.addColorStop(0, 'rgba(255,230,60,1)');
+        g.addColorStop(0.35, 'rgba(255,110,20,0.85)');
+        g.addColorStop(0.7, 'rgba(200,40,0,0.4)');
+        g.addColorStop(1, 'rgba(160,20,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'spark') {
+        ctx.strokeStyle = `rgba(255,200,50,${p.life})`;
+        ctx.lineWidth = p.size * 0.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x - p.speedX * 3, p.y - p.speedY * 2);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = `rgba(110,100,90,${p.life * 0.45})`;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, p.size * 1.4, p.size * 0.7, Math.random() * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── TROPICAL ARCHIPELAGO — fireflies + pollen + leaf drift ──
+  jungle: {
+    count: 38,
+    create(cw, ch) {
+      const type = Math.random() < 0.45 ? 'firefly' : Math.random() < 0.6 ? 'pollen' : 'leaf';
+      return {
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        size: type === 'firefly' ? Math.random() * 3 + 1.5
+          : type === 'pollen' ? Math.random() * 2 + 0.8
+            : Math.random() * 6 + 3,
+        speedX: (Math.random() - 0.5) * 0.35,
+        speedY: type === 'leaf' ? Math.random() * 0.4 + 0.1 : (Math.random() - 0.5) * 0.28,
+        phase: Math.random() * Math.PI * 2,
+        phaseX: Math.random() * 0.04 + 0.01,
+        phaseY: Math.random() * 0.03 + 0.008,
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 1.2,
+        opacity: 0,
+        hue: 100 + Math.random() * 40, // green range
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseX;
+      p.x += p.speedX + Math.sin(p.phase * 0.8) * 0.55;
+      p.y += p.speedY + Math.cos(p.phase * 0.6) * 0.22;
+      p.rotation += p.rotSpeed;
+      p.opacity = p.type === 'firefly'
+        ? Math.max(0, 0.3 + Math.sin(p.phase * 2.2) * 0.7)
+        : 0.5 + Math.sin(p.phase * 1.3) * 0.35;
+      if (p.x < -20) p.x = cw + 20;
+      if (p.x > cw + 20) p.x = -20;
+      if (p.y < -20) p.y = ch + 20;
+      if (p.y > ch + 20) p.y = -20;
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      if (p.type === 'firefly') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3.5);
+        g.addColorStop(0, 'rgba(210,255,120,1)');
+        g.addColorStop(0.3, 'rgba(100,230,50,0.65)');
+        g.addColorStop(0.7, 'rgba(30,180,20,0.25)');
+        g.addColorStop(1, 'rgba(0,150,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'pollen') {
+        ctx.fillStyle = `rgba(240,255,160,0.75)`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 0.65, 0, Math.PI * 2);
+        ctx.fill();
+        // tiny glow
+        const g2 = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2);
+        g2.addColorStop(0, 'rgba(200,255,80,0.3)');
+        g2.addColorStop(1, 'rgba(200,255,80,0)');
+        ctx.fillStyle = g2;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // leaf silhouette
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation * Math.PI / 180);
+        ctx.fillStyle = `hsla(${p.hue},75%,35%,0.6)`;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.size, p.size * 0.45, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = `hsla(${p.hue},60%,25%,0.4)`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(-p.size, 0);
+        ctx.lineTo(p.size, 0);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── ENCHANTED FOREST — arcane orbs + void sparks + constellations ──
+  forest: {
+    count: 44,
+    create(cw, ch) {
+      const type = Math.random() < 0.45 ? 'orb' : Math.random() < 0.55 ? 'spark' : 'star';
+      return {
+        x: Math.random() * cw,
+        y: type === 'orb' ? ch * 0.5 + Math.random() * ch * 0.5
+          : type === 'star' ? Math.random() * ch * 0.5
+            : Math.random() * ch,
+        size: type === 'orb' ? Math.random() * 5 + 2.5
+          : type === 'spark' ? Math.random() * 1.8 + 0.6
+            : Math.random() * 2 + 0.8,
+        speedX: (Math.random() - 0.5) * 0.40,
+        speedY: type === 'orb' ? -(Math.random() * 0.55 + 0.15)
+          : type === 'star' ? (Math.random() - 0.5) * 0.12
+            : -(Math.random() * 0.3 + 0.08),
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.035 + 0.01,
+        hue: type === 'orb' ? 260 + Math.random() * 50
+          : type === 'spark' ? 200 + Math.random() * 80
+            : 280 + Math.random() * 60,
+        opacity: 0,
+        life: Math.random(),
+        decay: Math.random() * 0.005 + 0.002,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX + Math.sin(p.phase * 0.9) * 0.45;
+      p.y += p.speedY;
+      p.life -= p.decay;
+      if (p.type === 'orb') {
+        p.opacity = Math.max(0, Math.min(0.85, p.life * 0.9 + Math.sin(p.phase * 1.8) * 0.2));
+      } else if (p.type === 'star') {
+        p.opacity = Math.max(0, 0.3 + Math.abs(Math.sin(p.phase * 2.5)) * 0.7);
+        p.life = 1; // stars don't die
+      } else {
+        p.opacity = Math.max(0, p.life * 0.95);
+      }
+      if (p.life <= 0 || p.y < -20) {
+        if (p.type !== 'star') {
+          p.x = Math.random() * cw;
+          p.y = p.type === 'orb' ? ch * 0.6 + Math.random() * ch * 0.4 : Math.random() * ch;
+          p.life = 0.8 + Math.random() * 0.2;
+        }
+      }
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      if (p.type === 'orb') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.8);
+        g.addColorStop(0, `hsla(${p.hue},100%,88%,1)`);
+        g.addColorStop(0.3, `hsla(${p.hue},85%,65%,0.7)`);
+        g.addColorStop(0.65, `hsla(${p.hue},75%,50%,0.3)`);
+        g.addColorStop(1, `hsla(${p.hue},70%,40%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        // inner bright core
+        ctx.globalAlpha = p.opacity * 0.9;
+        ctx.fillStyle = `hsla(${p.hue + 20},100%,95%,0.9)`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'spark') {
+        ctx.strokeStyle = `hsla(${p.hue},100%,80%,${p.opacity})`;
+        ctx.lineWidth = p.size * 0.7;
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `hsla(${p.hue},100%,70%,0.8)`;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x - p.speedX * 4, p.y - p.speedY * 3);
+        ctx.stroke();
+      } else {
+        // twinkling star cross
+        ctx.fillStyle = `hsla(${p.hue},80%,90%,0.95)`;
+        const s = p.size;
+        ctx.fillRect(p.x - s * 0.12, p.y - s * 1.4, s * 0.24, s * 2.8);
+        ctx.fillRect(p.x - s * 1.4, p.y - s * 0.12, s * 2.8, s * 0.24);
+        const gs = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, s * 1.8);
+        gs.addColorStop(0, `hsla(${p.hue},90%,90%,0.4)`);
+        gs.addColorStop(1, `hsla(${p.hue},80%,70%,0)`);
+        ctx.fillStyle = gs;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, s * 1.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+};
+
+// Cancel existing particle loops before re-rendering
+const _particleAnimIds = {};
+
+function initIslandParticles(canvas, biomeId) {
+  const cfg = BIOME_PARTICLES[biomeId];
+  if (!cfg || !canvas) return;
+  // Cancel previous loop for this biome if any
+  if (_particleAnimIds[biomeId]) cancelAnimationFrame(_particleAnimIds[biomeId]);
+  const ctx = canvas.getContext('2d');
+  const cw = canvas.width, ch = canvas.height;
+  const particles = Array.from({ length: cfg.count }, () => cfg.create(cw, ch));
+  function tick() {
+    ctx.clearRect(0, 0, cw, ch);
+    particles.forEach(p => { cfg.update(p, cw, ch); cfg.draw(ctx, p); });
+    _particleAnimIds[biomeId] = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function initAllIslandParticles() {
+  Object.keys(BIOME_DEFS).forEach(id => {
+    initIslandParticles(document.getElementById(`ipc-${id}`), id);
+  });
+}
+
+// ── BIOME-SPECIFIC EXTRA HTML GENERATORS ────────────────────────
+
+function _biomeAmbient(b) {
+  if (b.id === 'tundra') {
+    return `<div class="inode-aurora-wrap" aria-hidden="true">
+      <div class="inode-aurora-ribbon" style="--ar-col:rgba(80,220,200,.18);--ar-dur:5.5s;--ar-delay:0s;top:20%;"></div>
+      <div class="inode-aurora-ribbon" style="--ar-col:rgba(100,180,255,.14);--ar-dur:7s;--ar-delay:-2s;top:34%;"></div>
+      <div class="inode-aurora-ribbon" style="--ar-col:rgba(60,240,180,.10);--ar-dur:6.2s;--ar-delay:-1.3s;top:48%;"></div>
+    </div>`;
+  }
+  if (b.id === 'volcano') {
+    return `<div class="inode-heat-haze" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'jungle') {
+    return `<div class="inode-mist-layer" style="--mist-col:rgba(50,160,50,.18)" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'forest') {
+    return `<div class="inode-magic-ring" aria-hidden="true">
+      <div class="inode-rune-ring" style="--rr-col:rgba(139,92,246,.5);--rr-size:82%;animation-delay:0s"></div>
+      <div class="inode-rune-ring" style="--rr-col:rgba(167,139,250,.35);--rr-size:94%;animation-delay:-2.8s"></div>
+    </div>`;
+  }
+  return '';
+}
+
+function _biomeCapOverlay(b) {
+  if (b.id === 'tundra') {
+    return `<div class="inode-frost-overlay" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'volcano') {
+    return `<div class="inode-lava-crack inode-lava-crack-1" aria-hidden="true"></div>
+            <div class="inode-lava-crack inode-lava-crack-2" aria-hidden="true"></div>
+            <div class="inode-lava-crack inode-lava-crack-3" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'jungle') {
+    return `<div class="inode-canopy-shimmer" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'forest') {
+    return `<div class="inode-arcane-shimmer" aria-hidden="true"></div>`;
+  }
+  return '';
+}
+
+function _biomeCliffFX(b) {
+  if (b.id === 'tundra') {
+    // Icicles hanging from the bottom of the cap into the cliff top
+    const icicles = Array.from({ length: 9 }, (_, i) => {
+      const h = 14 + (i % 3) * 9;
+      const l = 5 + i * 11;
+      return `<div class="inode-icicle" style="left:${l}%;height:${h}px;animation-delay:${(i * 0.3).toFixed(1)}s"></div>`;
+    }).join('');
+    return `<div class="inode-icicle-row" aria-hidden="true">${icicles}</div>`;
+  }
+  if (b.id === 'volcano') {
+    // Lava vein cracks glowing in the cliff
+    return `<div class="inode-lava-vein inode-lv-a" aria-hidden="true"></div>
+            <div class="inode-lava-vein inode-lv-b" aria-hidden="true"></div>
+            <div class="inode-lava-vein inode-lv-c" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'jungle') {
+    // Hanging vines down the cliff face
+    const vines = Array.from({ length: 7 }, (_, i) => {
+      const h = 40 + (i % 4) * 22;
+      const l = 6 + i * 13;
+      return `<div class="inode-vine" style="left:${l}%;height:${h}px;animation-delay:${(i * 0.45).toFixed(2)}s"></div>`;
+    }).join('');
+    return `<div class="inode-vine-row" aria-hidden="true">${vines}</div>`;
+  }
+  if (b.id === 'forest') {
+    // Crystal formations + arcane rune marks on cliff
+    return `<div class="inode-crystal-row" aria-hidden="true">
+      <div class="inode-crystal" style="left:12%;height:28px;animation-delay:0s"></div>
+      <div class="inode-crystal" style="left:28%;height:20px;animation-delay:-.8s"></div>
+      <div class="inode-crystal" style="left:48%;height:32px;animation-delay:-1.6s"></div>
+      <div class="inode-crystal" style="left:65%;height:22px;animation-delay:-.4s"></div>
+      <div class="inode-crystal" style="left:80%;height:26px;animation-delay:-2.1s"></div>
+    </div>`;
+  }
+  return '';
+}
+
+function _biomeBaseGlow(b, tipW, tipH) {
+  const glowMap = {
+    tundra: 'radial-gradient(ellipse at 50% 50%, rgba(80,210,240,.55) 0%, rgba(34,211,238,.25) 40%, transparent 80%)',
+    volcano: 'radial-gradient(ellipse at 50% 80%, rgba(255,80,0,.80) 0%, rgba(230,50,0,.50) 35%, transparent 80%)',
+    jungle: 'radial-gradient(ellipse at 50% 50%, rgba(30,200,80,.50) 0%, rgba(16,185,129,.22) 45%, transparent 80%)',
+    forest: 'radial-gradient(ellipse at 50% 50%, rgba(160,80,255,.65) 0%, rgba(139,92,246,.30) 40%, transparent 80%)',
+  };
+  return `<div class="inode-base-glow" style="background:${glowMap[b.id]}" aria-hidden="true"></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ENHANCED buildIslandHTML
+// ═══════════════════════════════════════════════════════════════
+
 function buildIslandHTML(b) {
   const pos = ISLAND_POSITIONS[b.id];
   const ter = ISLAND_TERRAIN[b.id];
   const w = pos.w;
-  const capH = Math.round(w * 0.44);  // terrain cap height
-  const cliffH = Math.round(w * 0.38); // cliff body height
-  const tipH = Math.round(w * 0.12);   // bottom tip
+  const capH = Math.round(w * 0.44);
+  const cliffH = Math.round(w * 0.38);
+  const tipH = Math.round(w * 0.12);
+  const totalIslandH = capH + cliffH + tipH;
+
+  // Canvas is oversized so particles can fly above and around the island
+  const cvW = w + 180, cvH = totalIslandH + 280;
+  const cvLeft = -90, cvTop = -140;
 
   const capGrad = `radial-gradient(ellipse at 40% 35%, ${ter.capColors[0]} 0%, ${ter.capColors[1]} 55%, ${ter.capColors[2]} 100%)`;
   const cliffGrad = `linear-gradient(180deg, ${ter.cliffColors[0]} 0%, ${ter.cliffColors[1]} 35%, ${ter.cliffColors[2]} 70%, ${ter.cliffColors[3]} 100%)`;
 
-  const decoHtml = ter.deco.map(d =>
-    `<span class="inode-deco-item" style="left:${d.x}%;top:${d.y}%;font-size:${d.s}px">${d.e}</span>`
+  const decoHtml = ter.deco.map((d, i) =>
+    `<span class="inode-deco-item" style="left:${d.x}%;top:${d.y}%;font-size:${d.s}px;animation-delay:${(i * 0.55).toFixed(2)}s">${d.e}</span>`
   ).join('');
 
   const starsHtml = '⭐'.repeat(b.difficulty) +
     `<span style="opacity:.22">${'⭐'.repeat(5 - b.difficulty)}</span>`;
 
-  return `
-  <div class="island-node" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
-       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex}">
+  const shadowGlow = `0 0 ${Math.round(w * 0.35)}px ${Math.round(w * 0.10)}px ${b.color}28`;
+  const nodeGlow = b.id === 'volcano'
+    ? `0 0 40px 8px rgba(255,80,0,.18), 0 0 80px 16px rgba(200,40,0,.10)`
+    : b.id === 'tundra'
+      ? `0 0 40px 8px rgba(34,211,238,.15), 0 0 80px 16px rgba(100,220,255,.08)`
+      : b.id === 'jungle'
+        ? `0 0 40px 8px rgba(16,185,129,.15), 0 0 80px 16px rgba(30,200,80,.08)`
+        : `0 0 40px 8px rgba(139,92,246,.18), 0 0 80px 16px rgba(120,60,240,.10)`;
 
-    <!-- terrain cap -->
-    <div class="inode-cap" style="width:${w}px;height:${capH}px;background:${capGrad};border-color:${ter.rimColor}">
+  return `
+  <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
+       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color};filter:drop-shadow(0 0 0 transparent)">
+
+    <!-- ── PARTICLE CANVAS (absolute, behind nothing) ── -->
+    <canvas class="inode-particles" id="ipc-${b.id}"
+            width="${cvW}" height="${cvH}"
+            style="width:${cvW}px;height:${cvH}px;top:${cvTop}px;left:${cvLeft}px"></canvas>
+
+    <!-- ── AMBIENT BIOME FX (aurora / heat-haze / mist / rune rings) ── -->
+    ${_biomeAmbient(b)}
+
+    <!-- ── TERRAIN CAP ── -->
+    <div class="inode-cap" style="width:${w}px;height:${capH}px;background:${capGrad};border-color:${ter.rimColor};box-shadow:0 6px 0 rgba(0,0,0,.22),0 12px 30px rgba(0,0,0,.28),inset 0 10px 20px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.25),${nodeGlow}">
       <div class="inode-cap-shine"></div>
+      ${_biomeCapOverlay(b)}
       <div class="inode-deco-wrap">${decoHtml}</div>
     </div>
 
-    <!-- cliff body — trapezoidal rock face -->
+    <!-- ── CLIFF BODY ── -->
     <div class="inode-cliff-body" style="width:${Math.round(w * .84)}px;height:${cliffH}px;background:${cliffGrad};margin-left:${Math.round(w * .08)}px">
       <div class="inode-cliff-stripe" style="background:${ter.cliffStripe}"></div>
       <div class="inode-cliff-stripe" style="left:20%;background:${ter.cliffStripe}"></div>
       <div class="inode-cliff-stripe" style="left:40%;background:${ter.cliffStripe}"></div>
       <div class="inode-cliff-stripe" style="left:62%;background:${ter.cliffStripe}"></div>
       <div class="inode-cliff-stripe" style="left:80%;background:${ter.cliffStripe}"></div>
-      <!-- horizontal crack lines -->
       <div class="inode-crack" style="top:30%;background:rgba(0,0,0,.18)"></div>
       <div class="inode-crack" style="top:62%;background:rgba(0,0,0,.14)"></div>
+      ${_biomeCliffFX(b)}
     </div>
 
-    <!-- bottom tip — tapered pointed base -->
-    <div class="inode-cliff-tip" style="width:${Math.round(w * .52)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .24)}px"></div>
+    <!-- ── BOTTOM TIP ── -->
+    <div class="inode-cliff-tip" style="width:${Math.round(w * .52)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .24)}px">
+      ${_biomeBaseGlow(b, Math.round(w * .52), tipH)}
+    </div>
 
-    <!-- ground shadow -->
-    <div class="inode-shadow" style="width:${Math.round(w * .62)}px;margin-left:${Math.round(w * .19)}px"></div>
+    <!-- ── FLOATING SHADOW (tinted by biome) ── -->
+    <div class="inode-shadow" style="width:${Math.round(w * .62)}px;margin-left:${Math.round(w * .19)}px;box-shadow:${shadowGlow}"></div>
 
-    <!-- nameplate -->
+    <!-- ── NAMEPLATE ── -->
     <div class="inode-nameplate" style="--biome-col:${b.color}">
       <span class="inode-np-icon">${b.icon}</span>
       <span class="inode-np-name">${b.name}</span>
+      <span class="inode-np-tagline">${b.tagline}</span>
       <span class="inode-np-stars">${starsHtml}</span>
     </div>
   </div>`;
@@ -872,20 +1342,27 @@ function renderIslandCards() {
   const grid = document.getElementById('island-grid');
   grid.className = 'island-scene';
 
-  // Clouds at varied heights & speeds
-  const cloudData = [
-    { t: 6, l: 3, sx: 1.4, sy: 0.9, dur: 28, delay: 0 },
-    { t: 18, l: 22, sx: 0.8, sy: 0.7, dur: 22, delay: -8 },
-    { t: 3, l: 44, sx: 1.1, sy: 0.8, dur: 35, delay: -15 },
-    { t: 22, l: 60, sx: 0.7, sy: 0.6, dur: 20, delay: -5 },
-    { t: 8, l: 78, sx: 1.3, sy: 1.0, dur: 30, delay: -20 },
-    { t: 30, l: 10, sx: 0.6, sy: 0.5, dur: 18, delay: -10 },
-    { t: 14, l: 85, sx: 0.9, sy: 0.8, dur: 25, delay: -3 },
-    { t: 35, l: 50, sx: 0.5, sy: 0.5, dur: 16, delay: -12 },
+  // Background atmospheric wisps (dark, subtle)
+  const wispData = [
+    { t: 12, l: 8, w: 320, h: 80, op: 0.06, dur: 18, delay: 0 },
+    { t: 38, l: 45, w: 260, h: 60, op: 0.05, dur: 22, delay: -7 },
+    { t: 60, l: 20, w: 400, h: 90, op: 0.07, dur: 26, delay: -13 },
+    { t: 72, l: 68, w: 280, h: 70, op: 0.05, dur: 20, delay: -5 },
   ];
-  const clouds = cloudData.map(c =>
-    `<div class="isc-cloud" style="top:${c.t}%;left:${c.l}%;transform:scaleX(${c.sx}) scaleY(${c.sy});animation-duration:${c.dur}s;animation-delay:${c.delay}s"></div>`
+  const wisps = wispData.map(w =>
+    `<div class="isc-wisp" style="top:${w.t}%;left:${w.l}%;width:${w.w}px;height:${w.h}px;opacity:${w.op};animation-duration:${w.dur}s;animation-delay:${w.delay}s"></div>`
   ).join('');
+
+  // Distant background stars
+  const starCount = 55;
+  const stars = Array.from({ length: starCount }, (_, i) => {
+    const x = Math.random() * 100, y = Math.random() * 65;
+    const s = Math.random() * 2.2 + 0.5;
+    const op = Math.random() * 0.5 + 0.15;
+    const dur = 2.5 + Math.random() * 4;
+    const del = -(Math.random() * dur);
+    return `<div class="isc-star" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(1)}px;height:${s.toFixed(1)}px;opacity:${op.toFixed(2)};animation-duration:${dur.toFixed(1)}s;animation-delay:${del.toFixed(1)}s"></div>`;
+  }).join('');
 
   const islands = Object.values(BIOME_DEFS).map(buildIslandHTML).join('');
 
@@ -905,7 +1382,9 @@ function renderIslandCards() {
     </div>
   </div>`;
 
-  grid.innerHTML = clouds + islands + detailPanel;
+  grid.innerHTML = wisps + stars + islands + detailPanel;
+  // Kick off all canvas particle engines after DOM is populated
+  requestAnimationFrame(initAllIslandParticles);
 }
 
 window.islandNodeClick = function (biomeId) {

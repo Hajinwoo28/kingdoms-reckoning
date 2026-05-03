@@ -4047,33 +4047,30 @@ body {
   flex-direction: column;
   overflow: hidden;
   z-index: 80;
-  /* Sky-to-ground gradient */
+  /* Dark moody background matching mode-select atmosphere */
   background:
-    radial-gradient(ellipse at 25% 2%, rgba(255, 255, 255, .60) 0%, transparent 28%),
-    radial-gradient(ellipse at 80% 4%, rgba(255, 255, 255, .45) 0%, transparent 22%),
-    radial-gradient(ellipse at 5% 35%, rgba(255, 255, 255, .20) 0%, transparent 18%),
+    radial-gradient(ellipse at 50% 0%, rgba(160, 60, 20, .55) 0%, transparent 52%),
+    radial-gradient(ellipse at 20% 100%, rgba(80, 20, 10, .35) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 100%, rgba(60, 15, 8, .30) 0%, transparent 38%),
     linear-gradient(180deg,
-      #2E9BD8 0%,
-      #52B8E8 8%,
-      #82CEED 20%,
-      #ADEAF7 38%,
-      #C8F0F8 52%,
-      #D2F2D8 64%,
-      #A8E880 76%,
-      #68CC30 86%,
-      #42AA18 100%);
+      #1a0a04 0%,
+      #1e0c06 15%,
+      #160808 35%,
+      #100505 60%,
+      #0b0303 80%,
+      #080202 100%);
 }
 
-/* Faint horizon haze */
+/* Faint ambient glow layer */
 .is-bg-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(ellipse at 50% 100%, rgba(60, 160, 30, .30) 0%, transparent 45%),
-    radial-gradient(ellipse at 15% 96%, rgba(50, 140, 20, .22) 0%, transparent 28%),
-    radial-gradient(ellipse at 85% 98%, rgba(45, 130, 18, .20) 0%, transparent 26%);
+    radial-gradient(ellipse at 50% 10%, rgba(200, 80, 20, .12) 0%, transparent 45%),
+    radial-gradient(ellipse at 15% 50%, rgba(120, 30, 10, .08) 0%, transparent 30%),
+    radial-gradient(ellipse at 85% 50%, rgba(100, 25, 8, .08) 0%, transparent 28%);
 }
 
 /* ── HEADER (sits on top of scene) ── */
@@ -4090,14 +4087,14 @@ body {
   align-items: center;
   gap: 16px;
   padding: 16px 22px 12px;
-  background: linear-gradient(180deg, rgba(20, 70, 130, .50) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, .55) 0%, transparent 100%);
   pointer-events: all;
 }
 
 .is-back-btn {
-  background: rgba(255, 255, 255, .60);
-  border: 1.5px solid rgba(120, 190, 240, .65);
-  color: #0C3565;
+  background: rgba(30, 10, 5, .70);
+  border: 1.5px solid rgba(200, 80, 20, .50);
+  color: #F0C842;
   font-family: 'Cinzel', serif;
   font-size: 11px;
   font-weight: 700;
@@ -4109,14 +4106,14 @@ body {
   transition: all .18s;
   flex-shrink: 0;
   backdrop-filter: blur(10px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, .14);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .40);
 }
 
 .is-back-btn:hover {
-  background: rgba(255, 255, 255, .86);
-  color: #062852;
-  border-color: rgba(70, 155, 225, .90);
-  box-shadow: 0 4px 18px rgba(70, 155, 225, .28);
+  background: rgba(60, 20, 8, .88);
+  color: #FFD966;
+  border-color: rgba(220, 100, 30, .80);
+  box-shadow: 0 4px 18px rgba(200, 80, 20, .35);
 }
 
 .is-title-wrap {
@@ -4130,15 +4127,15 @@ body {
   font-size: 10px;
   letter-spacing: .22em;
   color: rgba(255, 130, 20, .90);
-  text-shadow: 0 1px 8px rgba(255, 255, 255, .65);
+  text-shadow: 0 1px 8px rgba(200, 80, 20, .65);
 }
 
 .is-title {
   font-family: 'Cinzel Decorative', cursive;
   font-size: clamp(17px, 3vw, 28px);
   font-weight: 900;
-  color: #fff;
-  text-shadow: 0 2px 12px rgba(0, 55, 120, .60), 0 0 32px rgba(140, 220, 255, .45);
+  color: #F0C842;
+  text-shadow: 0 2px 12px rgba(160, 60, 10, .80), 0 0 32px rgba(240, 160, 30, .40);
   margin: 0;
   line-height: 1.1;
 }
@@ -4146,7 +4143,7 @@ body {
 .is-sub {
   font-family: 'EB Garamond', serif;
   font-size: 13px;
-  color: rgba(220, 242, 255, .72);
+  color: rgba(240, 200, 120, .72);
   margin: 0;
 }
 
@@ -4174,12 +4171,12 @@ body {
   width: 180px;
   height: 58px;
   border-radius: 58px;
-  background: rgba(255, 255, 255, .88);
+  background: rgba(80, 30, 10, .18);
   box-shadow:
-    40px -14px 0 12px rgba(255, 255, 255, .80),
-    72px -6px 0 6px rgba(255, 255, 255, .70),
-    22px 0 0 18px rgba(255, 255, 255, .65),
-    98px -8px 0 8px rgba(255, 255, 255, .55);
+    40px -14px 0 12px rgba(80, 30, 10, .14),
+    72px -6px 0 6px rgba(80, 30, 10, .12),
+    22px 0 0 18px rgba(80, 30, 10, .10),
+    98px -8px 0 8px rgba(80, 30, 10, .08);
   animation: cloud-drift linear infinite;
   transform-origin: left center;
 }
@@ -4194,6 +4191,49 @@ body {
   }
 }
 
+/* ── BACKGROUND SCENE STARS ── */
+.isc-star {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  animation: star-twinkle ease-in-out infinite;
+}
+
+@keyframes star-twinkle {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: var(--base-op, .3);
+  }
+
+  50% {
+    transform: scale(1.6);
+    opacity: 1;
+  }
+}
+
+/* ── ATMOSPHERIC WISPS (background) ── */
+.isc-wisp {
+  position: absolute;
+  border-radius: 60%;
+  background: radial-gradient(ellipse, rgba(180, 100, 50, .6) 0%, transparent 70%);
+  filter: blur(28px);
+  pointer-events: none;
+  animation: wisp-drift ease-in-out infinite alternate;
+}
+
+@keyframes wisp-drift {
+  from {
+    transform: translateX(-40px) scaleX(0.92);
+  }
+
+  to {
+    transform: translateX(40px) scaleX(1.08);
+  }
+}
+
 /* ── ISLAND NODE — positioned absolute in fixed scene ── */
 .island-node {
   position: absolute;
@@ -4203,7 +4243,7 @@ body {
   cursor: pointer;
   animation: float-island var(--float-dur, 5s) ease-in-out infinite;
   animation-delay: var(--float-delay, 0s);
-  transition: filter .22s, transform .22s;
+  transition: filter .28s, transform .28s;
   -webkit-tap-highlight-color: transparent;
   transform-origin: center bottom;
   /* ensure float animation doesn't interfere with absolute position */
@@ -4356,40 +4396,561 @@ body {
   border: 1.5px solid rgba(255, 255, 255, .18);
   border-top-color: var(--biome-col, rgba(255, 255, 255, .45));
   border-radius: 26px;
-  padding: 6px 20px 5px;
+  padding: 7px 22px 6px;
   box-shadow:
-    0 4px 18px rgba(0, 0, 0, .38),
-    0 0 14px var(--biome-col, rgba(255, 255, 255, .08));
-  transition: all .22s;
+    0 4px 18px rgba(0, 0, 0, .50),
+    0 0 20px var(--biome-col, rgba(255, 255, 255, .08));
+  transition: all .28s;
   pointer-events: none;
-  min-width: 120px;
+  min-width: 130px;
 }
 
 .island-node:hover .inode-nameplate {
-  background: rgba(8, 18, 40, .88);
-  border-color: var(--biome-col, rgba(255, 255, 255, .55));
-  box-shadow: 0 6px 26px rgba(0, 0, 0, .48), 0 0 22px var(--biome-col, rgba(255, 255, 255, .18));
+  background: rgba(4, 8, 22, .94);
+  border-color: var(--biome-col, rgba(255, 255, 255, .70));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .60), 0 0 30px var(--biome-col, rgba(255, 255, 255, .22));
+  transform: translateY(-3px);
 }
 
 .inode-np-icon {
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1;
+  filter: drop-shadow(0 0 6px var(--biome-col, rgba(255, 255, 255, .5)));
 }
 
 .inode-np-name {
   font-family: 'Cinzel', serif;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: .11em;
+  letter-spacing: .12em;
   color: #fff;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, .65);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .80),
+    0 0 12px var(--biome-col, rgba(255, 255, 255, .2));
   white-space: nowrap;
+}
+
+.inode-np-tagline {
+  font-family: 'EB Garamond', serif;
+  font-size: 9.5px;
+  font-style: italic;
+  color: rgba(200, 200, 220, .60);
+  letter-spacing: .04em;
+  white-space: nowrap;
+  margin-top: -1px;
 }
 
 .inode-np-stars {
   font-size: 11px;
   letter-spacing: 1px;
   line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 200, 0, .5));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARTICLE CANVAS
+════════════════════════════════════════════════════════════════ */
+.inode-particles {
+  position: absolute;
+  pointer-events: none;
+  z-index: 25;
+  image-rendering: pixelated;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BIOME — BASE GLOW (tip underside)
+════════════════════════════════════════════════════════════════ */
+.inode-base-glow {
+  position: absolute;
+  inset: -4px -30%;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(10px);
+  z-index: 2;
+  animation: base-glow-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes base-glow-pulse {
+
+  0%,
+  100% {
+    opacity: .75;
+    transform: scaleX(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleX(1.08);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BIOME — HOVER SUPER-GLOW  (per island class)
+════════════════════════════════════════════════════════════════ */
+.inode-biome-tundra:hover {
+  filter: brightness(1.14) drop-shadow(0 0 22px rgba(34, 211, 238, .60)) drop-shadow(0 12px 30px rgba(0, 0, 0, .50));
+}
+
+.inode-biome-volcano:hover {
+  filter: brightness(1.14) drop-shadow(0 0 22px rgba(249, 115, 22, .65)) drop-shadow(0 12px 30px rgba(0, 0, 0, .50));
+}
+
+.inode-biome-jungle:hover {
+  filter: brightness(1.14) drop-shadow(0 0 22px rgba(16, 185, 129, .60)) drop-shadow(0 12px 30px rgba(0, 0, 0, .50));
+}
+
+.inode-biome-forest:hover {
+  filter: brightness(1.14) drop-shadow(0 0 22px rgba(139, 92, 246, .65)) drop-shadow(0 12px 30px rgba(0, 0, 0, .50));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TUNDRA — AURORA RIBBONS
+════════════════════════════════════════════════════════════════ */
+.inode-aurora-wrap {
+  position: absolute;
+  inset: -60px -50px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.inode-aurora-ribbon {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 20px;
+  background: var(--ar-col, rgba(80, 220, 200, .12));
+  border-radius: 50%;
+  filter: blur(12px);
+  animation: aurora-wave var(--ar-dur, 6s) ease-in-out infinite;
+  animation-delay: var(--ar-delay, 0s);
+}
+
+@keyframes aurora-wave {
+
+  0%,
+  100% {
+    transform: scaleX(0.88) translateX(-8%) skewX(-4deg);
+    opacity: .6;
+  }
+
+  33% {
+    transform: scaleX(1.05) translateX(5%) skewX(6deg);
+    opacity: 1;
+  }
+
+  66% {
+    transform: scaleX(0.96) translateX(-3%) skewX(2deg);
+    opacity: .8;
+  }
+}
+
+/* ── TUNDRA frost overlay on cap ── */
+.inode-frost-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255, 255, 255, .22) 0%, transparent 40%),
+    radial-gradient(ellipse at 75% 25%, rgba(200, 240, 255, .18) 0%, transparent 35%),
+    linear-gradient(160deg, rgba(200, 240, 255, .10) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── TUNDRA icicles ── */
+.inode-icicle-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  z-index: 10;
+}
+
+.inode-icicle {
+  position: absolute;
+  top: 0;
+  width: 5px;
+  background: linear-gradient(180deg,
+      rgba(200, 240, 255, .90) 0%,
+      rgba(140, 210, 240, .70) 55%,
+      rgba(100, 190, 230, .20) 100%);
+  border-radius: 0 0 3px 3px;
+  filter: drop-shadow(0 2px 4px rgba(80, 200, 240, .45));
+  animation: icicle-drip 3.5s ease-in-out infinite;
+}
+
+@keyframes icicle-drip {
+
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: .85;
+  }
+
+  60% {
+    transform: scaleY(1.06);
+    opacity: 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VOLCANO — HEAT HAZE + LAVA CRACKS + LAVA VEINS
+════════════════════════════════════════════════════════════════ */
+.inode-heat-haze {
+  position: absolute;
+  bottom: 100%;
+  left: 10%;
+  right: 10%;
+  height: 100px;
+  pointer-events: none;
+  z-index: 5;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 100, 20, .06) 100%);
+  filter: blur(8px);
+  animation: heat-shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes heat-shimmer {
+
+  0%,
+  100% {
+    transform: skewX(0deg) scaleY(1);
+    opacity: .5;
+  }
+
+  25% {
+    transform: skewX(1.5deg) scaleY(1.04);
+    opacity: .8;
+  }
+
+  75% {
+    transform: skewX(-1deg) scaleY(.98);
+    opacity: .6;
+  }
+}
+
+/* Glowing lava surface cracks on cap */
+.inode-lava-crack {
+  position: absolute;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(255, 120, 0, .0) 0%, rgba(255, 180, 20, .9) 50%, rgba(255, 80, 0, .0) 100%);
+  filter: blur(1.5px);
+  animation: lava-glow-crack 2.2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.inode-lava-crack-1 {
+  top: 35%;
+  left: 15%;
+  width: 40%;
+  height: 3px;
+  animation-delay: 0s;
+}
+
+.inode-lava-crack-2 {
+  top: 55%;
+  left: 40%;
+  width: 30%;
+  height: 2px;
+  animation-delay: -.7s;
+  transform: rotate(-6deg);
+}
+
+.inode-lava-crack-3 {
+  top: 25%;
+  left: 60%;
+  width: 22%;
+  height: 3px;
+  animation-delay: -1.4s;
+  transform: rotate(8deg);
+}
+
+@keyframes lava-glow-crack {
+
+  0%,
+  100% {
+    opacity: .55;
+    box-shadow: 0 0 6px 2px rgba(255, 100, 0, .35);
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 14px 4px rgba(255, 150, 20, .70);
+  }
+}
+
+/* Lava veins in cliff face */
+.inode-lava-vein {
+  position: absolute;
+  width: 3px;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(180deg,
+      rgba(255, 100, 0, .0) 0%,
+      rgba(255, 160, 20, .8) 30%,
+      rgba(255, 80, 0, .9) 65%,
+      rgba(200, 40, 0, .6) 90%,
+      rgba(150, 20, 0, .0) 100%);
+  filter: blur(1px);
+  animation: lava-vein-pulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.inode-lv-a {
+  left: 18%;
+  animation-delay: 0s;
+}
+
+.inode-lv-b {
+  left: 48%;
+  animation-delay: -.9s;
+}
+
+.inode-lv-c {
+  left: 72%;
+  animation-delay: -1.7s;
+}
+
+@keyframes lava-vein-pulse {
+
+  0%,
+  100% {
+    opacity: .55;
+    box-shadow: 0 0 6px 2px rgba(255, 90, 0, .30);
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 12px 4px rgba(255, 140, 20, .65);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   JUNGLE — CANOPY SHIMMER + MIST + VINES
+════════════════════════════════════════════════════════════════ */
+.inode-canopy-shimmer {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(100, 255, 130, .12) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(60, 220, 80, .10) 0%, transparent 45%);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  animation: canopy-breathe 4s ease-in-out infinite;
+}
+
+@keyframes canopy-breathe {
+
+  0%,
+  100% {
+    opacity: .7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.inode-mist-layer {
+  position: absolute;
+  bottom: -20px;
+  left: -20%;
+  right: -20%;
+  height: 55px;
+  background: var(--mist-col, rgba(50, 160, 50, .15));
+  filter: blur(18px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: mist-drift 5s ease-in-out infinite alternate;
+}
+
+@keyframes mist-drift {
+  from {
+    transform: scaleX(.90) translateX(-8px);
+    opacity: .6;
+  }
+
+  to {
+    transform: scaleX(1.10) translateX(8px);
+    opacity: 1;
+  }
+}
+
+/* Hanging vines on cliff */
+.inode-vine-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.inode-vine {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  background: linear-gradient(180deg,
+      rgba(30, 140, 30, .0) 0%,
+      rgba(40, 160, 40, .80) 20%,
+      rgba(25, 130, 25, .90) 70%,
+      rgba(15, 100, 15, .40) 100%);
+  border-radius: 0 0 2px 2px;
+  animation: vine-sway 3.8s ease-in-out infinite;
+}
+
+@keyframes vine-sway {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+    transform-origin: top center;
+  }
+
+  40% {
+    transform: rotate(2.5deg);
+    transform-origin: top center;
+  }
+
+  70% {
+    transform: rotate(-1.8deg);
+    transform-origin: top center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ENCHANTED FOREST — ARCANE SHIMMER + RUNE RINGS + CRYSTALS
+════════════════════════════════════════════════════════════════ */
+.inode-arcane-shimmer {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 35%, rgba(180, 100, 255, .18) 0%, transparent 45%),
+    radial-gradient(ellipse at 72% 55%, rgba(120, 60, 220, .14) 0%, transparent 40%),
+    linear-gradient(135deg, rgba(100, 40, 200, .08) 0%, transparent 55%);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  animation: arcane-shimmer 5s ease-in-out infinite;
+}
+
+@keyframes arcane-shimmer {
+
+  0%,
+  100% {
+    opacity: .7;
+    filter: hue-rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    filter: hue-rotate(20deg);
+  }
+}
+
+.inode-magic-ring {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 30px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.inode-rune-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--rr-size, 80%);
+  padding-top: calc(var(--rr-size, 80%) * 0.28);
+  border-radius: 50%;
+  border: 1.5px solid var(--rr-col, rgba(139, 92, 246, .4));
+  box-shadow: 0 0 12px 2px var(--rr-col, rgba(139, 92, 246, .2)),
+    inset 0 0 10px 2px var(--rr-col, rgba(139, 92, 246, .1));
+  filter: blur(0.5px);
+  animation: rune-ring-spin 8s linear infinite;
+}
+
+@keyframes rune-ring-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg) scaleY(.25);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg) scaleY(.25);
+  }
+}
+
+/* Crystal formations on cliff */
+.inode-crystal-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.inode-crystal {
+  position: absolute;
+  top: 0;
+  width: 7px;
+  background: linear-gradient(180deg,
+      rgba(200, 150, 255, .90) 0%,
+      rgba(150, 80, 240, .80) 50%,
+      rgba(100, 40, 200, .30) 100%);
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  filter: drop-shadow(0 0 5px rgba(180, 100, 255, .55));
+  animation: crystal-pulse 3s ease-in-out infinite;
+}
+
+@keyframes crystal-pulse {
+
+  0%,
+  100% {
+    opacity: .65;
+    transform: scaleY(1);
+    filter: drop-shadow(0 0 4px rgba(180, 100, 255, .40));
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1.06);
+    filter: drop-shadow(0 0 10px rgba(200, 130, 255, .80));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ENHANCED FLOATING SHADOW (biome glow tint)
+════════════════════════════════════════════════════════════════ */
+.inode-shadow {
+  height: 22px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, .30) 0%, transparent 70%);
+  border-radius: 50%;
+  margin-top: 8px;
+  filter: blur(6px);
+  animation: shadow-breathe 4s ease-in-out infinite;
+}
+
+@keyframes shadow-breathe {
+
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: .75;
+  }
+
+  50% {
+    transform: scaleX(.92);
+    opacity: .55;
+  }
 }
 
 /* ── DETAIL PANEL (modal popup) ── */
