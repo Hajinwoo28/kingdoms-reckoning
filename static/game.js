@@ -1493,7 +1493,17 @@ function getIslandStat(biomeId) {
 
 // ── BACK TO ISLAND SELECT (from in-game settings) ─────────────
 window.confirmBackToIsland = function () {
-  document.getElementById('back-to-island-modal').style.display = 'flex';
+  const modal = document.getElementById('back-to-island-modal');
+  if (G.gameMode === 'story') {
+    modal.querySelector('.modal-crest').textContent = '🗺️';
+    modal.querySelector('.modal-title').textContent = 'Back to Stages?';
+    modal.querySelector('.primary-btn').textContent = '🗺️ Choose Stage';
+  } else {
+    modal.querySelector('.modal-crest').textContent = '🏝️';
+    modal.querySelector('.modal-title').textContent = 'Change Island?';
+    modal.querySelector('.primary-btn').textContent = '🏝️ Choose Island';
+  }
+  modal.style.display = 'flex';
 };
 
 window.closeBackToIslandModal = function () {
@@ -1502,15 +1512,17 @@ window.closeBackToIslandModal = function () {
 
 window.goBackToIsland = function () {
   document.getElementById('back-to-island-modal').style.display = 'none';
-  // Stop any running animation/wave
   G.gameOver = true;
   G.isAnimating = false;
-  // Save current state before leaving
   saveGame();
-  // Switch screens
   document.getElementById('game-section').style.display = 'none';
-  document.getElementById('island-select-section').style.display = 'flex';
-  buildIslandSelect();
+  if (G.gameMode === 'story') {
+    loadStageProgress();
+    showStageSelect();
+  } else {
+    document.getElementById('island-select-section').style.display = 'flex';
+    buildIslandSelect();
+  }
 };
 
 window.selectBiome = function (biomeId) {
@@ -3558,7 +3570,13 @@ function toggleSetting(key) {
   });
   if (key === 'fastMode' && gameSettings.fastMode && !G.isAnimating && !G.gameOver) setTimeout(executeTurn, 300);
 }
-function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+function openSettings() {
+  const backBtn = document.getElementById('settings-back-btn');
+  if (backBtn) {
+    backBtn.textContent = G.gameMode === 'story' ? '🗺️ BACK TO STAGES' : '🏝️ BACK TO ISLAND SELECT';
+  }
+  document.getElementById('settings-modal').style.display = 'flex';
+}
 function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
 
 // ── LEADERBOARD ───────────────────────────────────────────────
