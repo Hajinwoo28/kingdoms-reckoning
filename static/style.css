@@ -7722,7 +7722,6 @@ body {
   .combat-log-scroll,
   .stage-map-scroll {
     -webkit-overflow-scrolling: touch;
-    overflow-scrolling: touch;
   }
 
   /* Remove stuck hover states on touch */
