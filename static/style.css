@@ -6618,3 +6618,647 @@ body {
   justify-content: center;
   margin: 6px 0 10px;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   STORY STAGE TILE THEMES
+   Applies to cells via .stage-N class added by createBoard()
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Shared deco helpers ────────────────────────────────────── */
+.path-deco {
+  position: absolute;
+  font-size: 11px;
+  opacity: 0.45;
+  pointer-events: none;
+  bottom: 2px;
+  right: 3px;
+  z-index: 1;
+  line-height: 1;
+  user-select: none;
+}
+
+.ground-deco {
+  position: absolute;
+  font-size: 13px;
+  opacity: 0.22;
+  pointer-events: none;
+  bottom: 3px;
+  right: 3px;
+  z-index: 1;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ══ STAGE 1 — Goblin's Forest ══════════════════════════════════
+   Deep emerald forest floor, dirt-root path */
+.stage-1.cell {
+  background: linear-gradient(150deg, #2A6B18 0%, #1C5010 45%, #123808 100%);
+  border-color: rgba(60, 140, 30, .5);
+}
+
+.stage-1.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #326020 0%, #204C14 45%, #143010 100%);
+}
+
+.stage-1.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #1E5A10 0%, #144408 45%, #0C2C04 100%);
+}
+
+.stage-1.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #3A6C1A 0%, #285414 45%, #183A0C 100%);
+}
+
+.stage-1.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #284E10 0%, #1A3C0A 45%, #102805 100%);
+}
+
+.stage-1.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #2E6418 0%, #1E4E10 45%, #12340A 100%);
+}
+
+.stage-1.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #48A828 0%, #328018 45%, #1E5408 100%);
+  border-color: rgba(74, 222, 128, .75);
+  box-shadow: inset 0 0 10px rgba(74, 222, 128, .2), 0 0 8px rgba(50, 180, 30, .4);
+}
+
+.stage-1.path-cell {
+  background: linear-gradient(150deg, #7A5228 0%, #5C3C14 45%, #3E2408 100%) !important;
+  border-color: rgba(100, 70, 30, .55) !important;
+}
+
+.stage-1.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #8A5C2C 0%, #6A4218 45%, #482A0A 100%) !important;
+}
+
+.stage-1.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #6C4A1E 0%, #503410 45%, #342008 100%) !important;
+}
+
+.stage-1.path-cell[data-tv="2"] {
+  background: linear-gradient(140deg, #986028 0%, #744820 45%, #502C0E 100%) !important;
+}
+
+.stage-1.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 40%, rgba(80, 50, 10, .15) 40%, rgba(80, 50, 10, .15) 60%),
+    repeating-linear-gradient(75deg, transparent 0%, transparent 70%, rgba(40, 20, 5, .08) 70%, rgba(40, 20, 5, .08) 72%) !important;
+}
+
+.stage-1.base-cell {
+  background: linear-gradient(150deg, #7A5228 0%, #5C3C14 45%, #3E2408 100%) !important;
+  border-color: rgba(74, 222, 128, .55) !important;
+}
+
+.stage-1.can-place {
+  border-color: rgba(74, 222, 128, .6) !important;
+}
+
+/* ══ STAGE 2 — Troll Bridge ═════════════════════════════════════
+   Rocky grey cliff ground, stone-bridge path with water-blue seams */
+.stage-2.cell {
+  background: linear-gradient(150deg, #5A5460 0%, #424048 45%, #2C2A34 100%);
+  border-color: rgba(130, 120, 150, .45);
+}
+
+.stage-2.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #625C6A 0%, #4A4652 45%, #322E3A 100%);
+}
+
+.stage-2.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #504A58 0%, #3A3640 45%, #242230 100%);
+}
+
+.stage-2.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #686070 0%, #504C5C 45%, #383444 100%);
+}
+
+.stage-2.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #464050 0%, #34303C 45%, #22202C 100%);
+}
+
+.stage-2.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #5C5864 0%, #44404E 45%, #2E2C38 100%);
+}
+
+.stage-2.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #807888 0%, #666070 45%, #4A4458 100%);
+  border-color: rgba(167, 139, 250, .75);
+  box-shadow: inset 0 0 10px rgba(167, 139, 250, .2), 0 0 8px rgba(130, 110, 200, .4);
+}
+
+.stage-2.path-cell {
+  background: linear-gradient(150deg, #708090 0%, #505C6A 45%, #384048 100%) !important;
+  border-color: rgba(100, 130, 160, .5) !important;
+  box-shadow: inset 0 4px 8px rgba(30, 80, 120, .25) !important;
+}
+
+.stage-2.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #7A8C9C 0%, #5A6878 45%, #404C58 100%) !important;
+}
+
+.stage-2.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #607080 0%, #445060 45%, #2E3A46 100%) !important;
+}
+
+.stage-2.path-cell[data-tv="2"] {
+  background: linear-gradient(140deg, #6A7C8C 0%, #4C5C6E 45%, #344452 100%) !important;
+}
+
+.stage-2.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 30%, rgba(100, 160, 200, .18) 30%, rgba(100, 160, 200, .18) 35%, transparent 35%, transparent 65%, rgba(100, 160, 200, .18) 65%, rgba(100, 160, 200, .18) 70%),
+    repeating-linear-gradient(0deg, transparent 0%, transparent 45%, rgba(50, 100, 140, .10) 45%, rgba(50, 100, 140, .10) 55%) !important;
+}
+
+.stage-2.base-cell {
+  background: linear-gradient(150deg, #708090 0%, #505C6A 45%, #384048 100%) !important;
+  border-color: rgba(167, 139, 250, .55) !important;
+}
+
+.stage-2.can-place {
+  border-color: rgba(167, 139, 250, .6) !important;
+}
+
+/* ══ STAGE 3 — Dark Vale ════════════════════════════════════════
+   Shadowy dark-purple ground, cracked obsidian path */
+.stage-3.cell {
+  background: linear-gradient(150deg, #2C1840 0%, #1E1030 45%, #120820 100%);
+  border-color: rgba(100, 60, 140, .4);
+}
+
+.stage-3.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #341E4C 0%, #24143A 45%, #160A28 100%);
+}
+
+.stage-3.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #22122E 0%, #180C22 45%, #0E0618 100%);
+}
+
+.stage-3.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #3A2050 0%, #28163C 45%, #180E28 100%);
+}
+
+.stage-3.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #1E1038 0%, #140A28 45%, #0C061C 100%);
+}
+
+.stage-3.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #2E1A44 0%, #201234 45%, #140C24 100%);
+}
+
+.stage-3.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #4A2860 0%, #361C4A 45%, #220E30 100%);
+  border-color: rgba(248, 113, 113, .7);
+  box-shadow: inset 0 0 10px rgba(248, 113, 113, .15), 0 0 8px rgba(200, 60, 80, .35);
+}
+
+.stage-3.path-cell {
+  background: linear-gradient(150deg, #1E1828 0%, #140E1E 45%, #0A0814 100%) !important;
+  border-color: rgba(120, 60, 60, .45) !important;
+}
+
+.stage-3.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #24202E 0%, #1A1422 45%, #100C18 100%) !important;
+}
+
+.stage-3.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #18141E 0%, #0E0C18 45%, #08060E 100%) !important;
+}
+
+.stage-3.path-cell::after {
+  background: repeating-linear-gradient(125deg, transparent 0%, transparent 45%, rgba(180, 60, 60, .12) 45%, rgba(180, 60, 60, .12) 47%, transparent 47%, transparent 53%, rgba(180, 60, 60, .10) 53%, rgba(180, 60, 60, .10) 55%) !important;
+}
+
+.stage-3.base-cell {
+  background: linear-gradient(150deg, #1E1828 0%, #140E1E 45%, #0A0814 100%) !important;
+  border-color: rgba(248, 113, 113, .55) !important;
+}
+
+.stage-3.can-place {
+  border-color: rgba(248, 113, 113, .55) !important;
+}
+
+/* ══ STAGE 4 — Iron Fortress ════════════════════════════════════
+   Cold iron-grey ground, iron-plate path with rivet pattern */
+.stage-4.cell {
+  background: linear-gradient(150deg, #4A5060 0%, #363C4A 45%, #242832 100%);
+  border-color: rgba(96, 165, 250, .35);
+}
+
+.stage-4.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #525868 0%, #3E4454 45%, #2A3040 100%);
+}
+
+.stage-4.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #404858 0%, #2E3444 45%, #1C2230 100%);
+}
+
+.stage-4.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #585E6C 0%, #444A58 45%, #303644 100%);
+}
+
+.stage-4.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #3C424E 0%, #2A3040 45%, #1A1E2A 100%);
+}
+
+.stage-4.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #4C5260 0%, #383E4C 45%, #262C38 100%);
+}
+
+.stage-4.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #6A7080 0%, #545A6C 45%, #3A4054 100%);
+  border-color: rgba(96, 165, 250, .75);
+  box-shadow: inset 0 0 10px rgba(96, 165, 250, .2), 0 0 8px rgba(60, 120, 220, .4);
+}
+
+.stage-4.path-cell {
+  background: linear-gradient(150deg, #38404C 0%, #272E38 45%, #181D24 100%) !important;
+  border-color: rgba(96, 165, 250, .4) !important;
+}
+
+.stage-4.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #404850 0%, #303844 45%, #20272E 100%) !important;
+}
+
+.stage-4.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #303840 0%, #22282E 45%, #14181E 100%) !important;
+}
+
+.stage-4.path-cell::after {
+  background:
+    repeating-linear-gradient(90deg, transparent 0%, transparent 48%, rgba(96, 165, 250, .14) 48%, rgba(96, 165, 250, .14) 52%),
+    repeating-linear-gradient(0deg, transparent 0%, transparent 48%, rgba(96, 165, 250, .10) 48%, rgba(96, 165, 250, .10) 52%) !important;
+}
+
+.stage-4.base-cell {
+  background: linear-gradient(150deg, #38404C 0%, #272E38 45%, #181D24 100%) !important;
+  border-color: rgba(96, 165, 250, .6) !important;
+}
+
+.stage-4.can-place {
+  border-color: rgba(96, 165, 250, .6) !important;
+}
+
+/* ══ STAGE 5 — Dragon's Approach ════════════════════════════════
+   Scorched ashen ground, charred path with heat-crack glow */
+.stage-5.cell {
+  background: linear-gradient(150deg, #3C2010 0%, #2A1408 45%, #1A0C04 100%);
+  border-color: rgba(251, 146, 60, .35);
+}
+
+.stage-5.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #482614 0%, #341A0A 45%, #200E04 100%);
+}
+
+.stage-5.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #301A0C 0%, #200E06 45%, #120804 100%);
+}
+
+.stage-5.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #4E2C18 0%, #3A1E0C 45%, #241208 100%);
+}
+
+.stage-5.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #281406 0%, #1A0C04 45%, #0E0602 100%);
+}
+
+.stage-5.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #402010 0%, #2E1608 45%, #1C0C04 100%);
+}
+
+.stage-5.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #6A3020 0%, #502018 45%, #34100C 100%);
+  border-color: rgba(251, 146, 60, .75);
+  box-shadow: inset 0 0 12px rgba(251, 146, 60, .2), 0 0 10px rgba(220, 80, 20, .45);
+}
+
+.stage-5.path-cell {
+  background: linear-gradient(150deg, #2A1E14 0%, #1C140C 45%, #100C08 100%) !important;
+  border-color: rgba(251, 146, 60, .4) !important;
+  box-shadow: inset 0 0 8px rgba(251, 80, 10, .1) !important;
+}
+
+.stage-5.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #30221A 0%, #201810 45%, #140E0A 100%) !important;
+}
+
+.stage-5.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #241A10 0%, #18100C 45%, #0E0A06 100%) !important;
+}
+
+.stage-5.path-cell::after {
+  background: repeating-linear-gradient(35deg, transparent 0%, transparent 45%, rgba(251, 146, 60, .1) 45%, rgba(251, 146, 60, .1) 46%, transparent 46%, transparent 54%, rgba(251, 146, 60, .08) 54%, rgba(251, 146, 60, .08) 55%) !important;
+}
+
+.stage-5.base-cell {
+  background: linear-gradient(150deg, #2A1E14 0%, #1C140C 45%, #100C08 100%) !important;
+  border-color: rgba(251, 146, 60, .6) !important;
+}
+
+.stage-5.can-place {
+  border-color: rgba(251, 146, 60, .6) !important;
+}
+
+/* ══ STAGE 6 — Scorched Plains ══════════════════════════════════
+   Volcanic black with ember veins, lava-crack path glowing orange */
+.stage-6.cell {
+  background: linear-gradient(150deg, #200A00 0%, #160600 45%, #0C0300 100%);
+  border-color: rgba(251, 191, 36, .3);
+}
+
+.stage-6.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #2A0E00 0%, #1C0800 45%, #100400 100%);
+}
+
+.stage-6.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #180600 0%, #100400 45%, #080200 100%);
+}
+
+.stage-6.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #2E1000 0%, #200A00 45%, #140500 100%);
+}
+
+.stage-6.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #140500 0%, #0E0300 45%, #060100 100%);
+}
+
+.stage-6.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #240C00 0%, #180800 45%, #0E0400 100%);
+}
+
+.stage-6.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #4A1600 0%, #360E00 45%, #220800 100%);
+  border-color: rgba(251, 191, 36, .75);
+  box-shadow: inset 0 0 14px rgba(251, 100, 10, .2), 0 0 10px rgba(200, 80, 0, .5);
+}
+
+.stage-6.path-cell {
+  background: linear-gradient(150deg, #381200 0%, #260C00 45%, #180700 100%) !important;
+  border-color: rgba(251, 120, 10, .45) !important;
+  box-shadow: inset 0 0 10px rgba(251, 80, 0, .15) !important;
+}
+
+.stage-6.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #421600 0%, #2E1000 45%, #1C0A00 100%) !important;
+}
+
+.stage-6.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #2C0E00 0%, #1E0900 45%, #120600 100%) !important;
+}
+
+.stage-6.path-cell::after {
+  background: repeating-linear-gradient(55deg, transparent 0%, transparent 40%, rgba(251, 120, 10, .18) 40%, rgba(251, 120, 10, .18) 42%, transparent 42%, transparent 58%, rgba(251, 80, 0, .14) 58%, rgba(251, 80, 0, .14) 60%) !important;
+}
+
+.stage-6.base-cell {
+  background: linear-gradient(150deg, #381200 0%, #260C00 45%, #180700 100%) !important;
+  border-color: rgba(251, 191, 36, .6) !important;
+}
+
+.stage-6.can-place {
+  border-color: rgba(251, 191, 36, .55) !important;
+}
+
+/* ══ STAGE 7 — The Siege ════════════════════════════════════════
+   Castle courtyard stone, flagstone path with mortar lines */
+.stage-7.cell {
+  background: linear-gradient(150deg, #6A5A44 0%, #524432 45%, #382E20 100%);
+  border-color: rgba(232, 121, 249, .3);
+}
+
+.stage-7.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #706040 0%, #584C2E 45%, #3C3020 100%);
+}
+
+.stage-7.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #60503A 0%, #483C28 45%, #302818 100%);
+}
+
+.stage-7.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #786848 0%, #5E5038 45%, #423828 100%);
+}
+
+.stage-7.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #564630 0%, #403622 45%, #2A2216 100%);
+}
+
+.stage-7.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #6C5C3E 0%, #524430 45%, #382C1E 100%);
+}
+
+.stage-7.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #907C60 0%, #706050 45%, #504438 100%);
+  border-color: rgba(232, 121, 249, .7);
+  box-shadow: inset 0 0 10px rgba(232, 121, 249, .15), 0 0 8px rgba(180, 60, 200, .35);
+}
+
+.stage-7.path-cell {
+  background: linear-gradient(150deg, #8A7C6C 0%, #6C5E50 45%, #4C4234 100%) !important;
+  border-color: rgba(200, 180, 140, .5) !important;
+}
+
+.stage-7.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #948470 0%, #746458 45%, #544A3A 100%) !important;
+}
+
+.stage-7.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #7E7060 0%, #605448 45%, #423C30 100%) !important;
+}
+
+.stage-7.path-cell::after {
+  background:
+    repeating-linear-gradient(90deg, transparent 0%, transparent 49%, rgba(50, 40, 20, .22) 49%, rgba(50, 40, 20, .22) 51%),
+    repeating-linear-gradient(0deg, transparent 0%, transparent 49%, rgba(50, 40, 20, .18) 49%, rgba(50, 40, 20, .18) 51%) !important;
+}
+
+.stage-7.base-cell {
+  background: linear-gradient(150deg, #8A7C6C 0%, #6C5E50 45%, #4C4234 100%) !important;
+  border-color: rgba(232, 121, 249, .55) !important;
+}
+
+.stage-7.can-place {
+  border-color: rgba(232, 121, 249, .55) !important;
+}
+
+/* ══ STAGE 8 — The Void Gate ════════════════════════════════════
+   Deep space-void purple, ethereal shimmer path */
+.stage-8.cell {
+  background: linear-gradient(150deg, #0E0A28 0%, #080620 45%, #040314 100%);
+  border-color: rgba(34, 211, 238, .3);
+}
+
+.stage-8.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #140E30 0%, #0C0A24 45%, #060518 100%);
+}
+
+.stage-8.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #0A081E 0%, #060418 45%, #030210 100%);
+}
+
+.stage-8.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #180C34 0%, #100A28 45%, #080619 100%);
+}
+
+.stage-8.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #08061A 0%, #050415 45%, #02030E 100%);
+}
+
+.stage-8.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #10082C 0%, #0A0622 45%, #060418 100%);
+}
+
+.stage-8.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #241648 0%, #180E38 45%, #0C0824 100%);
+  border-color: rgba(34, 211, 238, .8);
+  box-shadow: inset 0 0 14px rgba(34, 211, 238, .2), 0 0 10px rgba(20, 180, 220, .45);
+}
+
+.stage-8.path-cell {
+  background: linear-gradient(150deg, #1A1240 0%, #100C30 45%, #080820 100%) !important;
+  border-color: rgba(34, 211, 238, .4) !important;
+  box-shadow: inset 0 0 10px rgba(34, 211, 238, .12) !important;
+}
+
+.stage-8.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #20164A 0%, #161038 45%, #0C0A26 100%) !important;
+}
+
+.stage-8.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #140E36 0%, #0C0A28 45%, #06061A 100%) !important;
+}
+
+.stage-8.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 44%, rgba(34, 211, 238, .14) 44%, rgba(34, 211, 238, .14) 56%),
+    repeating-linear-gradient(0deg, transparent 0%, transparent 44%, rgba(34, 211, 238, .08) 44%, rgba(34, 211, 238, .08) 56%) !important;
+}
+
+.stage-8.base-cell {
+  background: linear-gradient(150deg, #1A1240 0%, #100C30 45%, #080820 100%) !important;
+  border-color: rgba(34, 211, 238, .6) !important;
+}
+
+.stage-8.can-place {
+  border-color: rgba(34, 211, 238, .6) !important;
+}
+
+/* ══ STAGE 9 — End of Days ══════════════════════════════════════
+   Apocalyptic blood-red cracked earth, molten-seam path */
+.stage-9.cell {
+  background: linear-gradient(150deg, #2E0606 0%, #200404 45%, #140202 100%);
+  border-color: rgba(248, 113, 113, .35);
+}
+
+.stage-9.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #3A0808 0%, #280606 45%, #1A0304 100%);
+}
+
+.stage-9.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #220404 0%, #160202 45%, #0E0202 100%);
+}
+
+.stage-9.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #3E0A0A 0%, #2C0606 45%, #1C0404 100%);
+}
+
+.stage-9.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #1C0404 0%, #120202 45%, #0A0101 100%);
+}
+
+.stage-9.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #320606 0%, #220404 45%, #160303 100%);
+}
+
+.stage-9.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #6A1010 0%, #501010 45%, #360808 100%);
+  border-color: rgba(248, 113, 113, .8);
+  box-shadow: inset 0 0 14px rgba(248, 60, 60, .2), 0 0 10px rgba(200, 30, 30, .5);
+}
+
+.stage-9.path-cell {
+  background: linear-gradient(150deg, #3C0C0C 0%, #280808 45%, #1A0606 100%) !important;
+  border-color: rgba(248, 80, 80, .4) !important;
+  box-shadow: inset 0 0 10px rgba(240, 40, 40, .1) !important;
+}
+
+.stage-9.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #480E0E 0%, #320A0A 45%, #220606 100%) !important;
+}
+
+.stage-9.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #300A0A 0%, #200606 45%, #140404 100%) !important;
+}
+
+.stage-9.path-cell::after {
+  background: repeating-linear-gradient(45deg, transparent 0%, transparent 43%, rgba(248, 60, 60, .16) 43%, rgba(248, 60, 60, .16) 45%, transparent 45%, transparent 55%, rgba(248, 40, 40, .12) 55%, rgba(248, 40, 40, .12) 57%) !important;
+}
+
+.stage-9.base-cell {
+  background: linear-gradient(150deg, #3C0C0C 0%, #280808 45%, #1A0606 100%) !important;
+  border-color: rgba(248, 113, 113, .6) !important;
+}
+
+.stage-9.can-place {
+  border-color: rgba(248, 80, 80, .55) !important;
+}
+
+/* ══ STAGE 10 — Kingdom's Reckoning ═════════════════════════════
+   Royal golden ground, gilded-marble path */
+.stage-10.cell {
+  background: linear-gradient(150deg, #4A3C08 0%, #342A04 45%, #201A02 100%);
+  border-color: rgba(240, 200, 66, .35);
+}
+
+.stage-10.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #564610 0%, #3E3008 45%, #281E04 100%);
+}
+
+.stage-10.cell[data-tv="1"] {
+  background: linear-gradient(148deg, #3A2C04 0%, #2A1E02 45%, #180E01 100%);
+}
+
+.stage-10.cell[data-tv="2"] {
+  background: linear-gradient(160deg, #5E4A0C 0%, #46360A 45%, #2E2206 100%);
+}
+
+.stage-10.cell[data-tv="3"] {
+  background: linear-gradient(145deg, #302602 0%, #221A01 45%, #140E01 100%);
+}
+
+.stage-10.cell[data-tv="4"] {
+  background: linear-gradient(155deg, #4C3E0A 0%, #362C06 45%, #222002 100%);
+}
+
+.stage-10.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(150deg, #7A6218 0%, #5E4A0E 45%, #403006 100%);
+  border-color: rgba(240, 200, 66, .8);
+  box-shadow: inset 0 0 14px rgba(240, 200, 66, .2), 0 0 10px rgba(200, 160, 20, .5);
+}
+
+.stage-10.path-cell {
+  background: linear-gradient(150deg, #C8A838 0%, #A08020 45%, #786010 100%) !important;
+  border-color: rgba(240, 200, 66, .55) !important;
+  box-shadow: inset 0 0 12px rgba(240, 200, 66, .18) !important;
+}
+
+.stage-10.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #D4B440 0%, #AC8C28 45%, #826816 100%) !important;
+}
+
+.stage-10.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #B89C30 0%, #927818 45%, #6A580C 100%) !important;
+}
+
+.stage-10.path-cell::after {
+  background:
+    repeating-linear-gradient(90deg, transparent 0%, transparent 47%, rgba(240, 200, 66, .25) 47%, rgba(240, 200, 66, .25) 53%),
+    repeating-linear-gradient(0deg, transparent 0%, transparent 47%, rgba(240, 200, 66, .20) 47%, rgba(240, 200, 66, .20) 53%) !important;
+}
+
+.stage-10.base-cell {
+  background: linear-gradient(150deg, #C8A838 0%, #A08020 45%, #786010 100%) !important;
+  border-color: rgba(240, 200, 66, .7) !important;
+  box-shadow: 0 0 20px rgba(240, 200, 66, .4) !important;
+}
+
+.stage-10.can-place {
+  border-color: rgba(240, 200, 66, .65) !important;
+}

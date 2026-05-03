@@ -1493,17 +1493,7 @@ function getIslandStat(biomeId) {
 
 // ── BACK TO ISLAND SELECT (from in-game settings) ─────────────
 window.confirmBackToIsland = function () {
-  const modal = document.getElementById('back-to-island-modal');
-  if (G.gameMode === 'story') {
-    modal.querySelector('.modal-crest').textContent = '🗺️';
-    modal.querySelector('.modal-title').textContent = 'Back to Stages?';
-    modal.querySelector('.primary-btn').textContent = '🗺️ Choose Stage';
-  } else {
-    modal.querySelector('.modal-crest').textContent = '🏝️';
-    modal.querySelector('.modal-title').textContent = 'Change Island?';
-    modal.querySelector('.primary-btn').textContent = '🏝️ Choose Island';
-  }
-  modal.style.display = 'flex';
+  document.getElementById('back-to-island-modal').style.display = 'flex';
 };
 
 window.closeBackToIslandModal = function () {
@@ -1519,13 +1509,8 @@ window.goBackToIsland = function () {
   saveGame();
   // Switch screens
   document.getElementById('game-section').style.display = 'none';
-  if (G.gameMode === 'story') {
-    loadStageProgress();
-    showStageSelect();
-  } else {
-    document.getElementById('island-select-section').style.display = 'flex';
-    buildIslandSelect();
-  }
+  document.getElementById('island-select-section').style.display = 'flex';
+  buildIslandSelect();
 };
 
 window.selectBiome = function (biomeId) {
@@ -1635,14 +1620,51 @@ function initQuests() {
   renderQuests();
 }
 
+// ── STAGE TILE THEMES ─────────────────────────────────────────
+// Per-stage decorative emoji for path cells and ground cells
+const STAGE_TILE_THEMES = [
+  // Stage 1 — Goblin's Forest
+  { groundClass: 'stage-1', pathDeco: ['🌿', '🍂', '🌱', '🍃'], groundDeco: ['🌲', '🌳', '🍄', '🌿'] },
+  // Stage 2 — Troll Bridge
+  { groundClass: 'stage-2', pathDeco: ['🪨', '💧', '🪨', '🌊'], groundDeco: ['🪨', '🧌', '🪨', '💦'] },
+  // Stage 3 — Dark Vale
+  { groundClass: 'stage-3', pathDeco: ['💀', '🌑', '⚔️', '💀'], groundDeco: ['🌑', '⚔️', '🕷️', '🌑'] },
+  // Stage 4 — Iron Fortress
+  { groundClass: 'stage-4', pathDeco: ['⚙️', '🔩', '⚙️', '🛡️'], groundDeco: ['⚙️', '🔩', '🛡️', '⚙️'] },
+  // Stage 5 — Dragon's Approach
+  { groundClass: 'stage-5', pathDeco: ['🔥', '💥', '🔥', '🌋'], groundDeco: ['🔥', '💥', '🐉', '🔥'] },
+  // Stage 6 — Scorched Plains
+  { groundClass: 'stage-6', pathDeco: ['🌋', '🔥', '💀', '🌋'], groundDeco: ['🌋', '🔥', '💥', '🌑'] },
+  // Stage 7 — The Siege
+  { groundClass: 'stage-7', pathDeco: ['🏰', '🪨', '⚔️', '🏰'], groundDeco: ['🏰', '⚔️', '🛡️', '🪨'] },
+  // Stage 8 — The Void Gate
+  { groundClass: 'stage-8', pathDeco: ['🌀', '⭐', '✨', '🌀'], groundDeco: ['🌀', '⭐', '💫', '✨'] },
+  // Stage 9 — End of Days
+  { groundClass: 'stage-9', pathDeco: ['☄️', '💀', '🔥', '☄️'], groundDeco: ['☄️', '💀', '🌑', '🔥'] },
+  // Stage 10 — Kingdom's Reckoning
+  { groundClass: 'stage-10', pathDeco: ['👑', '⚔️', '✨', '👑'], groundDeco: ['👑', '⚔️', '💎', '✨'] },
+];
+
 // ── BOARD CREATION ────────────────────────────────────────────
 function createBoard() {
   boardEl.innerHTML = '';
+  const stageTheme = (G.gameMode === 'story' && G.storyStage)
+    ? STAGE_TILE_THEMES[G.storyStage - 1] : null;
+
+  let tileIdx = 0;
   for (let y = 0; y < GRID_H; y++) {
     for (let x = 0; x < GRID_W; x++) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       cell.dataset.x = x; cell.dataset.y = y;
+
+      // Apply stage theme class + tile variation
+      if (stageTheme) {
+        cell.classList.add(stageTheme.groundClass);
+        cell.dataset.tv = tileIdx % 5;
+      }
+      tileIdx++;
+
       if (y === PATH_ROW) {
         if (x === GRID_W - 1) {
           cell.classList.add('base-cell');
@@ -1662,8 +1684,22 @@ function createBoard() {
           cell.appendChild(castle);
         } else {
           cell.classList.add('path-cell');
+          // Add themed path decoration emoji on every 3rd path cell
+          if (stageTheme && x % 3 === 1) {
+            const deco = document.createElement('span');
+            deco.className = 'path-deco';
+            deco.textContent = stageTheme.pathDeco[x % stageTheme.pathDeco.length];
+            cell.appendChild(deco);
+          }
         }
       } else {
+        // Add rare ground decorations on a few non-path cells
+        if (stageTheme && (x * 7 + y * 3) % 11 === 0) {
+          const gdeco = document.createElement('span');
+          gdeco.className = 'ground-deco';
+          gdeco.textContent = stageTheme.groundDeco[(x + y) % stageTheme.groundDeco.length];
+          cell.appendChild(gdeco);
+        }
         cell.addEventListener('mouseenter', () => hoverCell(x, y));
         cell.addEventListener('mouseleave', clearHighlights);
         cell.addEventListener('click', () => handleCellClick(x, y));
@@ -3522,17 +3558,7 @@ function toggleSetting(key) {
   });
   if (key === 'fastMode' && gameSettings.fastMode && !G.isAnimating && !G.gameOver) setTimeout(executeTurn, 300);
 }
-function openSettings() {
-  const backBtn = document.getElementById('settings-back-btn');
-  if (backBtn) {
-    if (G.gameMode === 'story') {
-      backBtn.textContent = '🗺️ BACK TO STAGES';
-    } else {
-      backBtn.textContent = '🏝️ BACK TO ISLAND SELECT';
-    }
-  }
-  document.getElementById('settings-modal').style.display = 'flex';
-}
+function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
 function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
 
 // ── LEADERBOARD ───────────────────────────────────────────────
