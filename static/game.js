@@ -634,6 +634,48 @@ window.islandNodeClick = function (biomeId) {
      <div style="font-size:12px;opacity:.6;font-family:EB Garamond,serif">${b.reward.desc}</div></div>`;
   document.getElementById('isc-d-lore').textContent = b.loreText;
 
+  // ── Per-island best stats ──────────────────────────────────
+  const stat = getIslandStat(biomeId);
+  let statsEl = document.getElementById('isc-d-stats');
+  if (!statsEl) {
+    statsEl = document.createElement('div');
+    statsEl.id = 'isc-d-stats';
+    statsEl.style.cssText = `
+      display:flex; gap:10px; justify-content:center; margin:10px 0 2px;
+    `;
+    // Insert before the enter button
+    const enterBtn = document.getElementById('isc-d-enter-btn');
+    enterBtn.parentNode.insertBefore(statsEl, enterBtn);
+  }
+  if (stat.bestWave > 0 || stat.bestScore > 0) {
+    statsEl.style.display = 'flex';
+    statsEl.innerHTML = `
+      <div style="
+        background:rgba(0,0,0,.35);border:1px solid ${b.border || 'rgba(255,255,255,.2)'};
+        border-radius:10px;padding:8px 14px;text-align:center;flex:1;
+      ">
+        <div style="font-size:18px">🌊</div>
+        <div style="font-family:Cinzel,serif;font-size:16px;font-weight:700;color:${b.color}">${stat.bestWave}</div>
+        <div style="font-size:9px;letter-spacing:1.5px;opacity:.55;font-family:Cinzel,serif;margin-top:2px">BEST WAVE</div>
+      </div>
+      <div style="
+        background:rgba(0,0,0,.35);border:1px solid ${b.border || 'rgba(255,255,255,.2)'};
+        border-radius:10px;padding:8px 14px;text-align:center;flex:1;
+      ">
+        <div style="font-size:18px">🏆</div>
+        <div style="font-family:Cinzel,serif;font-size:16px;font-weight:700;color:#F0C842">${stat.bestScore.toLocaleString()}</div>
+        <div style="font-size:9px;letter-spacing:1.5px;opacity:.55;font-family:Cinzel,serif;margin-top:2px">BEST SCORE</div>
+      </div>`;
+  } else {
+    statsEl.style.display = 'flex';
+    statsEl.innerHTML = `
+      <div style="
+        width:100%;background:rgba(0,0,0,.2);border:1px dashed rgba(255,255,255,.15);
+        border-radius:10px;padding:8px;text-align:center;
+        font-family:EB Garamond,serif;font-size:13px;font-style:italic;opacity:.5;
+      ">No runs yet — be the first to conquer this island!</div>`;
+  }
+
   const enterBtn = document.getElementById('isc-d-enter-btn');
   enterBtn.style.background = `linear-gradient(135deg,${b.color},${b.colorDark})`;
   enterBtn.onclick = () => { closeIslandDetail(); selectBiome(biomeId); };
@@ -648,6 +690,51 @@ window.islandNodeClick = function (biomeId) {
 window.closeIslandDetail = function () {
   const panel = document.getElementById('isc-detail-panel');
   if (panel) panel.style.display = 'none';
+};
+
+// ── PER-ISLAND STAT PERSISTENCE ───────────────────────────────
+function _islandKey(id) { return `kr_istat_${id}`; }
+
+function saveIslandStat(biomeId, wave, score) {
+  try {
+    const key = _islandKey(biomeId);
+    const prev = getIslandStat(biomeId);
+    const next = {
+      bestWave: Math.max(prev.bestWave, wave || 0),
+      bestScore: Math.max(prev.bestScore, score || 0),
+    };
+    localStorage.setItem(key, JSON.stringify(next));
+  } catch (_) { }
+}
+
+function getIslandStat(biomeId) {
+  try {
+    const raw = localStorage.getItem(_islandKey(biomeId));
+    if (raw) return JSON.parse(raw);
+  } catch (_) { }
+  return { bestWave: 0, bestScore: 0 };
+}
+
+// ── BACK TO ISLAND SELECT (from in-game settings) ─────────────
+window.confirmBackToIsland = function () {
+  document.getElementById('back-to-island-modal').style.display = 'flex';
+};
+
+window.closeBackToIslandModal = function () {
+  document.getElementById('back-to-island-modal').style.display = 'none';
+};
+
+window.goBackToIsland = function () {
+  document.getElementById('back-to-island-modal').style.display = 'none';
+  // Stop any running animation/wave
+  G.gameOver = true;
+  G.isAnimating = false;
+  // Save current state before leaving
+  saveGame();
+  // Switch screens
+  document.getElementById('game-section').style.display = 'none';
+  document.getElementById('island-select-section').style.display = 'flex';
+  buildIslandSelect();
 };
 
 window.selectBiome = function (biomeId) {
@@ -707,66 +794,6 @@ window.goBackToMenu = function () {
   showModeSelect();
 };
 
-// ── FLOATING ISLAND ENVIRONMENT ───────────────────────────────
-function createCloudLayer() {
-  const wrapper = document.querySelector('.board-wrapper');
-  if (!wrapper) return;
-  wrapper.querySelectorAll('.game-cloud').forEach(c => c.remove());
-  const clouds = [
-    { w: 80, h: 22, top: '8%', dur: 28, delay: 0, opacity: .55 },
-    { w: 110, h: 28, top: '3%', dur: 35, delay: -8, opacity: .45 },
-    { w: 65, h: 18, top: '14%', dur: 22, delay: -14, opacity: .5 },
-    { w: 95, h: 24, top: '6%', dur: 32, delay: -20, opacity: .4 },
-    { w: 55, h: 16, top: '18%', dur: 26, delay: -5, opacity: .35 },
-  ];
-  clouds.forEach(cfg => {
-    const c = document.createElement('div');
-    c.className = 'game-cloud';
-    c.style.cssText = `width:${cfg.w}px;height:${cfg.h}px;top:${cfg.top};opacity:${cfg.opacity};animation-duration:${cfg.dur}s;animation-delay:${cfg.delay}s;`;
-    wrapper.appendChild(c);
-  });
-}
-
-function createMagicParticles() {
-  const wrapper = document.querySelector('.board-wrapper');
-  if (!wrapper) return;
-  wrapper.querySelectorAll('.magic-particle').forEach(p => p.remove());
-  const colors = ['mp-gold', 'mp-cyan', 'mp-pink', 'mp-green', 'mp-white'];
-  for (let i = 0; i < 12; i++) {
-    const p = document.createElement('div');
-    const size = 4 + Math.random() * 5;
-    const left = 5 + Math.random() * 90;
-    const bottom = Math.random() * 30;
-    const dur = 3 + Math.random() * 4;
-    const delay = Math.random() * 6;
-    p.className = `magic-particle ${colors[i % colors.length]}`;
-    p.style.cssText = `width:${size}px;height:${size}px;left:${left}%;bottom:${bottom}%;animation-duration:${dur}s;animation-delay:${delay}s;`;
-    wrapper.appendChild(p);
-  }
-}
-
-function createBoardCliffDecor() {
-  const wrapper = document.querySelector('.board-wrapper');
-  if (!wrapper) return;
-  wrapper.querySelectorAll('.board-cliff-body, .board-shadow').forEach(e => e.remove());
-  const cliff = document.createElement('div');
-  cliff.className = 'board-cliff-body';
-  wrapper.appendChild(cliff);
-  const shadow = document.createElement('div');
-  shadow.className = 'board-shadow';
-  wrapper.appendChild(shadow);
-}
-
-function applyBiomeBoardClass() {
-  const wrapper = document.querySelector('.board-wrapper');
-  if (!wrapper) return;
-  // Remove any existing biome class
-  wrapper.className = wrapper.className.replace(/\bboard-biome-\S+/g, '').trim();
-  if (G.gameMode === 'extreme' && G.activeBiome) {
-    wrapper.classList.add(`board-biome-${G.activeBiome.id}`);
-  }
-}
-
 function restartGame(loginRestore = false) {
   document.getElementById('game-over-modal').style.display = 'none';
   const skin = CASTLE_SKINS[G.castleSkin] || CASTLE_SKINS.Wooden;
@@ -800,11 +827,6 @@ function restartGame(loginRestore = false) {
   setPhase('planning');
   showWavePreview();
   updateModeBadge();
-  // Floating island environment effects
-  applyBiomeBoardClass();
-  createCloudLayer();
-  createMagicParticles();
-  createBoardCliffDecor();
 }
 
 function initQuests() {
@@ -823,11 +845,6 @@ function createBoard() {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       cell.dataset.x = x; cell.dataset.y = y;
-      // Extreme mode: apply biome-specific tile class + deterministic per-tile variant
-      if (G.gameMode === 'extreme' && G.activeBiome) {
-        cell.classList.add(`biome-${G.activeBiome.id}`);
-        cell.dataset.tv = (x * 3 + y * 7 + x * y) % 5;
-      }
       if (y === PATH_ROW) {
         if (x === GRID_W - 1) {
           cell.classList.add('base-cell');
@@ -1119,7 +1136,7 @@ async function executeTurn() {
 
   // Spawn next enemy from queue
   if (G.spawnIndex < G.enemiesToSpawn.length) {
-    G.enemies.push({ ...G.enemiesToSpawn[G.spawnIndex] });
+    G.enemies.push({ ...G.enemiesToSpawn[G.spawnIndex], justSpawned: true });
     G.spawnIndex++;
   }
 
@@ -1202,6 +1219,7 @@ async function executeTurn() {
   if (!G.frozenTurn) {
     const toRemove = [];
     G.enemies.forEach(e => {
+      if (e.justSpawned) { e.justSpawned = false; return; } // don't move on spawn turn — prevents 1-tile gap
       if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; return; }
       // Troll regeneration
       if (e.def.ability === 'regen' && e.hp < e.maxHp && e.hp > 0) {
@@ -1302,6 +1320,7 @@ async function waveComplete() {
 
   G.gold += goldRwd + biomeGold; G.diamonds += diaRwd + biomeDia; G.score += waveScore;
   if (G.wave > G.bestWave) G.bestWave = G.wave;
+  if (G.activeBiome) saveIslandStat(G.activeBiome.id, G.wave, G.score);
   updateQuestProgress('wave');
   updateDailyProgress('wave', G.wave);
 
@@ -1349,6 +1368,7 @@ function closeWaveComplete() {
 async function handleGameOver() {
   G.gameOver = true;
   if (G.wave > G.bestWave) G.bestWave = G.wave;
+  if (G.activeBiome) saveIslandStat(G.activeBiome.id, G.wave, G.score);
   setPhase('combat');
   document.getElementById('go-wave').textContent = G.wave;
   document.getElementById('go-waveval').textContent = G.wave;
