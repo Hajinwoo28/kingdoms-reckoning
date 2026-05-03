@@ -1,12 +1,12 @@
 {
   "name": "Kingdom's Reckoning",
-  "short_name": "KR",
-  "description": "Tactical Tower Defense — Defend your kingdom!",
+  "short_name": "Kingdoms",
+  "description": "Tactical Turn-Based Tower Defense",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
-  "background_color": "#0f0a28",
-  "theme_color": "#ffd700",
+  "background_color": "#07061A",
+  "theme_color": "#07061A",
   "icons": [
     { "src": "/static/icon-72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any maskable" },
     { "src": "/static/icon-96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any maskable" },
