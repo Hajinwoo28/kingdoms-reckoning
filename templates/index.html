@@ -177,6 +177,30 @@
     </div>
   </div>
 
+  <!-- STAGE COMPLETE MODAL -->
+  <div id="stage-complete-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box success-box sc-box">
+      <div class="sc-banner">
+        <span class="sc-stage-icon" id="sc-stage-icon">🌲</span>
+        <div class="sc-badge">STAGE COMPLETE!</div>
+      </div>
+      <h2 class="modal-title success-title" id="sc-stage-num">Stage 1</h2>
+      <p class="sc-stage-name" id="sc-stage-name">Goblin's Forest</p>
+      <div class="sc-stars-row" id="sc-stars">
+        <span style="color:#F0C842;font-size:32px">★</span>
+        <span style="color:#F0C842;font-size:32px">★</span>
+        <span style="color:#F0C842;font-size:32px">★</span>
+      </div>
+      <div class="modal-rewards" id="sc-rewards"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;width:100%">
+        <button class="btn-modal primary-btn" id="sc-next-btn" style="width:100%">▶ Next Stage</button>
+        <button class="btn-modal secondary-btn" style="width:100%" onclick="closeStageComplete()">🗺️ Stage
+          Select</button>
+        <button class="btn-modal share-btn" style="width:100%" onclick="shareScoreCard()">📤 SHARE MY RUN</button>
+      </div>
+    </div>
+  </div>
+
   <!-- GAME OVER -->
   <div id="game-over-modal" class="modal-overlay" style="display:none">
     <div class="modal-box danger-box">
@@ -388,6 +412,36 @@
             <button class="btn-auth-secondary" onclick="register()">ENLIST</button>
           </div>
           <p id="auth-message" class="auth-msg"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE SELECT (Story Mode) -->
+    <div id="stage-select-section" class="stage-select-screen" style="display:none">
+      <div class="ss-bg-overlay"></div>
+      <div class="ss-content">
+        <div class="ss-header">
+          <button class="ss-back-btn" onclick="backFromStageSelect()">← Back</button>
+          <div class="ss-title-wrap">
+            <div class="ss-pre">⚔️ STORY MODE</div>
+            <h1 class="ss-title">Choose Your Stage</h1>
+            <p class="ss-sub">Complete all 3 waves to clear a stage and unlock the next</p>
+          </div>
+        </div>
+        <div class="stage-map-scroll">
+          <div class="stage-map-path" id="stage-grid"></div>
+        </div>
+      </div>
+      <!-- Stage Detail Panel -->
+      <div class="stage-detail-panel" id="stage-detail-panel" style="display:none">
+        <div class="sd-inner">
+          <button class="sd-close" onclick="closeStageDetail()">✕</button>
+          <div class="sd-art" id="sd-art">🌲</div>
+          <div class="sd-name" id="sd-name">Stage Name</div>
+          <div class="sd-tag" id="sd-tag">Tagline</div>
+          <div class="sd-stars-row" id="sd-stars"></div>
+          <div class="sd-waves-list" id="sd-waves"></div>
+          <button class="sd-enter-btn" id="sd-enter-btn" onclick="enterSelectedStage()">▶ ENTER STAGE</button>
         </div>
       </div>
     </div>

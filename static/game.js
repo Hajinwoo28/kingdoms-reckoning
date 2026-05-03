@@ -185,6 +185,121 @@ const BIOME_ENEMY_DEFS = {
 // Merge biome enemies into main ENEMY_DEFS
 Object.assign(ENEMY_DEFS, BIOME_ENEMY_DEFS);
 
+// ── STORY STAGES ─────────────────────────────────────────────
+// Each stage has exactly 3 waves: Normal → Fierce → BOSS
+const STORY_STAGES = [
+  {
+    id: 1, name: "Goblin's Forest", icon: '🌲', art: '🌿',
+    tagline: 'Where the shadows first stir...',
+    color: '#4ADE80', colorDark: '#166534', bg: 'rgba(74,222,128,.12)',
+    border: 'rgba(74,222,128,.45)', hpScale: 0.75,
+    waves: [
+      { label: 'Normal', desc: 'Light scouting party', enemies: [{ type: 'goblin', count: 4 }] },
+      { label: 'Fierce', desc: 'The raid begins', enemies: [{ type: 'goblin', count: 7 }, { type: 'orc', count: 2 }] },
+      { label: 'BOSS 💀', desc: 'Forest Warlord arrives', enemies: [{ type: 'goblin', count: 5 }, { type: 'orc', count: 3 }, { type: 'troll', count: 1 }], boss: true },
+    ],
+  },
+  {
+    id: 2, name: 'Troll Bridge', icon: '🌉', art: '🧌',
+    tagline: 'None shall pass — unless you stop them.',
+    color: '#A78BFA', colorDark: '#5B21B6', bg: 'rgba(167,139,250,.12)',
+    border: 'rgba(167,139,250,.45)', hpScale: 0.9,
+    waves: [
+      { label: 'Normal', desc: 'Bridge patrols advance', enemies: [{ type: 'goblin', count: 5 }, { type: 'orc', count: 3 }] },
+      { label: 'Fierce', desc: 'Trolls charge the gate', enemies: [{ type: 'orc', count: 5 }, { type: 'troll', count: 2 }] },
+      { label: 'BOSS 💀', desc: 'The Bridge Tyrant rises', enemies: [{ type: 'orc', count: 5 }, { type: 'troll', count: 3 }], boss: true },
+    ],
+  },
+  {
+    id: 3, name: 'Dark Vale', icon: '⚔️', art: '🌑',
+    tagline: 'The knights of darkness march at dusk.',
+    color: '#F87171', colorDark: '#7F1D1D', bg: 'rgba(248,113,113,.12)',
+    border: 'rgba(248,113,113,.45)', hpScale: 1.0,
+    waves: [
+      { label: 'Normal', desc: 'Orc vanguard spills in', enemies: [{ type: 'orc', count: 5 }, { type: 'troll', count: 2 }] },
+      { label: 'Fierce', desc: 'Knights join the assault', enemies: [{ type: 'orc', count: 5 }, { type: 'troll', count: 2 }, { type: 'knight', count: 1 }] },
+      { label: 'BOSS 💀', desc: 'The Dark Vale Champion', enemies: [{ type: 'troll', count: 3 }, { type: 'knight', count: 2 }], boss: true },
+    ],
+  },
+  {
+    id: 4, name: 'Iron Fortress', icon: '🏯', art: '⚔️',
+    tagline: 'Armored legions pour from the gates.',
+    color: '#60A5FA', colorDark: '#1E3A5F', bg: 'rgba(96,165,250,.12)',
+    border: 'rgba(96,165,250,.45)', hpScale: 1.1,
+    waves: [
+      { label: 'Normal', desc: 'Knight patrols march', enemies: [{ type: 'orc', count: 4 }, { type: 'knight', count: 2 }] },
+      { label: 'Fierce', desc: 'Iron ranks advance', enemies: [{ type: 'knight', count: 3 }, { type: 'troll', count: 3 }] },
+      { label: 'BOSS 💀', desc: 'The Iron Warlord!', enemies: [{ type: 'knight', count: 4 }, { type: 'troll', count: 2 }, { type: 'orc', count: 4 }], boss: true },
+    ],
+  },
+  {
+    id: 5, name: "Dragon's Approach", icon: '🐉', art: '🔥',
+    tagline: 'The sky darkens. Wings blot out the sun.',
+    color: '#FB923C', colorDark: '#7C2D12', bg: 'rgba(251,146,60,.12)',
+    border: 'rgba(251,146,60,.45)', hpScale: 1.2,
+    waves: [
+      { label: 'Normal', desc: 'Heavy knights close in', enemies: [{ type: 'knight', count: 4 }, { type: 'troll', count: 3 }] },
+      { label: 'Fierce', desc: 'Dragons scout ahead', enemies: [{ type: 'knight', count: 5 }, { type: 'troll', count: 2 }, { type: 'dragon', count: 1 }] },
+      { label: 'BOSS 💀', desc: 'The Dragon General!', enemies: [{ type: 'dragon', count: 2 }, { type: 'knight', count: 4 }], boss: true },
+    ],
+  },
+  {
+    id: 6, name: 'Scorched Plains', icon: '🌋', art: '💥',
+    tagline: 'Everything burns. Only the strong remain.',
+    color: '#FBBF24', colorDark: '#78350F', bg: 'rgba(251,191,36,.12)',
+    border: 'rgba(251,191,36,.45)', hpScale: 1.35,
+    waves: [
+      { label: 'Normal', desc: 'Scorched horde rushes in', enemies: [{ type: 'orc', count: 6 }, { type: 'knight', count: 3 }, { type: 'troll', count: 2 }] },
+      { label: 'Fierce', desc: 'Dragons rain fire', enemies: [{ type: 'dragon', count: 2 }, { type: 'knight', count: 4 }] },
+      { label: 'BOSS 💀', desc: 'The Inferno Overlord!', enemies: [{ type: 'dragon', count: 2 }, { type: 'knight', count: 5 }, { type: 'troll', count: 3 }], boss: true },
+    ],
+  },
+  {
+    id: 7, name: 'The Siege', icon: '🏰', art: '💀',
+    tagline: 'They besiege the last outer wall.',
+    color: '#E879F9', colorDark: '#701A75', bg: 'rgba(232,121,249,.12)',
+    border: 'rgba(232,121,249,.45)', hpScale: 1.5,
+    waves: [
+      { label: 'Normal', desc: 'Siege forces mobilise', enemies: [{ type: 'dragon', count: 2 }, { type: 'knight', count: 5 }, { type: 'troll', count: 3 }] },
+      { label: 'Fierce', desc: 'The walls are cracking', enemies: [{ type: 'dragon', count: 3 }, { type: 'knight', count: 5 }, { type: 'orc', count: 5 }] },
+      { label: 'BOSS 💀', desc: 'The Siege Commander!', enemies: [{ type: 'dragon', count: 3 }, { type: 'knight', count: 6 }, { type: 'troll', count: 4 }, { type: 'orc', count: 4 }], boss: true },
+    ],
+  },
+  {
+    id: 8, name: 'The Void Gate', icon: '🌀', art: '🌑',
+    tagline: 'A rift tears reality apart. Horrors pour through.',
+    color: '#22D3EE', colorDark: '#0E4D5E', bg: 'rgba(34,211,238,.12)',
+    border: 'rgba(34,211,238,.45)', hpScale: 1.7,
+    waves: [
+      { label: 'Normal', desc: 'Void creatures emerge', enemies: [{ type: 'dragon', count: 3 }, { type: 'knight', count: 5 }, { type: 'troll', count: 4 }] },
+      { label: 'Fierce', desc: 'The gate opens wider', enemies: [{ type: 'dragon', count: 4 }, { type: 'knight', count: 5 }, { type: 'troll', count: 3 }] },
+      { label: 'BOSS 💀', desc: 'The Void Harbinger!', enemies: [{ type: 'dragon', count: 4 }, { type: 'knight', count: 6 }, { type: 'troll', count: 5 }, { type: 'orc', count: 6 }], boss: true },
+    ],
+  },
+  {
+    id: 9, name: 'End of Days', icon: '☄️', art: '💀',
+    tagline: 'The prophecy is at hand. No kingdom survives this.',
+    color: '#F87171', colorDark: '#450A0A', bg: 'rgba(248,113,113,.12)',
+    border: 'rgba(248,113,113,.5)', hpScale: 2.0,
+    waves: [
+      { label: 'Normal', desc: 'Apocalypse vanguard', enemies: [{ type: 'dragon', count: 4 }, { type: 'knight', count: 6 }, { type: 'troll', count: 4 }] },
+      { label: 'Fierce', desc: 'The heavens split open', enemies: [{ type: 'dragon', count: 5 }, { type: 'knight', count: 6 }, { type: 'troll', count: 4 }] },
+      { label: 'BOSS 💀', desc: 'The World-Ender rises!', enemies: [{ type: 'dragon', count: 6 }, { type: 'knight', count: 7 }, { type: 'troll', count: 5 }, { type: 'orc', count: 8 }], boss: true },
+    ],
+  },
+  {
+    id: 10, name: "Kingdom's Reckoning", icon: '👑', art: '⚔️',
+    tagline: 'The final reckoning. Only one will stand.',
+    color: '#F0C842', colorDark: '#78350F', bg: 'rgba(240,200,66,.14)',
+    border: 'rgba(240,200,66,.6)', hpScale: 2.5,
+    waves: [
+      { label: 'Normal', desc: 'The ultimate horde awakens', enemies: [{ type: 'dragon', count: 5 }, { type: 'knight', count: 7 }, { type: 'troll', count: 5 }] },
+      { label: 'Fierce', desc: 'Dragons fill the skies', enemies: [{ type: 'dragon', count: 6 }, { type: 'knight', count: 7 }, { type: 'troll', count: 5 }] },
+      { label: 'BOSS 💀', desc: '⚠️ THE FINAL RECKONING ⚠️', enemies: [{ type: 'dragon', count: 8 }, { type: 'knight', count: 8 }, { type: 'troll', count: 6 }, { type: 'orc', count: 8 }], boss: true },
+    ],
+  },
+];
+
 
 const CASTLE_SKINS = {
   Wooden: { name: 'Wooden Keep', icon: '🏰', cssClass: 'castle-wooden', maxHp: 15, cost: 0, currency: 'free', desc: 'Your starting stronghold.' },
@@ -242,6 +357,15 @@ const DAILY_POOL = [
 
 // ── WAVE COMPOSITIONS ────────────────────────────────────────
 function getWaveEnemies(wave) {
+  // Story mode: use stage-specific wave data
+  if (G.gameMode === 'story' && G.storyStage) {
+    const stage = STORY_STAGES[G.storyStage - 1];
+    if (stage) {
+      const waveData = stage.waves[(G.waveInStage || 1) - 1];
+      if (waveData) return waveData.enemies;
+    }
+  }
+  // Extreme mode and fallback: original progression
   const scale = 1 + (wave - 1) * 0.15;
   if (wave === 1) return [{ type: 'goblin', count: 4 }];
   if (wave === 2) return [{ type: 'goblin', count: 6 }, { type: 'orc', count: 1 }];
@@ -281,7 +405,12 @@ let G = {
   castleOwned: ['Wooden'], towerSkinOwned: ['Basic'],
   quests: [], questProgress: {},
   selectedTowerType: null, selectedTower: null,
-  tempShield: 0
+  tempShield: 0,
+  // Story Mode stage tracking
+  storyStage: 1,    // which stage (1–10)
+  waveInStage: 1,   // wave within stage (1, 2, 3)
+  stagesCleared: [], // array of cleared stage IDs
+  stageStars: {},    // { stageId: stars (0-3) }
 };
 let gameSettings = { music: true, sfx: true, vfx: true, fastMode: false };
 let currentShopTab = 'castles';
@@ -432,13 +561,11 @@ window.selectMode = function (mode) {
     document.getElementById('mode-select-section').style.display = 'none';
     showIslandSelect();
   } else {
+    // Story Mode → show Stage Select first
     G.activeBiome = null;
+    loadStageProgress();
     document.getElementById('mode-select-section').style.display = 'none';
-    document.getElementById('game-section').style.display = 'flex';
-    document.getElementById('display-username').textContent = _pendingUsername;
-    restartGame(false);
-    const seen = localStorage.getItem('kr_tutorial_done');
-    if (!seen) setTimeout(startTutorial, 800);
+    showStageSelect();
   }
 };
 
@@ -447,6 +574,176 @@ function showIslandSelect() {
   screen.style.display = 'flex';
   renderIslandCards();
 }
+
+// ── STORY STAGE SELECT ────────────────────────────────────────
+function loadStageProgress() {
+  try {
+    const raw = localStorage.getItem('kr_story_stages');
+    if (raw) {
+      const d = JSON.parse(raw);
+      G.stagesCleared = d.cleared || [];
+      G.stageStars = d.stars || {};
+    } else {
+      G.stagesCleared = [];
+      G.stageStars = {};
+    }
+  } catch (_) { G.stagesCleared = []; G.stageStars = {}; }
+}
+
+function saveStageProgress() {
+  try {
+    localStorage.setItem('kr_story_stages', JSON.stringify({
+      cleared: G.stagesCleared,
+      stars: G.stageStars,
+    }));
+  } catch (_) { }
+}
+
+function isStageUnlocked(stageId) {
+  if (stageId === 1) return true;
+  return G.stagesCleared.includes(stageId - 1);
+}
+
+function showStageSelect() {
+  const sec = document.getElementById('stage-select-section');
+  sec.style.display = 'flex';
+  renderStageSelect();
+}
+
+function renderStageSelect() {
+  const grid = document.getElementById('stage-grid');
+  grid.innerHTML = '';
+
+  // Build path connector + stage nodes
+  STORY_STAGES.forEach((stage, idx) => {
+    const unlocked = isStageUnlocked(stage.id);
+    const cleared = G.stagesCleared.includes(stage.id);
+    const stars = G.stageStars[stage.id] || 0;
+    const isCurrent = !cleared && unlocked;
+
+    const starsHtml = [1, 2, 3].map(s =>
+      `<span style="color:${s <= stars ? '#F0C842' : 'rgba(255,255,255,.18)'};font-size:16px">★</span>`
+    ).join('');
+
+    const waveLabels = stage.waves.map((w, wi) => {
+      let icon = cleared ? '✅' : (wi < (G.waveInStage - 1) && G.storyStage === stage.id ? '✅' : '⭕');
+      if (!unlocked) icon = '🔒';
+      return `<span class="snode-wave-dot ${unlocked ? '' : 'locked-dot'}" title="${w.label}">${icon}</span>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = `stage-node ${unlocked ? 'sn-unlocked' : 'sn-locked'} ${cleared ? 'sn-cleared' : ''} ${isCurrent ? 'sn-current' : ''}`;
+    card.style.setProperty('--sn-col', stage.color);
+    card.style.setProperty('--sn-dark', stage.colorDark);
+    card.style.setProperty('--sn-border', stage.border);
+    card.style.setProperty('--sn-bg', stage.bg);
+
+    card.innerHTML = `
+      <div class="sn-number">${stage.id}</div>
+      <div class="sn-art" style="color:${stage.color};filter:drop-shadow(0 0 10px ${stage.color})">${stage.art}</div>
+      <div class="sn-name" style="color:${unlocked ? stage.color : 'var(--col-dim)'}">${stage.name}</div>
+      <div class="sn-tagline">${unlocked ? stage.tagline : '🔒 Clear Stage ' + (stage.id - 1) + ' to Unlock'}</div>
+      <div class="sn-wave-track">${waveLabels}</div>
+      <div class="sn-stars">${starsHtml}</div>
+      ${cleared ? '<div class="sn-cleared-badge">✓ CLEARED</div>' : ''}
+      ${isCurrent && !cleared ? '<div class="sn-current-badge">▶ IN PROGRESS</div>' : ''}
+    `;
+
+    if (unlocked) {
+      card.addEventListener('click', () => openStageDetail(stage.id));
+    }
+
+    // Add connector line between nodes
+    if (idx < STORY_STAGES.length - 1) {
+      const connector = document.createElement('div');
+      connector.className = `sn-connector ${isStageUnlocked(stage.id + 1) ? 'conn-active' : 'conn-locked'}`;
+      grid.appendChild(card);
+      grid.appendChild(connector);
+    } else {
+      grid.appendChild(card);
+    }
+  });
+}
+
+let _stageDetailId = null;
+function openStageDetail(stageId) {
+  _stageDetailId = stageId;
+  const stage = STORY_STAGES[stageId - 1];
+  const panel = document.getElementById('stage-detail-panel');
+  const cleared = G.stagesCleared.includes(stageId);
+  const stars = G.stageStars[stageId] || 0;
+
+  document.getElementById('sd-art').textContent = stage.art;
+  document.getElementById('sd-art').style.color = stage.color;
+  document.getElementById('sd-art').style.filter = `drop-shadow(0 0 20px ${stage.color})`;
+  document.getElementById('sd-name').textContent = stage.name;
+  document.getElementById('sd-name').style.color = stage.color;
+  document.getElementById('sd-tag').textContent = stage.tagline;
+
+  const starsHtml = [1, 2, 3].map(s =>
+    `<span style="color:${s <= stars ? '#F0C842' : 'rgba(255,255,255,.18)'};font-size:22px">★</span>`
+  ).join('');
+  document.getElementById('sd-stars').innerHTML = starsHtml;
+
+  // Wave list
+  const waveList = stage.waves.map((w, i) => `
+    <div class="sd-wave-row">
+      <span class="sdw-num">Wave ${i + 1}</span>
+      <span class="sdw-label" style="color:${w.boss ? '#F87171' : '#93C5FD'}">${w.label}</span>
+      <span class="sdw-desc">${w.desc}</span>
+      <div class="sdw-enemies">${w.enemies.map(e =>
+    `<span title="${ENEMY_DEFS[e.type]?.name}">${ENEMY_DEFS[e.type]?.icon} ×${e.count}</span>`
+  ).join(' ')}</div>
+    </div>
+  `).join('');
+  document.getElementById('sd-waves').innerHTML = waveList;
+
+  const enterBtn = document.getElementById('sd-enter-btn');
+  enterBtn.style.background = `linear-gradient(135deg,${stage.color},${stage.colorDark})`;
+  enterBtn.textContent = cleared ? '▶ REPLAY STAGE' : '▶ ENTER STAGE';
+
+  panel.style.display = 'flex';
+  panel.style.setProperty('--sd-col', stage.color);
+  panel.style.setProperty('--sd-border', stage.border);
+  panel.style.setProperty('--sd-bg', stage.bg);
+}
+
+window.closeStageDetail = function () {
+  document.getElementById('stage-detail-panel').style.display = 'none';
+};
+
+window.enterSelectedStage = function () {
+  if (!_stageDetailId) return;
+  closeStageDetail();
+  selectStage(_stageDetailId);
+};
+
+window.selectStage = function (stageId) {
+  const stage = STORY_STAGES[stageId - 1];
+  if (!stage) return;
+  G.storyStage = stageId;
+  G.waveInStage = 1;
+  G.wave = 1; // reset wave counter for display
+  G.gold = 80;
+  G.diamonds = 0;
+  G.score = 0;
+  G._savedTowers = [];
+
+  document.getElementById('stage-select-section').style.display = 'none';
+  document.getElementById('game-section').style.display = 'flex';
+  document.getElementById('display-username').textContent = _pendingUsername;
+  restartGame(false);
+  showToast(`${stage.icon} Entering ${stage.name}!`, 'tsuccess');
+  updateModeBadge();
+
+  const seen = localStorage.getItem('kr_tutorial_done');
+  if (!seen) setTimeout(startTutorial, 800);
+};
+
+window.backFromStageSelect = function () {
+  document.getElementById('stage-select-section').style.display = 'none';
+  document.getElementById('mode-select-section').style.display = 'flex';
+};
 
 // Island scene position config — positions relative to viewport (fixed scene)
 const ISLAND_POSITIONS = {
@@ -775,10 +1072,8 @@ window.closeBackToMenuModal = function () {
 
 window.goBackToMenu = function () {
   document.getElementById('back-to-menu-modal').style.display = 'none';
-  // Stop any running animation/wave
   G.gameOver = true;
   G.isAnimating = false;
-  // Preserve towers in memory so continueGame can restore them
   G._savedTowers = G.towers.map(t => ({
     x: t.x, y: t.y, type: t.type,
     level: t.level, upgrades: t.upgrades,
@@ -787,11 +1082,14 @@ window.goBackToMenu = function () {
     splashRange: t.splashRange || 1,
     kills: t.kills || 0
   }));
-  // Save to server
   saveGame(true);
-  // Switch screens
   document.getElementById('game-section').style.display = 'none';
-  showModeSelect();
+  if (G.gameMode === 'story') {
+    loadStageProgress();
+    showStageSelect();
+  } else {
+    showModeSelect();
+  }
 };
 
 function restartGame(loginRestore = false) {
@@ -806,6 +1104,12 @@ function restartGame(loginRestore = false) {
   G.totalKills = 0; G.totalBuilds = 0; G.totalUpgrades = 0;
   G.dragonKills = 0; G.teslaTowers = 0;
   G.abilitiesUsed = 0; G.towelsSold = 0;
+
+  // Story mode: initialize to wave 1 of current stage
+  if (G.gameMode === 'story' && !loginRestore) {
+    G.wave = 1;
+    G.waveInStage = 1;
+  }
 
   if (loginRestore && G._savedTowers && G._savedTowers.length > 0) {
     G.towers = G._savedTowers.map(t => ({
@@ -1064,8 +1368,20 @@ function sellSelected() {
 function buildWaveQueue() {
   const groups = getWaveEnemies(G.wave);
   const biome = G.activeBiome;
-  const hpScale = (1 + (G.wave - 1) * 0.15) * (G.gameMode === 'extreme' ? 1.75 : 1) * (biome ? biome.enemyMods.hpMult : 1);
-  const dmgMult = biome ? biome.enemyMods.dmgMult : 1;
+
+  // In story mode: use stage hpScale + waveInStage progression
+  let storyHpMult = 1;
+  const isBossWave = G.gameMode === 'story' && G.waveInStage === 3;
+  if (G.gameMode === 'story' && G.storyStage) {
+    const stage = STORY_STAGES[G.storyStage - 1];
+    if (stage) {
+      storyHpMult = stage.hpScale * (1 + (G.waveInStage - 1) * 0.3);
+    }
+  }
+
+  const baseScale = G.gameMode === 'extreme' ? (1 + (G.wave - 1) * 0.15) : storyHpMult;
+  const hpScale = baseScale * (G.gameMode === 'extreme' ? 1.75 : 1) * (biome ? biome.enemyMods.hpMult : 1);
+  const dmgMult = biome ? biome.enemyMods.dmgMult : (isBossWave ? 1.3 : 1);
   const spdBonus = biome ? biome.enemyMods.spdBonus : 0;
 
   // In biome mode, replace enemy types with biome-specific ones
@@ -1100,8 +1416,20 @@ function buildWaveQueue() {
 
 function showWavePreview() {
   const modal = document.getElementById('wave-start-modal');
-  document.getElementById('wsm-title').textContent = `⚔️ WAVE ${G.wave} INCOMING`;
-  document.getElementById('wsm-sub').textContent = G.wave % 10 === 0 ? '🐉 BOSS WAVE — Dragon approaches!' : 'Darkness gathers at the gate...';
+  const isBoss = G.gameMode === 'story' && G.waveInStage === 3;
+  const stageData = G.gameMode === 'story' && G.storyStage ? STORY_STAGES[G.storyStage - 1] : null;
+  const waveData = stageData ? stageData.waves[G.waveInStage - 1] : null;
+
+  if (G.gameMode === 'story' && stageData) {
+    document.getElementById('wsm-title').textContent =
+      `${stageData.icon} ${stageData.name} — Wave ${G.waveInStage}/3`;
+    document.getElementById('wsm-sub').textContent = waveData
+      ? `${waveData.label}: ${waveData.desc}`
+      : (isBoss ? '🐉 BOSS WAVE — Face the stage guardian!' : 'Darkness gathers at the gate...');
+  } else {
+    document.getElementById('wsm-title').textContent = `⚔️ WAVE ${G.wave} INCOMING`;
+    document.getElementById('wsm-sub').textContent = G.wave % 10 === 0 ? '🐉 BOSS WAVE — Dragon approaches!' : 'Darkness gathers at the gate...';
+  }
 
   const groups = getWaveEnemies(G.wave);
   const typeCounts = {};
@@ -1118,10 +1446,11 @@ function showWavePreview() {
   }).join('');
 
   const goldRwd = 30 + G.wave * 10;
-  const diaRwd = 1 + (G.wave % 10 === 0 ? 5 : 0);
+  const diaRwd = isBoss ? 3 : (1 + (G.wave % 10 === 0 ? 5 : 0));
   document.getElementById('wsm-rewards').innerHTML = `
     <div class="rwd-item"><span class="ri-icon">🪙</span><span class="ri-val">+${goldRwd}</span><span class="ri-lbl">Gold</span></div>
-    <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd}</span><span class="ri-lbl">Diamond${diaRwd > 1 ? 's' : ''}</span></div>`;
+    <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd}</span><span class="ri-lbl">Diamond${diaRwd > 1 ? 's' : ''}</span></div>
+    ${isBoss ? '<div class="rwd-item"><span class="ri-icon">💀</span><span class="ri-val">BOSS</span><span class="ri-lbl">Wave</span></div>' : ''}`;
 
   modal.style.display = 'flex';
 }
@@ -1292,8 +1621,10 @@ function getTargetsInRange(tower) {
 // ── WAVE COMPLETE ─────────────────────────────────────────────
 async function waveComplete() {
   const goldRwd = 30 + G.wave * 10;
-  const isMilestone = G.wave % 5 === 0;
-  const diaRwd = 1 + (isMilestone ? (G.wave % 10 === 0 ? 5 : 2) : 0);
+  const isMilestone = G.gameMode === 'extreme' && G.wave % 5 === 0;
+  const isBossWave = G.gameMode === 'story' && G.waveInStage === 3;
+  const isLastWave = G.gameMode === 'story' && G.waveInStage === 3;
+  const diaRwd = isBossWave ? 3 : (1 + (isMilestone ? (G.wave % 10 === 0 ? 5 : 2) : 0));
   const scoreMult = G.gameMode === 'extreme' ? 2 : 1;
   const waveScore = G.wave * 50 * scoreMult;
 
@@ -1302,7 +1633,6 @@ async function waveComplete() {
   let biomeGold = 0, biomeDia = 0, biomeHp = 0, biomeExtraLine = '';
   if (biome) {
     if (biome.id === 'volcano') {
-      // +35% gold from kills already applied; add bonus wave gold
       biomeGold = Math.floor(goldRwd * 0.35);
       biomeExtraLine = `<div class="rwd-item"><span class="ri-icon">${biome.reward.icon}</span><span class="ri-val">+${biomeGold}</span><span class="ri-lbl">Ember Bonus</span></div>`;
     } else if (biome.id === 'jungle') {
@@ -1310,7 +1640,7 @@ async function waveComplete() {
       G.hp = Math.min(G.maxHp, G.hp + biomeHp);
       biomeExtraLine = `<div class="rwd-item"><span class="ri-icon">${biome.reward.icon}</span><span class="ri-val">+${biomeHp} HP</span><span class="ri-lbl">Nature Heal</span></div>`;
     } else if (biome.id === 'forest') {
-      biomeDia = diaRwd; // double diamond drops
+      biomeDia = diaRwd;
       biomeExtraLine = `<div class="rwd-item"><span class="ri-icon">${biome.reward.icon}</span><span class="ri-val">+${biomeDia}💎</span><span class="ri-lbl">Arcane Bonus</span></div>`;
     } else if (biome.id === 'tundra') {
       biomeGold = biome.reward.gold > 0 ? 5 : 0;
@@ -1329,6 +1659,89 @@ async function waveComplete() {
     updateDailyProgress('nodmg');
   }
 
+  // ── Story mode: show stage wave complete or stage complete ──
+  if (G.gameMode === 'story') {
+    const stageData = STORY_STAGES[G.storyStage - 1];
+
+    if (isBossWave) {
+      // Stage complete!
+      await saveGame();
+      const hpLeft = G.hp;
+      const maxHp = G.maxHp;
+      const hpPct = hpLeft / maxHp;
+      const starsEarned = hpPct > 0.66 ? 3 : hpPct > 0.33 ? 2 : 1;
+
+      // Save stage completion
+      if (!G.stagesCleared.includes(G.storyStage)) G.stagesCleared.push(G.storyStage);
+      G.stageStars[G.storyStage] = Math.max(starsEarned, G.stageStars[G.storyStage] || 0);
+      saveStageProgress();
+
+      addLog(`🏆 Stage ${G.storyStage} "${stageData.name}" CLEARED! ${'★'.repeat(starsEarned)} +${goldRwd + biomeGold}🪙 +${diaRwd + biomeDia}💎`, 'log-wave');
+      showToast(`🏆 Stage ${G.storyStage} Cleared! ${'★'.repeat(starsEarned)}`, 'tdiamond');
+
+      // Show stage complete modal
+      document.getElementById('sc-stage-num').textContent = `Stage ${G.storyStage}`;
+      document.getElementById('sc-stage-name').textContent = stageData.name;
+      document.getElementById('sc-stage-icon').textContent = stageData.icon;
+      document.getElementById('sc-stars').innerHTML = [1, 2, 3].map(s =>
+        `<span style="color:${s <= starsEarned ? '#F0C842' : 'rgba(255,255,255,.18)'};font-size:32px;transition:all .3s">★</span>`
+      ).join('');
+      document.getElementById('sc-rewards').innerHTML = `
+        <div class="rwd-item"><span class="ri-icon">🪙</span><span class="ri-val">+${goldRwd + biomeGold}</span><span class="ri-lbl">Gold</span></div>
+        <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd + biomeDia}</span><span class="ri-lbl">Diamonds</span></div>
+        <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val">+${waveScore}</span><span class="ri-lbl">Score</span></div>`;
+
+      const nextStage = STORY_STAGES[G.storyStage];
+      const nextBtn = document.getElementById('sc-next-btn');
+      if (nextStage) {
+        nextBtn.style.display = 'block';
+        nextBtn.textContent = `▶ ${nextStage.icon} Next: ${nextStage.name}`;
+        nextBtn.onclick = () => {
+          document.getElementById('stage-complete-modal').style.display = 'none';
+          selectStage(G.storyStage + 1);
+        };
+      } else {
+        nextBtn.style.display = 'none';
+      }
+
+      document.getElementById('stage-complete-modal').style.display = 'flex';
+      G.wave++;
+      G.waveInStage = 1;
+      updateHUD();
+      renderQuests();
+      renderDailyChallenges();
+      return;
+    } else {
+      // Wave 1 or 2 complete within a stage — advance to next wave
+      addLog(`⚔️ Wave ${G.waveInStage}/3 cleared in Stage "${stageData.name}"! +${goldRwd}🪙 +${diaRwd}💎`, 'log-wave');
+      showToast(`Wave ${G.waveInStage}/3 cleared! +${goldRwd}🪙`, 'tsuccess');
+
+      await saveGame();
+
+      // Show wave complete modal with stage progress info
+      const wcm = document.getElementById('wave-complete-modal');
+      document.getElementById('wcm-icon').textContent = stageData.icon;
+      document.getElementById('wcm-title').textContent = `Wave ${G.waveInStage}/3 Cleared!`;
+      document.getElementById('wcm-rewards').innerHTML = `
+        <div class="rwd-item"><span class="ri-icon">🪙</span><span class="ri-val">+${goldRwd}</span><span class="ri-lbl">Gold</span></div>
+        <div class="rwd-item"><span class="ri-icon">💎</span><span class="ri-val">+${diaRwd}</span><span class="ri-lbl">Diamond${diaRwd > 1 ? 's' : ''}</span></div>
+        <div class="rwd-item"><span class="ri-icon">🏆</span><span class="ri-val">+${waveScore}</span><span class="ri-lbl">Score</span></div>`;
+      const nextWave = stageData.waves[G.waveInStage]; // waveInStage is still 1 or 2
+      document.getElementById('wcm-hint').innerHTML =
+        `<span style="color:var(--col-dim)">Next: </span><span style="color:${nextWave.boss ? '#F87171' : '#93C5FD'}">${nextWave.label}</span> — ${nextWave.desc}`;
+
+      G.wave++;
+      G.waveInStage++;
+      buildWaveQueue();
+      updateHUD();
+      renderQuests();
+      renderDailyChallenges();
+      wcm.style.display = 'flex';
+      return;
+    }
+  }
+
+  // ── Extreme / non-story path (original code) ──────────────
   addLog(`🏆 Wave ${G.wave} cleared! +${goldRwd + biomeGold}🪙 +${diaRwd + biomeDia}💎 +${waveScore}pts${scoreMult > 1 ? ' (2× Extreme!)' : ''}`, 'log-wave');
   showToast(isMilestone ? `🎯 MILESTONE! Wave ${G.wave}! +${diaRwd + biomeDia}💎` : `Wave ${G.wave} cleared! +${goldRwd + biomeGold}🪙`, 'tdiamond');
 
@@ -1363,6 +1776,15 @@ function closeWaveComplete() {
   renderTowerSelector(); renderUpgradePanel();
   showWavePreview();
 }
+
+window.closeStageComplete = function () {
+  document.getElementById('stage-complete-modal').style.display = 'none';
+  // Go back to stage select
+  G.gameOver = true; G.isAnimating = false;
+  document.getElementById('game-section').style.display = 'none';
+  loadStageProgress();
+  showStageSelect();
+};
 
 // ── GAME OVER ─────────────────────────────────────────────────
 async function handleGameOver() {
@@ -2548,7 +2970,12 @@ function updateHUD() {
   document.getElementById('hud-hp').textContent = `${Math.max(0, G.hp)}/${G.maxHp}`;
   document.getElementById('hud-gold').textContent = G.gold;
   document.getElementById('hud-dia').textContent = G.diamonds;
-  document.getElementById('hud-wave').textContent = G.wave;
+  // Show "S1-W2" in story mode, otherwise wave number
+  if (G.gameMode === 'story' && G.storyStage) {
+    document.getElementById('hud-wave').textContent = `S${G.storyStage}-W${G.waveInStage || 1}`;
+  } else {
+    document.getElementById('hud-wave').textContent = G.wave;
+  }
   document.getElementById('hud-score').textContent = G.score;
   updateStreakDisplay();
   updateModeBadge();
@@ -2563,10 +2990,11 @@ function updateModeBadge() {
     badge.style.borderColor = 'rgba(220,38,38,.7)';
     badge.style.color = '#FCA5A5';
   } else {
-    badge.textContent = '⚔️ STORY';
+    const stageData = G.storyStage ? STORY_STAGES[G.storyStage - 1] : null;
+    badge.textContent = stageData ? `${stageData.icon} Stage ${G.storyStage}` : '⚔️ STORY';
     badge.style.background = 'linear-gradient(135deg,rgba(59,130,246,.2),rgba(29,78,216,.15))';
-    badge.style.borderColor = 'rgba(59,130,246,.5)';
-    badge.style.color = '#93C5FD';
+    badge.style.borderColor = stageData ? stageData.border : 'rgba(59,130,246,.5)';
+    badge.style.color = stageData ? stageData.color : '#93C5FD';
   }
 }
 
