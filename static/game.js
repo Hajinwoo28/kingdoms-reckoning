@@ -2005,12 +2005,6 @@ async function executeTurn() {
   setPhase('combat');
   document.getElementById('execute-btn').disabled = true;
 
-  // Spawn next enemy from queue
-  if (G.spawnIndex < G.enemiesToSpawn.length) {
-    G.enemies.push({ ...G.enemiesToSpawn[G.spawnIndex], justSpawned: true });
-    G.spawnIndex++;
-  }
-
   await sleep(120);
 
   // Towers fire
@@ -2090,7 +2084,6 @@ async function executeTurn() {
   if (!G.frozenTurn) {
     const toRemove = [];
     G.enemies.forEach(e => {
-      if (e.justSpawned) { e.justSpawned = false; return; } // don't move on spawn turn — prevents 1-tile gap
       if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; return; }
       // Troll regeneration
       if (e.def.ability === 'regen' && e.hp < e.maxHp && e.hp > 0) {
@@ -2126,6 +2119,13 @@ async function executeTurn() {
     addLog('❄️ Enemies frozen — skipping their move.', 'log-ability');
   }
   G.frozenTurn = false;
+
+  // Spawn next enemy AFTER movement — appears cleanly at tile 0, no gap
+  if (G.spawnIndex < G.enemiesToSpawn.length) {
+    G.enemies.push({ ...G.enemiesToSpawn[G.spawnIndex] });
+    G.spawnIndex++;
+    renderBoard();
+  }
 
   updateHUD(); updateCastleHpBar();
 
