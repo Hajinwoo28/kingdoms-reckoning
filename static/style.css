@@ -839,6 +839,68 @@ body {
   margin-top: 4px;
 }
 
+/* ── AUTH CARD: Mobile ─────────────────────────── */
+@media (max-width: 640px) {
+  .auth-screen {
+    align-items: center;
+    padding: 12px;
+  }
+
+  .auth-card {
+    padding: 22px 18px 18px;
+    max-width: 92vw;
+    border-radius: 12px;
+  }
+
+  .auth-emblem {
+    font-size: 38px;
+    margin-bottom: 6px;
+  }
+
+  .auth-game-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .auth-tagline {
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .auth-input {
+    padding: 10px 12px;
+    font-size: 12px;
+    background: rgba(0, 0, 0, .75) !important;
+    appearance: none;
+    color: var(--col-txt) !important;
+    border-radius: 8px;
+  }
+
+  .auth-input::placeholder {
+    color: rgba(200, 170, 80, .55) !important;
+  }
+
+  .auth-form {
+    gap: 8px;
+  }
+
+  .btn-auth-primary,
+  .btn-auth-secondary {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  .auth-btn-row {
+    gap: 7px;
+    margin-top: 2px;
+  }
+
+  .auth-msg {
+    font-size: 11px;
+  }
+}
+
 /* ════════════════════════════════════════════
    GAME SCREEN
 ════════════════════════════════════════════ */
@@ -5128,6 +5190,39 @@ body {
 
   .isc-d-name {
     font-size: 15px;
+  }
+
+  /* Detail panel full-width on mobile */
+  .isc-detail-panel {
+    left: 4% !important;
+    right: 4% !important;
+    bottom: 10px !important;
+    top: auto !important;
+    transform: none !important;
+    width: auto !important;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+
+  .inode-nameplate {
+    padding: 5px 12px 4px;
+    min-width: 90px;
+  }
+
+  .inode-np-name {
+    font-size: 9px;
+  }
+
+  .inode-np-tagline {
+    font-size: 8px;
+  }
+
+  .inode-np-stars {
+    font-size: 9px;
+  }
+
+  .inode-np-icon {
+    font-size: 16px;
   }
 }
 
