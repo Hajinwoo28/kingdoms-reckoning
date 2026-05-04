@@ -753,30 +753,34 @@ const ISLAND_POSITIONS = {
   forest: { left: '73%', top: '11%', w: 250, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
 };
 
+/* Responsive island sizes — called at render time so resize events work */
 function getIslandPositions() {
   const vw = window.innerWidth;
   if (vw <= 480) {
+    /* Phone portrait: 2 × 2 grid, ~45 % of desktop */
     return {
-      tundra: { left: '2%', top: '6%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '50%', top: '3%', w: 148, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '3%', top: '50%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '53%', top: '48%', w: 114, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      tundra: { left: '3%', top: '5%', w: 128, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '51%', top: '2%', w: 145, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '4%', top: '51%', w: 120, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '53%', top: '49%', w: 112, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
     };
   }
   if (vw <= 640) {
+    /* Phone landscape / small: 2 × 2, ~55 % */
     return {
-      tundra: { left: '2%', top: '8%', w: 155, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '50%', top: '5%', w: 175, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '3%', top: '52%', w: 145, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '54%', top: '50%', w: 135, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      tundra: { left: '2%', top: '7%', w: 152, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '51%', top: '4%', w: 172, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '3%', top: '52%', w: 142, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '53%', top: '50%', w: 132, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
     };
   }
   if (vw <= 960) {
+    /* Tablet: horizontal row, ~70 % */
     return {
       tundra: { left: '2%', top: '14%', w: 200, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '24%', top: '10%', w: 230, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '52%', top: '14%', w: 190, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '72%', top: '12%', w: 175, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      jungle: { left: '24%', top: '10%', w: 228, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '52%', top: '14%', w: 188, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '72%', top: '12%', w: 174, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
     };
   }
   return ISLAND_POSITIONS;
@@ -1287,10 +1291,10 @@ function _biomeBaseGlow(b, tipW, tipH) {
 // ═══════════════════════════════════════════════════════════════
 
 function buildIslandHTML(b) {
-  const pos = (typeof getIslandPositions === 'function' ? getIslandPositions() : ISLAND_POSITIONS)[b.id];
+  const pos = getIslandPositions()[b.id];
   const ter = ISLAND_TERRAIN[b.id];
   const isMobile = window.innerWidth <= 640;
-  const decoScale = isMobile ? 0.55 : 1;
+  const decoScale = isMobile ? 0.54 : 1;
   const w = pos.w;
   const capH = Math.round(w * 0.44);
   const cliffH = Math.round(w * 0.38);

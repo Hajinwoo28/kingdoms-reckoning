@@ -14,7 +14,6 @@
   <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16.png') }}">
   <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
@@ -689,7 +688,7 @@
 
 
   <script>
-    /* ── HUD height measurement — keeps --hud-h CSS var accurate ── */
+    /* ── HUD height + safe-area CSS vars ── */
     (function () {
       function measureHud() {
         var hud = document.querySelector('.top-hud');
@@ -697,10 +696,20 @@
           var h = hud.getBoundingClientRect().height;
           document.documentElement.style.setProperty('--hud-h', h + 'px');
         }
+        /* Push safe-area insets as CSS vars for use in calc() */
+        var root = document.documentElement;
+        var sat = getComputedStyle(root).getPropertyValue('--sat') || '0px';
+        /* env() insets — set fallback if browser doesn't support */
+        root.style.setProperty('--sab', 'env(safe-area-inset-bottom, 0px)');
+        root.style.setProperty('--sat', 'env(safe-area-inset-top, 0px)');
+        root.style.setProperty('--sal', 'env(safe-area-inset-left, 0px)');
+        root.style.setProperty('--sar', 'env(safe-area-inset-right, 0px)');
       }
       measureHud();
       window.addEventListener('resize', measureHud);
-      // Re-measure after fonts load
+      window.addEventListener('orientationchange', function () {
+        setTimeout(measureHud, 200);
+      });
       document.fonts && document.fonts.ready && document.fonts.ready.then(measureHud);
     })();
   </script>
