@@ -3212,7 +3212,7 @@ function applyCastleSkin() {
 function setPhase(phase) {
   const dot = document.getElementById('phase-dot');
   const label = document.getElementById('phase-label');
-  /* Stamp phase onto the board so CSS can target it */
+  /* Stamp phase on board so CSS :has() selectors can target it */
   if (boardEl) boardEl.dataset.phase = phase;
   if (phase === 'planning') {
     dot.className = 'phase-indicator planning';

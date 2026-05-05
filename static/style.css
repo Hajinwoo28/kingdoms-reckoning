@@ -7747,162 +7747,654 @@ body {
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   PLANNING PHASE — COMPACT TOWERS PANEL
-   Shrinks the towers sidebar and cards so more screen space
-   goes to the board. Uses sibling selector matching data-phase.
-══════════════════════════════════════════════════════════════ */
-
-/* ── Desktop/tablet: narrow the towers column ── */
-.game-center:has(.board[data-phase="planning"])~.towers-panel {
-  width: 160px !important;
-  min-width: 160px !important;
-  max-width: 160px !important;
-  transition: width .25s ease, min-width .25s ease !important;
-}
-
-/* Tower selector padding */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .tower-selector {
-  padding: 5px 5px !important;
-  gap: 3px !important;
-}
-
-/* Tower cards — compact row */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .tower-card {
-  padding: 5px 7px !important;
-  gap: 6px !important;
-  border-radius: 6px !important;
-}
-
-/* Icon smaller */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .tc-icon {
-  font-size: 16px !important;
-}
-
-/* Name and cost tighter */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .tc-name {
-  font-size: 9px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .tc-cost {
-  font-size: 8.5px !important;
-}
-
-/* Hide description — saves the most space */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .tc-desc {
-  display: none !important;
-}
-
-/* Panel header */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .panel-header {
-  padding: 6px 8px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .panel-title {
-  font-size: 9px !important;
-  letter-spacing: .06em !important;
-}
-
-/* Info box — selected tower stats */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .tower-info-box {
-  padding: 6px 7px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .info-placeholder {
-  font-size: 9px !important;
-}
-
-/* Upgrade panel */
-.game-center:has(.board[data-phase="planning"])~.towers-panel .upgrade-panel {
-  padding: 6px 7px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .up-tower-icon {
-  font-size: 18px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .up-tower-name {
-  font-size: 9px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .up-tower-level {
-  font-size: 8px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .ts-row {
-  font-size: 9px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .up-stats-grid {
-  gap: 2px !important;
-  margin-bottom: 5px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .btn-upgrade-act {
-  padding: 5px !important;
-  font-size: 8px !important;
-}
-
-.game-center:has(.board[data-phase="planning"])~.towers-panel .btn-sell-act {
-  padding: 5px 8px !important;
-  font-size: 8px !important;
-}
-
-/* ── MOBILE: towers drawer compact when open during planning ── */
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE MASTER FIX — Kingdom's Reckoning
+   Fixes: HUD 2-row wrap, ability bar overflow, auth card size,
+   wave modal button cut-off, execute btn positioning.
+   All rules use !important to decisively override prior blocks.
+══════════════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
-  .towers-panel.panel-open {
-    width: min(72vw, 220px) !important;
+
+  /* ───────────────────────────────────────────────────────────────
+     1. TOP HUD — force single tight row, icon-only actions
+  ─────────────────────────────────────────────────────────────── */
+  .top-hud {
+    padding: 0 6px !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    gap: 4px !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    overflow: hidden !important;
   }
 
-  .towers-panel.panel-open .tower-card {
-    padding: 5px 7px !important;
-    gap: 6px !important;
-  }
-
-  .towers-panel.panel-open .tc-icon {
-    font-size: 16px !important;
-  }
-
-  .towers-panel.panel-open .tc-name {
-    font-size: 9px !important;
-  }
-
-  .towers-panel.panel-open .tc-cost {
-    font-size: 8.5px !important;
-  }
-
-  .towers-panel.panel-open .tc-desc {
+  /* Brand hidden */
+  .hud-brand {
     display: none !important;
   }
 
-  .towers-panel.panel-open .tower-selector {
-    padding: 5px !important;
+  .hud-user-label {
+    display: none !important;
+  }
+
+  /* Stats: single row, no wrap, left-aligned */
+  .hud-stats {
+    order: 0 !important;
+    width: auto !important;
+    flex: 1 !important;
+    justify-content: flex-start !important;
     gap: 3px !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
   }
 
-  .towers-panel.panel-open .panel-title {
+  /* Hide non-essential stat badges */
+  .score-badge {
+    display: none !important;
+  }
+
+  .streak-badge {
+    display: none !important;
+  }
+
+  .mode-badge {
+    display: none !important;
+  }
+
+  .hud-badge {
+    padding: 2px 5px !important;
+    font-size: 10px !important;
+    gap: 2px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Actions: right side, no wrap, icon-only */
+  .hud-actions {
+    order: 1 !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+    gap: 3px !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-end !important;
+  }
+
+  .hud-btn {
+    padding: 3px 6px !important;
     font-size: 9px !important;
+    min-height: 30px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
 
-  .towers-panel.panel-open .up-tower-icon {
+  /* MENU → icon only */
+  .back-menu-btn {
+    font-size: 0 !important;
+    padding: 4px 7px !important;
+    min-width: 28px !important;
+  }
+
+  .back-menu-btn::before {
+    content: '🏠';
+    font-size: 14px !important;
+  }
+
+  /* SHOP → icon only */
+  .shop-hud-btn {
+    font-size: 0 !important;
+    padding: 4px 7px !important;
+    min-width: 28px !important;
+  }
+
+  .shop-hud-btn::before {
+    content: '🛒';
+    font-size: 14px !important;
+  }
+
+  /* LOGOUT → icon only */
+  .logout-btn {
+    font-size: 0 !important;
+    padding: 4px 7px !important;
+    min-width: 28px !important;
+  }
+
+  .logout-btn::before {
+    content: '⇤';
+    font-size: 13px !important;
+  }
+
+  /* Leaderboard + help + settings small */
+  .hud-btn[onclick*="openLeaderboard"],
+  .hud-btn[onclick*="startTutorial"],
+  .hud-btn[onclick*="openSettings"] {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+    min-width: 28px !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     2. GAME LAYOUT — column, exact height, room for bottom nav
+  ─────────────────────────────────────────────────────────────── */
+  .game-layout {
+    flex-direction: column !important;
+    padding: 3px 3px 0 !important;
+    padding-bottom: 56px !important;
+    gap: 3px !important;
+    height: calc(100dvh - 42px) !important;
+    overflow: visible !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     3. SIDE PANELS — fixed drawers
+  ─────────────────────────────────────────────────────────────── */
+  .side-panel {
+    position: fixed !important;
+    top: 42px !important;
+    bottom: 56px !important;
+    width: min(86vw, 280px) !important;
+    z-index: 1500 !important;
+    overflow-y: auto !important;
+    transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .quests-panel {
+    left: 0 !important;
+    border-radius: 0 12px 12px 0 !important;
+    transform: translateX(-102%) !important;
+  }
+
+  .quests-panel.panel-open {
+    transform: translateX(0) !important;
+  }
+
+  .towers-panel {
+    right: 0 !important;
+    left: auto !important;
+    border-radius: 12px 0 0 12px !important;
+    transform: translateX(102%) !important;
+  }
+
+  .towers-panel.panel-open {
+    transform: translateX(0) !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     4. GAME CENTER — fills space between HUD and bottom nav
+  ─────────────────────────────────────────────────────────────── */
+  .game-center {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: calc(100dvh - 42px - 56px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    overflow: hidden !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     5. PHASE STRIP — one tight line
+  ─────────────────────────────────────────────────────────────── */
+  .phase-strip {
+    padding: 3px 7px !important;
+    font-size: 9px !important;
+    gap: 5px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    height: 24px !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     6. BOARD WRAPPER + BOARD
+  ─────────────────────────────────────────────────────────────── */
+  .board-wrapper {
+    flex: 1 !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  .board {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: auto !important;
+    padding: 2px !important;
+    gap: 1px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     7. COMBAT LOG — compact
+  ─────────────────────────────────────────────────────────────── */
+  .combat-log-wrap {
+    height: 28px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .combat-log-scroll {
+    font-size: 10px !important;
+    padding: 2px 7px !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     8. ABILITY BAR — ALL in ONE row: spells | FAST | EXECUTE
+  ─────────────────────────────────────────────────────────────── */
+  .ability-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 4px 5px !important;
+    flex-shrink: 0 !important;
+    border-top: 1px solid var(--panel-border) !important;
+    background: rgba(0, 0, 0, .65) !important;
+    height: 52px !important;
+  }
+
+  .abilities-group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 3px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .ab-btn {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 3px 2px !important;
+    gap: 1px !important;
+    min-width: 0 !important;
+    height: 44px !important;
+  }
+
+  .ab-ico {
+    font-size: 14px !important;
+  }
+
+  .ab-n {
+    font-size: 6px !important;
+    letter-spacing: 0.2px !important;
+  }
+
+  .ab-c {
+    font-size: 7px !important;
+  }
+
+  .right-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+    margin-left: 0 !important;
+    width: auto !important;
+  }
+
+  .fast-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    font-size: 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .fast-label {
+    font-size: 8px !important;
+  }
+
+  .btn-toggle {
+    padding: 4px 7px !important;
+    font-size: 8px !important;
+    min-width: 28px !important;
+  }
+
+  .execute-btn {
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.3px !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    height: 42px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     9. BOTTOM NAV — fixed 56px dock
+  ─────────────────────────────────────────────────────────────── */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 56px !important;
+    z-index: 1600 !important;
+    background: linear-gradient(180deg, rgba(14, 12, 35, .98) 0%, rgba(7, 6, 26, 1) 100%) !important;
+    border-top: 2px solid var(--gold-d) !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, .6) !important;
+    align-items: stretch !important;
+  }
+
+  .mob-nav-btn {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    border: none !important;
+    border-right: 1px solid var(--panel-border) !important;
+    background: transparent !important;
+    color: var(--col-dim) !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 8px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.6px !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .mob-nav-btn:last-child {
+    border-right: none !important;
+  }
+
+  .mob-nav-btn.mob-active {
+    color: var(--gold-l) !important;
+    background: rgba(201, 162, 39, .1) !important;
+    border-top: 2px solid var(--gold) !important;
+    margin-top: -2px !important;
+  }
+
+  .mob-nav-ico {
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     10. PANEL BACKDROP
+  ─────────────────────────────────────────────────────────────── */
+  .panel-backdrop {
+    display: none !important;
+    position: fixed !important;
+    inset: 0 !important;
+    top: 42px !important;
+    bottom: 56px !important;
+    background: rgba(0, 0, 0, .68) !important;
+    z-index: 1499 !important;
+    backdrop-filter: blur(3px) !important;
+  }
+
+  .panel-backdrop.active {
+    display: block !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     11. MODALS — slide up from bottom, FULLY visible
+  ─────────────────────────────────────────────────────────────── */
+  .modal-overlay {
+    align-items: flex-end !important;
+    padding: 0 !important;
+    padding-bottom: 56px !important;
+  }
+
+  .modal-box {
+    padding: 20px 16px 18px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 42px - 56px - 10px) !important;
+    border-radius: 16px 16px 0 0 !important;
+    border-bottom: none !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Wave incoming modal — make sure PREPARE DEFENSES is visible */
+  .wave-modal .modal-box,
+  .wave-incoming-modal .modal-box {
+    max-height: calc(100dvh - 42px - 56px - 10px) !important;
+    overflow-y: auto !important;
+  }
+
+  /* Modal button row — full-width stacked */
+  .modal-btn-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+  }
+
+  .btn-modal {
+    width: 100% !important;
+    padding: 13px 14px !important;
+    font-size: 13px !important;
+    text-align: center !important;
+  }
+
+  /* PREPARE DEFENSES button specifically */
+  .btn-prepare,
+  [onclick*="prepareDefenses"],
+  [onclick*="startPlanning"],
+  .prepare-btn {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 13px !important;
+  }
+
+  .modal-title {
+    font-size: 17px !important;
+  }
+
+  .modal-crest {
+    font-size: 38px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .shop-content-area {
+    max-height: 38vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Shop tabs horizontal scroll */
+  .shop-tabs {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+  }
+
+  .shop-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .shop-tab {
+    white-space: nowrap !important;
+    padding: 7px 10px !important;
+    flex-shrink: 0 !important;
+    font-size: 10px !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     12. AUTH / LOGIN — compact, fully visible
+  ─────────────────────────────────────────────────────────────── */
+  .auth-screen {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 12px !important;
+    overflow-y: auto !important;
+  }
+
+  .auth-card {
+    padding: 20px 18px 18px !important;
+    margin: 0 auto !important;
+    max-width: 88vw !important;
+    width: 88vw !important;
+    border-radius: 12px !important;
+  }
+
+  .auth-emblem {
+    font-size: 34px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .auth-game-title {
     font-size: 18px !important;
+    margin-bottom: 4px !important;
   }
 
-  .towers-panel.panel-open .up-tower-name {
-    font-size: 9px !important;
-  }
-
-  .towers-panel.panel-open .ts-row {
-    font-size: 9px !important;
-  }
-
-  .towers-panel.panel-open .btn-upgrade-act {
-    padding: 5px !important;
+  .auth-tagline {
     font-size: 8px !important;
+    letter-spacing: 1.8px !important;
+    margin-bottom: 16px !important;
   }
 
-  .towers-panel.panel-open .btn-sell-act {
-    padding: 5px 8px !important;
-    font-size: 8px !important;
+  .auth-form {
+    gap: 8px !important;
+  }
+
+  .auth-input {
+    padding: 10px 13px !important;
+    font-size: 13px !important;
+    appearance: none !important;
+    background: rgba(0, 0, 0, .8) !important;
+    color: var(--col-txt) !important;
+    -webkit-text-fill-color: var(--col-txt) !important;
+    border-radius: 8px !important;
+  }
+
+  .auth-input::placeholder {
+    color: rgba(200, 170, 80, .5) !important;
+    opacity: 1 !important;
+  }
+
+  .auth-btn-row {
+    gap: 8px !important;
+    margin-top: 4px !important;
+  }
+
+  .btn-auth-primary,
+  .btn-auth-secondary {
+    padding: 12px 8px !important;
+    font-size: 11px !important;
+  }
+
+  .auth-msg {
+    font-size: 11px !important;
+    min-height: 16px !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     13. ISLAND SELECT — detail panel at bottom
+  ─────────────────────────────────────────────────────────────── */
+  .isc-detail-panel {
+    left: 4% !important;
+    right: 4% !important;
+    bottom: 8px !important;
+    top: auto !important;
+    transform: none !important;
+    width: auto !important;
+    max-height: 58vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     14. TOAST — above bottom nav
+  ─────────────────────────────────────────────────────────────── */
+  #toast-container {
+    top: auto !important;
+    bottom: 64px !important;
+    right: 8px !important;
+    left: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .toast {
+    max-width: 100% !important;
+    font-size: 11px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* ───────────────────────────────────────────────────────────────
+     15. GLOBAL TOUCH OPTIMISATIONS
+  ─────────────────────────────────────────────────────────────── */
+  button,
+  .cell,
+  .ab-btn,
+  .mob-nav-btn,
+  .hud-btn,
+  .tower-card {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   VERY SMALL PHONES  ≤ 380px
+════════════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .auth-card {
+    padding: 16px 13px 14px !important;
+  }
+
+  .auth-game-title {
+    font-size: 15px !important;
+  }
+
+  .auth-emblem {
+    font-size: 28px !important;
+  }
+
+  .auth-input {
+    padding: 9px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .btn-auth-primary,
+  .btn-auth-secondary {
+    font-size: 10px !important;
+    padding: 10px 6px !important;
+  }
+
+  .dia-badge {
+    display: none !important;
+  }
+
+  .hud-badge {
+    font-size: 9px !important;
+    padding: 2px 4px !important;
+  }
+
+  .ab-ico {
+    font-size: 12px !important;
+  }
+
+  .ab-n {
+    font-size: 5px !important;
+  }
+
+  .execute-btn {
+    font-size: 9px !important;
+    padding: 6px 7px !important;
+    letter-spacing: 0 !important;
+  }
+
+  .modal-box {
+    padding: 16px 12px 14px !important;
+  }
+
+  .btn-modal {
+    padding: 11px 10px !important;
+    font-size: 11px !important;
   }
 }

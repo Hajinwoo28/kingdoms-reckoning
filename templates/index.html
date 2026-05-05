@@ -7,14 +7,7 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#07061A">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Kingdom's Reckoning">
   <title>⚔️ Kingdom's Reckoning — Tactical Tower Defense</title>
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
-  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
     rel="stylesheet">
@@ -633,33 +626,10 @@
       };
       var backdrop = document.getElementById('panel-backdrop');
       var boardBtn = btns.board;
-      var bottomNav = document.getElementById('mobile-bottom-nav');
-
-      /* ── Landscape detection ── */
-      function isLandscape() {
-        return window.innerWidth > window.innerHeight && window.innerWidth >= 568;
-      }
-
-      /* ── In landscape the panels are in-flow — never use drawer mode ── */
-      function syncLayout() {
-        if (isLandscape()) {
-          /* Close any open drawer first */
-          if (activePanel) {
-            panels[activePanel].classList.remove('panel-open');
-            btns[activePanel] && btns[activePanel].classList.remove('mob-active');
-            activePanel = null;
-          }
-          backdrop.classList.remove('active');
-          /* Let CSS show the panels inline via position:relative */
-        } else {
-          /* Portrait — default state: board active, drawers hidden */
-          if (!activePanel && boardBtn) boardBtn.classList.add('mob-active');
-        }
-      }
 
       function openPanel(name) {
-        if (isLandscape()) return; // panels already visible in landscape
         if (!panels[name]) return;
+        // Close any previously open panel first
         if (activePanel && activePanel !== name) {
           panels[activePanel].classList.remove('panel-open');
           btns[activePanel] && btns[activePanel].classList.remove('mob-active');
@@ -667,7 +637,7 @@
         activePanel = name;
         panels[name].classList.add('panel-open');
         btns[name] && btns[name].classList.add('mob-active');
-        if (boardBtn) boardBtn.classList.remove('mob-active');
+        boardBtn.classList.remove('mob-active');
         backdrop.classList.add('active');
       }
 
@@ -678,32 +648,40 @@
         }
         activePanel = null;
         backdrop.classList.remove('active');
-        if (boardBtn) boardBtn.classList.add('mob-active');
+        boardBtn.classList.add('mob-active');
       }
 
+      // Expose to inline onclick handlers in the HTML
       window.toggleMobilePanel = function (name) {
-        if (isLandscape()) return;
-        activePanel === name ? closePanel() : openPanel(name);
+        if (activePanel === name) {
+          closePanel();
+        } else {
+          openPanel(name);
+        }
       };
 
-      window.closeMobilePanels = function () { closePanel(); };
+      window.closeMobilePanels = function () {
+        closePanel();
+      };
 
-      /* Default: board active */
+      // Default active button: Board
       if (boardBtn) boardBtn.classList.add('mob-active');
 
-      document.addEventListener('modalOpen', function () { closeMobilePanels(); });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && activePanel) closeMobilePanels(); });
+      // Close panels when a modal opens (prevents z-index stacking issues)
+      document.addEventListener('modalOpen', function () {
+        closeMobilePanels();
+      });
 
-      /* Re-sync on rotate/resize */
-      window.addEventListener('resize', syncLayout);
-      window.addEventListener('orientationchange', function () { setTimeout(syncLayout, 150); });
-      syncLayout();
+      // Close panels on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && activePanel) closeMobilePanels();
+      });
     })();
   </script>
 
 
   <script>
-    /* ── HUD height + safe-area inset CSS vars ── */
+    /* ── HUD height + safe-area CSS vars ── */
     (function () {
       var root = document.documentElement;
       function measureHud() {
