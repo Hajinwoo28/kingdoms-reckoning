@@ -633,10 +633,33 @@
       };
       var backdrop = document.getElementById('panel-backdrop');
       var boardBtn = btns.board;
+      var bottomNav = document.getElementById('mobile-bottom-nav');
+
+      /* ── Landscape detection ── */
+      function isLandscape() {
+        return window.innerWidth > window.innerHeight && window.innerWidth >= 568;
+      }
+
+      /* ── In landscape the panels are in-flow — never use drawer mode ── */
+      function syncLayout() {
+        if (isLandscape()) {
+          /* Close any open drawer first */
+          if (activePanel) {
+            panels[activePanel].classList.remove('panel-open');
+            btns[activePanel] && btns[activePanel].classList.remove('mob-active');
+            activePanel = null;
+          }
+          backdrop.classList.remove('active');
+          /* Let CSS show the panels inline via position:relative */
+        } else {
+          /* Portrait — default state: board active, drawers hidden */
+          if (!activePanel && boardBtn) boardBtn.classList.add('mob-active');
+        }
+      }
 
       function openPanel(name) {
+        if (isLandscape()) return; // panels already visible in landscape
         if (!panels[name]) return;
-        // Close any previously open panel first
         if (activePanel && activePanel !== name) {
           panels[activePanel].classList.remove('panel-open');
           btns[activePanel] && btns[activePanel].classList.remove('mob-active');
@@ -644,7 +667,7 @@
         activePanel = name;
         panels[name].classList.add('panel-open');
         btns[name] && btns[name].classList.add('mob-active');
-        boardBtn.classList.remove('mob-active');
+        if (boardBtn) boardBtn.classList.remove('mob-active');
         backdrop.classList.add('active');
       }
 
@@ -655,61 +678,45 @@
         }
         activePanel = null;
         backdrop.classList.remove('active');
-        boardBtn.classList.add('mob-active');
+        if (boardBtn) boardBtn.classList.add('mob-active');
       }
 
-      // Expose to inline onclick handlers in the HTML
       window.toggleMobilePanel = function (name) {
-        if (activePanel === name) {
-          closePanel();
-        } else {
-          openPanel(name);
-        }
+        if (isLandscape()) return;
+        activePanel === name ? closePanel() : openPanel(name);
       };
 
-      window.closeMobilePanels = function () {
-        closePanel();
-      };
+      window.closeMobilePanels = function () { closePanel(); };
 
-      // Default active button: Board
+      /* Default: board active */
       if (boardBtn) boardBtn.classList.add('mob-active');
 
-      // Close panels when a modal opens (prevents z-index stacking issues)
-      document.addEventListener('modalOpen', function () {
-        closeMobilePanels();
-      });
+      document.addEventListener('modalOpen', function () { closeMobilePanels(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && activePanel) closeMobilePanels(); });
 
-      // Close panels on Escape key
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && activePanel) closeMobilePanels();
-      });
+      /* Re-sync on rotate/resize */
+      window.addEventListener('resize', syncLayout);
+      window.addEventListener('orientationchange', function () { setTimeout(syncLayout, 150); });
+      syncLayout();
     })();
   </script>
 
 
   <script>
-    /* ── HUD height + safe-area CSS vars ── */
+    /* ── HUD height + safe-area inset CSS vars ── */
     (function () {
+      var root = document.documentElement;
       function measureHud() {
         var hud = document.querySelector('.top-hud');
         if (hud) {
-          var h = hud.getBoundingClientRect().height;
-          document.documentElement.style.setProperty('--hud-h', h + 'px');
+          root.style.setProperty('--hud-h', hud.getBoundingClientRect().height + 'px');
         }
-        /* Push safe-area insets as CSS vars for use in calc() */
-        var root = document.documentElement;
-        var sat = getComputedStyle(root).getPropertyValue('--sat') || '0px';
-        /* env() insets — set fallback if browser doesn't support */
         root.style.setProperty('--sab', 'env(safe-area-inset-bottom, 0px)');
         root.style.setProperty('--sat', 'env(safe-area-inset-top, 0px)');
-        root.style.setProperty('--sal', 'env(safe-area-inset-left, 0px)');
-        root.style.setProperty('--sar', 'env(safe-area-inset-right, 0px)');
       }
       measureHud();
       window.addEventListener('resize', measureHud);
-      window.addEventListener('orientationchange', function () {
-        setTimeout(measureHud, 200);
-      });
+      window.addEventListener('orientationchange', function () { setTimeout(measureHud, 200); });
       document.fonts && document.fonts.ready && document.fonts.ready.then(measureHud);
     })();
   </script>
