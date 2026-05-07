@@ -5,9 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+  <meta name="screen-orientation" content="landscape">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#07061A">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kingdom's Reckoning">
   <title>⚔️ Kingdom's Reckoning — Tactical Tower Defense</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
     rel="stylesheet">
@@ -68,6 +76,67 @@
       font-size: 48px;
       transform: rotate(90deg);
       filter: drop-shadow(0 0 14px rgba(240, 200, 66, .6));
+    }
+
+    /* ── LANDSCAPE: wave modal inner split ──────────────── */
+    @media (orientation: landscape) and (max-height: 500px) {
+      #wave-start-modal .modal-box {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        max-width: min(96vw, 620px) !important;
+        padding: 10px 0 !important;
+        gap: 0 !important;
+        overflow: hidden !important;
+      }
+
+      #wave-start-modal .modal-crest {
+        padding: 0 14px;
+        margin-bottom: 2px !important;
+      }
+
+      #wave-start-modal .modal-title {
+        padding: 0 14px;
+        font-size: 13px !important;
+      }
+
+      #wave-start-modal .modal-sub {
+        padding: 0 14px;
+        font-size: 10px !important;
+      }
+
+      #wave-start-modal .enemy-preview-grid {
+        padding: 4px 14px 0;
+      }
+
+      #wave-start-modal .modal-rewards {
+        flex-direction: column !important;
+        border-left: 1px solid rgba(201, 162, 39, 0.22) !important;
+        border-top: none !important;
+        padding: 10px 14px !important;
+        margin: 0 !important;
+        gap: 8px !important;
+        min-width: 110px !important;
+        justify-content: center !important;
+        align-self: stretch !important;
+      }
+
+      #wave-start-modal .rwd-item {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 2px !important;
+      }
+
+      #wave-start-modal .btn-modal {
+        margin: 8px 14px 0 !important;
+        font-size: 9px !important;
+        padding: 7px 10px !important;
+        min-height: 34px !important;
+      }
+
+      .hud-game-name {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -683,18 +752,26 @@
   <script>
     /* ── HUD height + safe-area CSS vars ── */
     (function () {
-      var root = document.documentElement;
       function measureHud() {
         var hud = document.querySelector('.top-hud');
         if (hud) {
-          root.style.setProperty('--hud-h', hud.getBoundingClientRect().height + 'px');
+          var h = hud.getBoundingClientRect().height;
+          document.documentElement.style.setProperty('--hud-h', h + 'px');
         }
+        /* Push safe-area insets as CSS vars for use in calc() */
+        var root = document.documentElement;
+        var sat = getComputedStyle(root).getPropertyValue('--sat') || '0px';
+        /* env() insets — set fallback if browser doesn't support */
         root.style.setProperty('--sab', 'env(safe-area-inset-bottom, 0px)');
         root.style.setProperty('--sat', 'env(safe-area-inset-top, 0px)');
+        root.style.setProperty('--sal', 'env(safe-area-inset-left, 0px)');
+        root.style.setProperty('--sar', 'env(safe-area-inset-right, 0px)');
       }
       measureHud();
       window.addEventListener('resize', measureHud);
-      window.addEventListener('orientationchange', function () { setTimeout(measureHud, 200); });
+      window.addEventListener('orientationchange', function () {
+        setTimeout(measureHud, 200);
+      });
       document.fonts && document.fonts.ready && document.fonts.ready.then(measureHud);
     })();
   </script>
