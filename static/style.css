@@ -9513,3 +9513,415 @@ body {
     padding: 2px 5px !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   ENHANCED ISLAND VISUALS — SVG terrain + cliff depth + 2 new biomes
+════════════════════════════════════════════════════════════════ */
+
+/* ── SVG rock terrain layer sits on top of cap background ── */
+.inode-svg-terrain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ── Cliff wrap gives depth context for side panels ── */
+.inode-cliff-wrap {
+  position: relative;
+  display: flex;
+}
+
+/* ── Side cliff panels (3-D left/right faces) ── */
+.inode-cliff-side {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  border-radius: 0;
+  filter: brightness(0.55);
+}
+
+.inode-cliff-left {
+  left: 0;
+  clip-path: polygon(0 0, 100% 8%, 100% 92%, 0 100%);
+}
+
+.inode-cliff-right {
+  right: 0;
+  clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 92%);
+}
+
+/* ── Horizontal ledge lines on cliff face ── */
+.inode-cliff-ledge {
+  position: absolute;
+  left: 4%;
+  width: 92%;
+  height: 2px;
+  background: rgba(255, 255, 255, .07);
+  border-radius: 1px;
+}
+
+/* ── Desert-specific FX ── */
+.inode-heat-shimmer {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg,
+      transparent 0px,
+      rgba(255, 200, 80, .04) 2px,
+      transparent 4px);
+  animation: heatWave 2.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+@keyframes heatWave {
+
+  0%,
+  100% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scaleY(1.015) translateY(-1px);
+    opacity: 1;
+  }
+}
+
+.inode-sandstorm-veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 80%, rgba(220, 140, 30, .14) 0%, transparent 70%);
+  animation: sandVeil 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+@keyframes sandVeil {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.inode-sand-ripple {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(92deg,
+      transparent 0%,
+      rgba(255, 180, 50, .06) 8%,
+      transparent 16%);
+  animation: sandRipple 3.5s linear infinite;
+  pointer-events: none;
+  z-index: 3;
+  border-radius: inherit;
+}
+
+@keyframes sandRipple {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 60px 0;
+  }
+}
+
+.inode-mirage-glow {
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 35%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 200, 80, .22) 0%, transparent 80%);
+  animation: mirageGlow 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes mirageGlow {
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scaleX(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleX(1.06);
+  }
+}
+
+.inode-sand-strata {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.inode-strata-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.inode-sand-drip {
+  position: absolute;
+  width: 3px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(180deg, rgba(220, 150, 30, .55) 0%, rgba(180, 100, 10, .20) 100%);
+  animation: sandDrip 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.inode-sd-a {
+  left: 22%;
+  top: 0;
+  height: 55px;
+  animation-delay: 0s;
+}
+
+.inode-sd-b {
+  left: 70%;
+  top: 0;
+  height: 42px;
+  animation-delay: -1.8s;
+}
+
+@keyframes sandDrip {
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scaleY(1);
+  }
+
+  60% {
+    opacity: 0.9;
+    transform: scaleY(1.12);
+  }
+}
+
+/* ── Abyss-specific FX ── */
+.inode-deep-fog {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 70%, rgba(0, 30, 60, .55) 0%, rgba(0, 10, 25, .28) 55%, transparent 85%);
+  animation: deepFog 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+@keyframes deepFog {
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.inode-biolum-pulse {
+  position: absolute;
+  inset: 20% 15% 10%;
+  background: radial-gradient(ellipse at 40% 60%, rgba(0, 200, 230, .14) 0%, transparent 65%),
+    radial-gradient(ellipse at 70% 40%, rgba(0, 180, 220, .10) 0%, transparent 55%);
+  animation: biolumPulse 3.2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: inherit;
+}
+
+@keyframes biolumPulse {
+
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+.inode-cave-mouth {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: 12%;
+  top: 38%;
+  background: radial-gradient(ellipse at 50% 65%, rgba(0, 0, 15, .92) 0%, rgba(0, 5, 25, .75) 55%, transparent 85%);
+  border-radius: 45% 45% 50% 50%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.inode-deep-shimmer {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(135deg,
+      transparent 0%,
+      rgba(0, 200, 240, .04) 12%,
+      transparent 24%);
+  animation: deepShimmer 4.5s linear infinite;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: inherit;
+}
+
+@keyframes deepShimmer {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 50px 50px;
+  }
+}
+
+.inode-stalactite-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.inode-stalactite {
+  position: absolute;
+  top: 0;
+  width: 5px;
+  background: linear-gradient(180deg, rgba(6, 182, 212, .70) 0%, rgba(0, 100, 140, .40) 70%, transparent 100%);
+  border-radius: 0 0 3px 3px;
+  animation: stalDrip 3.5s ease-in-out infinite;
+  clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+}
+
+@keyframes stalDrip {
+
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.inode-water-drip {
+  position: absolute;
+  width: 2px;
+  border-radius: 50%;
+  background: rgba(0, 200, 240, .65);
+  animation: waterDrop 2.2s ease-in infinite;
+  pointer-events: none;
+}
+
+.inode-wd-a {
+  left: 35%;
+  top: 30%;
+  height: 3px;
+  animation-delay: 0s;
+}
+
+.inode-wd-b {
+  left: 62%;
+  top: 22%;
+  height: 3px;
+  animation-delay: -1.1s;
+}
+
+@keyframes waterDrop {
+  0% {
+    transform: translateY(0);
+    opacity: 0.8;
+  }
+
+  80% {
+    transform: translateY(50px);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+}
+
+/* ── Desert biome node overrides ── */
+.inode-biome-desert .inode-cap {
+  clip-path: polygon(0% 100%, 4% 55%, 8% 100%, 14% 40%, 20% 100%, 28% 20%, 36% 100%, 50% 5%, 64% 100%, 72% 30%, 80% 100%, 88% 48%, 94% 100%, 100% 100%);
+}
+
+.inode-biome-desert .inode-cliff-body {
+  clip-path: polygon(0% 0%, 100% 0%, 96% 100%, 4% 100%);
+}
+
+/* ── Abyss biome node overrides ── */
+.inode-biome-abyss .inode-cap {
+  clip-path: polygon(0% 100%, 5% 60%, 12% 80%, 20% 35%, 30% 65%, 40% 20%, 50% 50%, 60% 15%, 70% 55%, 80% 30%, 88% 72%, 94% 50%, 100% 100%);
+}
+
+/* ── Landscape 6-island scene ── */
+@media (orientation: landscape) and (max-height: 500px) {
+  .island-scene {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    min-width: 100% !important;
+  }
+
+  .island-node {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 1 / 1.1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .inode-nameplate {
+    bottom: -32px !important;
+    min-width: 65px !important;
+  }
+
+  .inode-np-name {
+    font-size: 6.5px !important;
+  }
+
+  .inode-np-tagline {
+    font-size: 5.5px !important;
+  }
+
+  .inode-np-stars {
+    font-size: 7px !important;
+  }
+
+  .inode-np-icon {
+    font-size: 10px !important;
+  }
+}
+
+/* ── Portrait 3×2 grid ── */
+@media (max-width: 480px) and (orientation: portrait) {
+  .island-scene {
+    min-height: 520px !important;
+  }
+}

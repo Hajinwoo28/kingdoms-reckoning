@@ -156,6 +156,40 @@ const BIOME_DEFS = {
     reward: { type: 'arcane_rune', icon: '🔮', label: 'Arcane Rune ×3', desc: '+8 diamonds & doubled diamond drops', gold: 100, dia: 8 },
     enemyMods: { hpMult: 1.5, spdBonus: 0, dmgMult: 1.8 },
     loreText: 'Ancient sorcerers and void phantoms haunt this mystical realm.'
+  },
+  desert: {
+    id: 'desert',
+    name: 'Sand Dune Wastes',
+    tagline: 'Scorched beneath the eternal sun',
+    icon: '🏜️',
+    art: '🐪',
+    color: '#F59E0B',
+    colorDark: '#B45309',
+    colorBg: 'rgba(245,158,11,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(180,83,9,.35) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(245,158,11,0.5)',
+    difficulty: 3,
+    enemies: ['sand_scorpion', 'dune_raider', 'sand_golem', 'desert_wyrm'],
+    reward: { type: 'sun_shard', icon: '☀️', label: 'Sun Shard ×3', desc: '+25% tower attack speed for this run', gold: 70, dia: 5 },
+    enemyMods: { hpMult: 1.15, spdBonus: 0, dmgMult: 1.3 },
+    loreText: 'Buried beneath endless dunes lies a cursed pharaoh\'s tomb, unleashing undead legions.'
+  },
+  abyss: {
+    id: 'abyss',
+    name: 'Abyssal Cavern',
+    tagline: 'Darkness swallows all hope',
+    icon: '🕳️',
+    art: '🦇',
+    color: '#06B6D4',
+    colorDark: '#0E7490',
+    colorBg: 'rgba(6,182,212,0.10)',
+    gradient: 'linear-gradient(135deg, rgba(14,116,144,.30) 0%, rgba(3,4,20,.98) 100%)',
+    border: 'rgba(6,182,212,0.45)',
+    difficulty: 4,
+    enemies: ['cave_bat', 'deep_lurker', 'stone_colossus', 'void_leviathan'],
+    reward: { type: 'void_crystal', icon: '💠', label: 'Void Crystal ×3', desc: 'All towers gain splash damage for this run', gold: 90, dia: 7 },
+    enemyMods: { hpMult: 1.25, spdBonus: 0, dmgMult: 1.4 },
+    loreText: 'Ancient sea monsters and shadow beasts dwell in these lightless subterranean caves.'
   }
 };
 
@@ -180,7 +214,17 @@ const BIOME_ENEMY_DEFS = {
   shadow_sprite: { id: 'shadow_sprite', name: 'Shadow Sprite', icon: '🌑', cssClass: 'en-goblin', baseHp: 18, speed: 2, reward: 9, damage: 1, desc: 'Phases through attacks', ability: 'dash', abilityChance: 0.35 },
   arcane_knight: { id: 'arcane_knight', name: 'Arcane Knight', icon: '🧙', cssClass: 'en-knight', baseHp: 200, speed: 1, reward: 55, damage: 6, desc: 'Magic deflect', ability: 'deflect', deflectChance: 0.40 },
   phantom_troll: { id: 'phantom_troll', name: 'Phantom Troll', icon: '👾', cssClass: 'en-troll', baseHp: 130, speed: 1, reward: 35, damage: 4, desc: 'Void regen', ability: 'regen', regenAmt: 12 },
-  void_dragon: { id: 'void_dragon', name: 'Void Dragon', icon: '🐉', cssClass: 'en-dragon', baseHp: 520, speed: 1, reward: 150, damage: 11, desc: 'BOSS — void annihilator', boss: true, ability: 'breath' }
+  void_dragon: { id: 'void_dragon', name: 'Void Dragon', icon: '🐉', cssClass: 'en-dragon', baseHp: 520, speed: 1, reward: 150, damage: 11, desc: 'BOSS — void annihilator', boss: true, ability: 'breath' },
+  // Desert
+  sand_scorpion: { id: 'sand_scorpion', name: 'Sand Scorpion', icon: '🦂', cssClass: 'en-goblin', baseHp: 20, speed: 2, reward: 10, damage: 1, desc: 'Venomous & fast', ability: 'dash', abilityChance: 0.30 },
+  dune_raider: { id: 'dune_raider', name: 'Dune Raider', icon: '🗡️', cssClass: 'en-orc', baseHp: 50, speed: 1, reward: 16, damage: 2, desc: 'Desert marauder' },
+  sand_golem: { id: 'sand_golem', name: 'Sand Golem', icon: '🗿', cssClass: 'en-troll', baseHp: 120, speed: 1, reward: 33, damage: 3, desc: 'Reforms from sand', ability: 'regen', regenAmt: 9 },
+  desert_wyrm: { id: 'desert_wyrm', name: 'Desert Wyrm', icon: '🐛', cssClass: 'en-dragon', baseHp: 440, speed: 1, reward: 130, damage: 9, desc: 'BOSS — sand storm', boss: true, ability: 'breath' },
+  // Abyss
+  cave_bat: { id: 'cave_bat', name: 'Cave Bat', icon: '🦇', cssClass: 'en-goblin', baseHp: 16, speed: 3, reward: 9, damage: 1, desc: 'Blindingly fast swarm', ability: 'dash', abilityChance: 0.40 },
+  deep_lurker: { id: 'deep_lurker', name: 'Deep Lurker', icon: '👁️', cssClass: 'en-orc', baseHp: 55, speed: 1, reward: 18, damage: 3, desc: 'Terrifying ambusher' },
+  stone_colossus: { id: 'stone_colossus', name: 'Stone Colossus', icon: '🗿', cssClass: 'en-troll', baseHp: 150, speed: 1, reward: 40, damage: 4, desc: 'Absorbs hits', ability: 'deflect', deflectChance: 0.25 },
+  void_leviathan: { id: 'void_leviathan', name: 'Void Leviathan', icon: '🐙', cssClass: 'en-dragon', baseHp: 500, speed: 1, reward: 145, damage: 10, desc: 'BOSS — ink burst', boss: true, ability: 'breath' }
 };
 // Merge biome enemies into main ENEMY_DEFS
 Object.assign(ENEMY_DEFS, BIOME_ENEMY_DEFS);
@@ -747,11 +791,54 @@ window.backFromStageSelect = function () {
 
 // Island scene position config — positions relative to viewport (fixed scene)
 const ISLAND_POSITIONS = {
-  tundra: { left: '4%', top: '13%', w: 290, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  jungle: { left: '28%', top: '10%', w: 330, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-  volcano: { left: '57%', top: '14%', w: 270, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-  forest: { left: '73%', top: '11%', w: 250, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  tundra: { left: '1%', top: '12%', w: 260, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  jungle: { left: '18%', top: '9%', w: 295, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  volcano: { left: '36%', top: '13%', w: 240, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  forest: { left: '52%', top: '10%', w: 225, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  desert: { left: '68%', top: '13%', w: 235, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+  abyss: { left: '82%', top: '11%', w: 215, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
 };
+
+/* Responsive island sizes — called at render time so resize events work */
+function getIslandPositions() {
+  const vw = window.innerWidth;
+  const isLandscape = window.innerWidth > window.innerHeight;
+
+  if (vw <= 480 && !isLandscape) {
+    /* Phone portrait: 3 × 2 grid */
+    return {
+      tundra: { left: '2%', top: '3%', w: 108, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '36%', top: '1%', w: 120, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '68%', top: '4%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '2%', top: '50%', w: 95, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '36%', top: '52%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '68%', top: '50%', w: 92, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+    };
+  }
+  if (isLandscape && vw <= 960) {
+    /* Landscape phone / small tablet: 6-in-a-row, compact */
+    return {
+      tundra: { left: '1%', top: '10%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '17%', top: '7%', w: 148, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '34%', top: '11%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '50%', top: '9%', w: 115, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '66%', top: '11%', w: 120, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '82%', top: '9%', w: 110, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+    };
+  }
+  if (vw <= 960) {
+    /* Tablet portrait: 3 × 2 */
+    return {
+      tundra: { left: '2%', top: '10%', w: 170, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '35%', top: '7%', w: 192, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '67%', top: '11%', w: 158, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '2%', top: '53%', w: 150, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '35%', top: '55%', w: 158, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '67%', top: '53%', w: 144, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+    };
+  }
+  return ISLAND_POSITIONS;
+}
 
 // Terrain cap color, cliff rock colors, decorative emoji sets, cliff stripe colors
 const ISLAND_TERRAIN = {
@@ -809,6 +896,34 @@ const ISLAND_TERRAIN = {
       { e: '✨', x: 52, y: 28, s: 22 },
       { e: '🧙', x: 24, y: 18, s: 28 },
       { e: '⭐', x: 78, y: 26, s: 18 },
+    ]
+  },
+  desert: {
+    capColors: ['#E8A53A', '#C17D20', '#A06010'],
+    cliffColors: ['#8B5A1A', '#6E4412', '#52300A', '#3C2206'],
+    cliffStripe: 'rgba(255,200,80,.07)',
+    rimColor: '#D4882A',
+    deco: [
+      { e: '🏜️', x: 10, y: 8, s: 42 },
+      { e: '🐪', x: 50, y: 10, s: 30 },
+      { e: '☀️', x: 72, y: 4, s: 26 },
+      { e: '🦴', x: 30, y: 28, s: 18 },
+      { e: '🌵', x: 80, y: 22, s: 24 },
+      { e: '💀', x: 20, y: 20, s: 20 },
+    ]
+  },
+  abyss: {
+    capColors: ['#0A2040', '#0D3060', '#082848'],
+    cliffColors: ['#071830', '#050F20', '#030A15', '#01050C'],
+    cliffStripe: 'rgba(0,180,220,.06)',
+    rimColor: '#0E4060',
+    deco: [
+      { e: '🕳️', x: 30, y: 12, s: 38 },
+      { e: '🦇', x: 12, y: 6, s: 30 },
+      { e: '🦇', x: 68, y: 10, s: 26 },
+      { e: '💎', x: 55, y: 24, s: 22 },
+      { e: '🌀', x: 78, y: 18, s: 24 },
+      { e: '⚓', x: 22, y: 30, s: 20 },
     ]
   },
 };
@@ -1134,10 +1249,137 @@ const BIOME_PARTICLES = {
       }
       ctx.restore();
     }
+  },
+
+  // ── SAND DUNE WASTES — swirling sand grains + shimmer sparks ──
+  desert: {
+    count: 48,
+    create(cw, ch) {
+      const type = Math.random() < 0.65 ? 'sand' : Math.random() < 0.5 ? 'shimmer' : 'dust';
+      return {
+        x: Math.random() * cw,
+        y: ch * 0.3 + Math.random() * ch * 0.7,
+        size: type === 'sand' ? Math.random() * 3 + 1 : type === 'dust' ? Math.random() * 6 + 3 : Math.random() * 2 + 0.5,
+        speedX: (Math.random() - 0.3) * 1.4,
+        speedY: (Math.random() - 0.6) * 0.5,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.04 + 0.01,
+        opacity: Math.random() * 0.5 + 0.2,
+        hue: 35 + Math.random() * 20,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX + Math.sin(p.phase) * 0.6;
+      p.y += p.speedY + Math.cos(p.phase * 0.7) * 0.3;
+      p.opacity = p.type === 'shimmer'
+        ? Math.max(0, 0.2 + Math.abs(Math.sin(p.phase * 3)) * 0.7)
+        : 0.25 + Math.sin(p.phase) * 0.18;
+      if (p.x > cw + 20) p.x = -20;
+      if (p.x < -20) p.x = cw + 20;
+      if (p.y > ch + 10) { p.y = ch * 0.3; p.x = Math.random() * cw; }
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      if (p.type === 'sand') {
+        ctx.fillStyle = `hsla(${p.hue},70%,65%,0.85)`;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, p.size, p.size * 0.55, p.speedX * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'shimmer') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+        g.addColorStop(0, 'rgba(255,230,150,0.9)');
+        g.addColorStop(0.5, 'rgba(255,190,60,0.4)');
+        g.addColorStop(1, 'rgba(255,150,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = `hsla(${p.hue},55%,55%,0.30)`;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, p.size * 1.8, p.size * 0.65, Math.sin(p.phase) * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── ABYSSAL CAVERN — bioluminescent orbs + drips + void sparks ──
+  abyss: {
+    count: 40,
+    create(cw, ch) {
+      const type = Math.random() < 0.4 ? 'biolum' : Math.random() < 0.55 ? 'drip' : 'spark';
+      return {
+        x: Math.random() * cw,
+        y: type === 'drip' ? Math.random() * ch * 0.4 : Math.random() * ch,
+        size: type === 'biolum' ? Math.random() * 4 + 1.5 : type === 'drip' ? Math.random() * 1.5 + 0.5 : Math.random() * 1.8 + 0.5,
+        speedX: type === 'spark' ? (Math.random() - 0.5) * 0.7 : (Math.random() - 0.5) * 0.18,
+        speedY: type === 'drip' ? Math.random() * 0.9 + 0.4 : (Math.random() - 0.5) * 0.22,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.03 + 0.008,
+        opacity: 0,
+        hue: 185 + Math.random() * 30,
+        type,
+        life: Math.random(),
+        decay: type === 'drip' ? 0.008 + Math.random() * 0.006 : 0
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX;
+      p.y += p.speedY;
+      if (p.type === 'biolum') {
+        p.opacity = Math.max(0, 0.25 + Math.sin(p.phase * 1.8) * 0.65);
+        if (p.y > ch + 10) p.y = -10;
+        if (p.y < -10) p.y = ch + 10;
+      } else if (p.type === 'drip') {
+        p.opacity = p.life * 0.8;
+        p.life -= p.decay;
+        if (p.life <= 0 || p.y > ch + 10) {
+          p.y = Math.random() * ch * 0.3;
+          p.x = Math.random() * cw;
+          p.life = 0.6 + Math.random() * 0.4;
+        }
+      } else {
+        p.opacity = Math.max(0, 0.15 + Math.abs(Math.sin(p.phase * 2.5)) * 0.6);
+        if (p.x < -10) p.x = cw + 10;
+        if (p.x > cw + 10) p.x = -10;
+        if (p.y > ch + 10) p.y = -10;
+      }
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      if (p.type === 'biolum') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3.5);
+        g.addColorStop(0, `hsla(${p.hue},95%,75%,1)`);
+        g.addColorStop(0.4, `hsla(${p.hue},90%,55%,0.55)`);
+        g.addColorStop(1, `hsla(${p.hue},80%,40%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'drip') {
+        ctx.fillStyle = `hsla(${p.hue},85%,65%,0.75)`;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, p.size * 0.5, p.size * 1.4, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = `hsla(${p.hue},90%,70%,0.8)`;
+        ctx.lineWidth = p.size * 0.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x - p.speedX * 4, p.y - p.speedY * 4);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
   }
 };
-
-// Cancel existing particle loops before re-rendering
 const _particleAnimIds = {};
 
 function initIslandParticles(canvas, biomeId) {
@@ -1184,6 +1426,14 @@ function _biomeAmbient(b) {
       <div class="inode-rune-ring" style="--rr-col:rgba(167,139,250,.35);--rr-size:94%;animation-delay:-2.8s"></div>
     </div>`;
   }
+  if (b.id === 'desert') {
+    return `<div class="inode-heat-shimmer" aria-hidden="true"></div>
+            <div class="inode-sandstorm-veil" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'abyss') {
+    return `<div class="inode-deep-fog" aria-hidden="true"></div>
+            <div class="inode-biolum-pulse" aria-hidden="true"></div>`;
+  }
   return '';
 }
 
@@ -1201,6 +1451,14 @@ function _biomeCapOverlay(b) {
   }
   if (b.id === 'forest') {
     return `<div class="inode-arcane-shimmer" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'desert') {
+    return `<div class="inode-sand-ripple" aria-hidden="true"></div>
+            <div class="inode-mirage-glow"  aria-hidden="true"></div>`;
+  }
+  if (b.id === 'abyss') {
+    return `<div class="inode-cave-mouth"  aria-hidden="true"></div>
+            <div class="inode-deep-shimmer" aria-hidden="true"></div>`;
   }
   return '';
 }
@@ -1240,6 +1498,27 @@ function _biomeCliffFX(b) {
       <div class="inode-crystal" style="left:80%;height:26px;animation-delay:-2.1s"></div>
     </div>`;
   }
+  if (b.id === 'desert') {
+    // Layered sand strata lines on cliff face
+    return `<div class="inode-sand-strata" aria-hidden="true">
+      <div class="inode-strata-line" style="top:22%;background:rgba(255,180,40,.18)"></div>
+      <div class="inode-strata-line" style="top:48%;background:rgba(220,140,20,.14)"></div>
+      <div class="inode-strata-line" style="top:72%;background:rgba(180,100,10,.12)"></div>
+    </div>
+    <div class="inode-sand-drip inode-sd-a" aria-hidden="true"></div>
+    <div class="inode-sand-drip inode-sd-b" aria-hidden="true"></div>`;
+  }
+  if (b.id === 'abyss') {
+    // Glowing crystal stalactites and dripping water
+    const stalactites = Array.from({ length: 8 }, (_, i) => {
+      const h = 18 + (i % 3) * 12;
+      const l = 4 + i * 12;
+      return `<div class="inode-stalactite" style="left:${l}%;height:${h}px;animation-delay:${(i * 0.4).toFixed(1)}s"></div>`;
+    }).join('');
+    return `<div class="inode-stalactite-row" aria-hidden="true">${stalactites}</div>
+            <div class="inode-water-drip inode-wd-a" aria-hidden="true"></div>
+            <div class="inode-water-drip inode-wd-b" aria-hidden="true"></div>`;
+  }
   return '';
 }
 
@@ -1249,6 +1528,8 @@ function _biomeBaseGlow(b, tipW, tipH) {
     volcano: 'radial-gradient(ellipse at 50% 80%, rgba(255,80,0,.80) 0%, rgba(230,50,0,.50) 35%, transparent 80%)',
     jungle: 'radial-gradient(ellipse at 50% 50%, rgba(30,200,80,.50) 0%, rgba(16,185,129,.22) 45%, transparent 80%)',
     forest: 'radial-gradient(ellipse at 50% 50%, rgba(160,80,255,.65) 0%, rgba(139,92,246,.30) 40%, transparent 80%)',
+    desert: 'radial-gradient(ellipse at 50% 70%, rgba(255,160,0,.70) 0%, rgba(220,120,0,.40) 40%, transparent 80%)',
+    abyss: 'radial-gradient(ellipse at 50% 60%, rgba(0,180,220,.55) 0%, rgba(6,182,212,.28) 42%, transparent 80%)',
   };
   return `<div class="inode-base-glow" style="background:${glowMap[b.id]}" aria-hidden="true"></div>`;
 }
@@ -1257,76 +1538,168 @@ function _biomeBaseGlow(b, tipW, tipH) {
 //  ENHANCED buildIslandHTML
 // ═══════════════════════════════════════════════════════════════
 
+function _biomeSVGTerrain(b, w, capH) {
+  const svgW = w, svgH = capH;
+  // Each biome gets unique rock/mountain SVG silhouettes drawn on the cap
+  const profiles = {
+    tundra: `
+      <polygon points="0,${svgH} ${svgW * 0.08},${svgH * 0.55} ${svgW * 0.18},${svgH * 0.28} ${svgW * 0.28},${svgH * 0.55} ${svgW * 0.35},${svgH}" fill="rgba(180,220,240,.22)"/>
+      <polygon points="${svgW * 0.30},${svgH} ${svgW * 0.42},${svgH * 0.18} ${svgW * 0.54},${svgH * 0.42} ${svgW * 0.62},${svgH}" fill="rgba(160,210,235,.18)"/>
+      <polygon points="${svgW * 0.56},${svgH} ${svgW * 0.68},${svgH * 0.32} ${svgW * 0.76},${svgH * 0.12} ${svgW * 0.84},${svgH * 0.38} ${svgW * 0.92},${svgH}" fill="rgba(200,235,250,.20)"/>
+      <rect x="${svgW * 0.16}" y="${svgH * 0.20}" width="3" height="${svgH * 0.35}" rx="2" fill="rgba(140,200,230,.55)"/>
+      <rect x="${svgW * 0.40}" y="${svgH * 0.08}" width="3" height="${svgH * 0.42}" rx="2" fill="rgba(140,200,230,.60)"/>
+      <rect x="${svgW * 0.76}" y="${svgH * 0.06}" width="3" height="${svgH * 0.38}" rx="2" fill="rgba(140,200,230,.55)"/>
+      <ellipse cx="${svgW * 0.18}" cy="${svgH * 0.20}" rx="${svgW * 0.04}" ry="${svgH * 0.06}" fill="rgba(230,248,255,.45)"/>
+      <ellipse cx="${svgW * 0.42}" cy="${svgH * 0.08}" rx="${svgW * 0.05}" ry="${svgH * 0.07}" fill="rgba(230,248,255,.50)"/>
+      <ellipse cx="${svgW * 0.76}" cy="${svgH * 0.06}" rx="${svgW * 0.04}" ry="${svgH * 0.06}" fill="rgba(230,248,255,.45)"/>`,
+
+    jungle: `
+      <polygon points="0,${svgH} ${svgW * 0.12},${svgH * 0.45} ${svgW * 0.22},${svgH * 0.60} ${svgW * 0.32},${svgH}" fill="rgba(20,100,30,.30)"/>
+      <polygon points="${svgW * 0.28},${svgH} ${svgW * 0.38},${svgH * 0.30} ${svgW * 0.50},${svgH * 0.48} ${svgW * 0.60},${svgH}" fill="rgba(15,120,35,.25)"/>
+      <polygon points="${svgW * 0.55},${svgH} ${svgW * 0.64},${svgH * 0.22} ${svgW * 0.74},${svgH * 0.40} ${svgW * 0.84},${svgH}" fill="rgba(25,110,28,.28)"/>
+      <line x1="${svgW * 0.50}" y1="${svgH * 0.10}" x2="${svgW * 0.50}" y2="${svgH}" stroke="rgba(30,160,80,.35)" stroke-width="4"/>
+      <line x1="${svgW * 0.50}" y1="${svgH * 0.10}" x2="${svgW * 0.50}" y2="${svgH}" stroke="rgba(30,160,80,.35)" stroke-width="4"/>
+      <ellipse cx="${svgW * 0.44}" cy="${svgH * 0.30}" rx="${svgW * 0.10}" ry="${svgH * 0.12}" fill="rgba(30,180,70,.28)"/>
+      <ellipse cx="${svgW * 0.56}" cy="${svgH * 0.25}" rx="${svgW * 0.09}" ry="${svgH * 0.11}" fill="rgba(20,200,60,.22)"/>
+      <rect x="${svgW * 0.48}" y="${svgH * 0.36}" width="${svgW * 0.04}" height="${svgH * 0.64}" fill="rgba(60,40,10,.40)"/>
+      <rect x="${svgW * 0.20}" y="${svgH * 0.38}" width="${svgW * 0.03}" height="${svgH * 0.62}" fill="rgba(60,40,10,.35)"/>
+      <ellipse cx="${svgW * 0.20}" cy="${svgH * 0.28}" rx="${svgW * 0.08}" ry="${svgH * 0.10}" fill="rgba(30,180,70,.25)"/>`,
+
+    volcano: `
+      <polygon points="${svgW * 0.10},${svgH} ${svgW * 0.28},${svgH * 0.35} ${svgW * 0.38},${svgH * 0.45} ${svgW * 0.46},${svgH}" fill="rgba(80,20,0,.35)"/>
+      <polygon points="${svgW * 0.35},${svgH} ${svgW * 0.50},${svgH * 0.05} ${svgW * 0.65},${svgH}" fill="rgba(100,25,0,.40)"/>
+      <polygon points="${svgW * 0.60},${svgH} ${svgW * 0.70},${svgH * 0.38} ${svgW * 0.80},${svgH * 0.50} ${svgW * 0.90},${svgH}" fill="rgba(70,18,0,.32)"/>
+      <ellipse cx="${svgW * 0.50}" cy="${svgH * 0.06}" rx="${svgW * 0.06}" ry="${svgH * 0.06}" fill="rgba(255,80,0,.70)"/>
+      <path d="M${svgW * 0.46},${svgH * 0.08} Q${svgW * 0.30},${svgH * 0.50} ${svgW * 0.22},${svgH}" stroke="rgba(255,100,0,.50)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M${svgW * 0.54},${svgH * 0.08} Q${svgW * 0.70},${svgH * 0.48} ${svgW * 0.78},${svgH}" stroke="rgba(255,80,0,.45)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="${svgW * 0.50}" cy="${svgH * 0.14}" rx="${svgW * 0.10}" ry="${svgH * 0.05}" fill="rgba(255,40,0,.22)" opacity="0.8"/>`,
+
+    forest: `
+      <polygon points="0,${svgH} ${svgW * 0.10},${svgH * 0.50} ${svgW * 0.20},${svgH * 0.65} ${svgW * 0.30},${svgH}" fill="rgba(80,30,160,.28)"/>
+      <polygon points="${svgW * 0.25},${svgH} ${svgW * 0.36},${svgH * 0.22} ${svgW * 0.48},${svgH * 0.42} ${svgW * 0.58},${svgH}" fill="rgba(100,40,180,.24)"/>
+      <polygon points="${svgW * 0.52},${svgH} ${svgW * 0.62},${svgH * 0.34} ${svgW * 0.72},${svgH * 0.18} ${svgW * 0.82},${svgH * 0.40} ${svgW * 0.92},${svgH}" fill="rgba(90,35,170,.26)"/>
+      <circle cx="${svgW * 0.25}" cy="${svgH * 0.35}" r="${svgW * 0.04}" fill="rgba(180,120,255,.35)"/>
+      <circle cx="${svgW * 0.55}" cy="${svgH * 0.22}" r="${svgW * 0.03}" fill="rgba(200,140,255,.40)"/>
+      <circle cx="${svgW * 0.75}" cy="${svgH * 0.30}" r="${svgW * 0.035}" fill="rgba(160,100,255,.30)"/>
+      <line x1="${svgW * 0.25}" y1="${svgH * 0.35}" x2="${svgW * 0.55}" y2="${svgH * 0.22}" stroke="rgba(180,120,255,.20)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="${svgW * 0.55}" y1="${svgH * 0.22}" x2="${svgW * 0.75}" y2="${svgH * 0.30}" stroke="rgba(180,120,255,.20)" stroke-width="1.5" stroke-dasharray="4,3"/>`,
+
+    desert: `
+      <polygon points="0,${svgH} ${svgW * 0.15},${svgH * 0.38} ${svgW * 0.28},${svgH * 0.55} ${svgW * 0.40},${svgH}" fill="rgba(160,90,10,.30)"/>
+      <polygon points="${svgW * 0.32},${svgH} ${svgW * 0.50},${svgH * 0.10} ${svgW * 0.68},${svgH}" fill="rgba(180,110,15,.35)"/>
+      <polygon points="${svgW * 0.60},${svgH} ${svgW * 0.72},${svgH * 0.40} ${svgW * 0.82},${svgH * 0.55} ${svgW * 0.95},${svgH}" fill="rgba(150,85,8,.28)"/>
+      <polygon points="${svgW * 0.44},${svgH * 0.10} ${svgW * 0.50},${svgH * 0.02} ${svgW * 0.56},${svgH * 0.10}" fill="rgba(200,140,20,.45)"/>
+      <rect x="${svgW * 0.46}" y="${svgH * 0.10}" width="${svgW * 0.08}" height="${svgH * 0.22}" fill="rgba(180,120,15,.38)"/>
+      <line x1="${svgW * 0.10}" y1="${svgH * 0.65}" x2="${svgW * 0.90}" y2="${svgH * 0.65}" stroke="rgba(200,140,30,.18)" stroke-width="2"/>
+      <line x1="${svgW * 0.10}" y1="${svgH * 0.80}" x2="${svgW * 0.90}" y2="${svgH * 0.80}" stroke="rgba(200,140,30,.14)" stroke-width="1.5"/>
+      <ellipse cx="${svgW * 0.50}" cy="${svgH * 0.55}" rx="${svgW * 0.35}" ry="${svgH * 0.08}" fill="rgba(220,160,40,.08)"/>`,
+
+    abyss: `
+      <polygon points="0,${svgH} ${svgW * 0.12},${svgH * 0.48} ${svgW * 0.24},${svgH * 0.62} ${svgW * 0.34},${svgH}" fill="rgba(0,40,80,.42)"/>
+      <polygon points="${svgW * 0.28},${svgH} ${svgW * 0.38},${svgH * 0.28} ${svgW * 0.50},${svgH * 0.44} ${svgW * 0.60},${svgH}" fill="rgba(0,50,90,.38)"/>
+      <polygon points="${svgW * 0.54},${svgH} ${svgW * 0.64},${svgH * 0.36} ${svgW * 0.74},${svgH * 0.20} ${svgW * 0.84},${svgH * 0.42} ${svgW * 0.94},${svgH}" fill="rgba(0,45,85,.40)"/>
+      <ellipse cx="${svgW * 0.38}" cy="${svgH * 0.60}" rx="${svgW * 0.14}" ry="${svgH * 0.18}" fill="rgba(0,20,50,.65)"/>
+      <ellipse cx="${svgW * 0.38}" cy="${svgH * 0.60}" rx="${svgW * 0.08}" ry="${svgH * 0.10}" fill="rgba(0,0,20,.80)"/>
+      <circle cx="${svgW * 0.18}" cy="${svgH * 0.45}" r="${svgW * 0.025}" fill="rgba(0,200,255,.45)"/>
+      <circle cx="${svgW * 0.65}" cy="${svgH * 0.50}" r="${svgW * 0.020}" fill="rgba(0,180,220,.40)"/>
+      <circle cx="${svgW * 0.80}" cy="${svgH * 0.35}" r="${svgW * 0.018}" fill="rgba(0,220,255,.35)"/>
+      <line x1="${svgW * 0.34}" y1="${svgH * 0.10}" x2="${svgW * 0.42}" y2="${svgH * 0.58}" stroke="rgba(0,180,220,.30)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="${svgW * 0.50}" y1="${svgH * 0.05}" x2="${svgW * 0.45}" y2="${svgH * 0.55}" stroke="rgba(0,160,200,.22)" stroke-width="2" stroke-linecap="round"/>`,
+  };
+  return `<svg class="inode-svg-terrain" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${profiles[b.id] || ''}</svg>`;
+}
+
 function buildIslandHTML(b) {
-  const pos = ISLAND_POSITIONS[b.id];
+  const pos = getIslandPositions()[b.id];
+  if (!pos) return '';
   const ter = ISLAND_TERRAIN[b.id];
+  if (!ter) return '';
+  const isMobile = window.innerWidth <= 640;
+  const decoScale = isMobile ? 0.54 : 1;
   const w = pos.w;
-  const capH = Math.round(w * 0.44);
-  const cliffH = Math.round(w * 0.38);
-  const tipH = Math.round(w * 0.12);
+  const capH = Math.round(w * 0.48);
+  const cliffH = Math.round(w * 0.42);
+  const tipH = Math.round(w * 0.14);
   const totalIslandH = capH + cliffH + tipH;
 
-  // Canvas is oversized so particles can fly above and around the island
   const cvW = w + 180, cvH = totalIslandH + 280;
   const cvLeft = -90, cvTop = -140;
 
   const capGrad = `radial-gradient(ellipse at 40% 35%, ${ter.capColors[0]} 0%, ${ter.capColors[1]} 55%, ${ter.capColors[2]} 100%)`;
-  const cliffGrad = `linear-gradient(180deg, ${ter.cliffColors[0]} 0%, ${ter.cliffColors[1]} 35%, ${ter.cliffColors[2]} 70%, ${ter.cliffColors[3]} 100%)`;
+  // Layered cliff: three colour bands for depth
+  const cliffGrad = `linear-gradient(180deg,
+    ${ter.cliffColors[0]} 0%,
+    ${ter.cliffColors[1]} 28%,
+    ${ter.cliffColors[2]} 62%,
+    ${ter.cliffColors[3]} 100%)`;
 
   const decoHtml = ter.deco.map((d, i) =>
-    `<span class="inode-deco-item" style="left:${d.x}%;top:${d.y}%;font-size:${d.s}px;animation-delay:${(i * 0.55).toFixed(2)}s">${d.e}</span>`
+    `<span class="inode-deco-item" style="left:${d.x}%;top:${d.y}%;font-size:${Math.round(d.s * decoScale)}px;animation-delay:${(i * 0.55).toFixed(2)}s">${d.e}</span>`
   ).join('');
 
   const starsHtml = '⭐'.repeat(b.difficulty) +
     `<span style="opacity:.22">${'⭐'.repeat(5 - b.difficulty)}</span>`;
 
   const shadowGlow = `0 0 ${Math.round(w * 0.35)}px ${Math.round(w * 0.10)}px ${b.color}28`;
-  const nodeGlow = b.id === 'volcano'
-    ? `0 0 40px 8px rgba(255,80,0,.18), 0 0 80px 16px rgba(200,40,0,.10)`
-    : b.id === 'tundra'
-      ? `0 0 40px 8px rgba(34,211,238,.15), 0 0 80px 16px rgba(100,220,255,.08)`
-      : b.id === 'jungle'
-        ? `0 0 40px 8px rgba(16,185,129,.15), 0 0 80px 16px rgba(30,200,80,.08)`
-        : `0 0 40px 8px rgba(139,92,246,.18), 0 0 80px 16px rgba(120,60,240,.10)`;
+
+  const nodeGlowMap = {
+    volcano: `0 0 40px 8px rgba(255,80,0,.20), 0 0 80px 16px rgba(200,40,0,.12)`,
+    tundra: `0 0 40px 8px rgba(34,211,238,.16), 0 0 80px 16px rgba(100,220,255,.09)`,
+    jungle: `0 0 40px 8px rgba(16,185,129,.16), 0 0 80px 16px rgba(30,200,80,.09)`,
+    forest: `0 0 40px 8px rgba(139,92,246,.20), 0 0 80px 16px rgba(120,60,240,.12)`,
+    desert: `0 0 40px 8px rgba(245,158,11,.18), 0 0 80px 16px rgba(220,120,0,.10)`,
+    abyss: `0 0 40px 8px rgba(6,182,212,.16),  0 0 80px 16px rgba(0,150,200,.09)`,
+  };
+  const nodeGlow = nodeGlowMap[b.id] || '';
+
+  // Extra cliff side panels for 3-D depth illusion
+  const cliffSideW = Math.round(w * 0.08);
+  const cliffLeftPanel = `<div class="inode-cliff-side inode-cliff-left"  style="width:${cliffSideW}px;height:${cliffH}px;background:${ter.cliffColors[3]};left:0"></div>`;
+  const cliffRightPanel = `<div class="inode-cliff-side inode-cliff-right" style="width:${cliffSideW}px;height:${cliffH}px;background:${ter.cliffColors[3]};right:0"></div>`;
 
   return `
   <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
-       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color};filter:drop-shadow(0 0 0 transparent)">
+       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color}">
 
-    <!-- ── PARTICLE CANVAS (absolute, behind nothing) ── -->
     <canvas class="inode-particles" id="ipc-${b.id}"
             width="${cvW}" height="${cvH}"
             style="width:${cvW}px;height:${cvH}px;top:${cvTop}px;left:${cvLeft}px"></canvas>
 
-    <!-- ── AMBIENT BIOME FX (aurora / heat-haze / mist / rune rings) ── -->
     ${_biomeAmbient(b)}
 
     <!-- ── TERRAIN CAP ── -->
-    <div class="inode-cap" style="width:${w}px;height:${capH}px;background:${capGrad};border-color:${ter.rimColor};box-shadow:0 6px 0 rgba(0,0,0,.22),0 12px 30px rgba(0,0,0,.28),inset 0 10px 20px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.25),${nodeGlow}">
+    <div class="inode-cap" style="width:${w}px;height:${capH}px;background:${capGrad};border-color:${ter.rimColor};box-shadow:0 6px 0 rgba(0,0,0,.28),0 14px 36px rgba(0,0,0,.32),inset 0 12px 22px rgba(255,255,255,.16),inset 0 -5px 10px rgba(0,0,0,.28),${nodeGlow}">
       <div class="inode-cap-shine"></div>
+      ${_biomeSVGTerrain(b, w, capH)}
       ${_biomeCapOverlay(b)}
       <div class="inode-deco-wrap">${decoHtml}</div>
     </div>
 
-    <!-- ── CLIFF BODY ── -->
-    <div class="inode-cliff-body" style="width:${Math.round(w * .84)}px;height:${cliffH}px;background:${cliffGrad};margin-left:${Math.round(w * .08)}px">
-      <div class="inode-cliff-stripe" style="background:${ter.cliffStripe}"></div>
-      <div class="inode-cliff-stripe" style="left:20%;background:${ter.cliffStripe}"></div>
-      <div class="inode-cliff-stripe" style="left:40%;background:${ter.cliffStripe}"></div>
-      <div class="inode-cliff-stripe" style="left:62%;background:${ter.cliffStripe}"></div>
-      <div class="inode-cliff-stripe" style="left:80%;background:${ter.cliffStripe}"></div>
-      <div class="inode-crack" style="top:30%;background:rgba(0,0,0,.18)"></div>
-      <div class="inode-crack" style="top:62%;background:rgba(0,0,0,.14)"></div>
-      ${_biomeCliffFX(b)}
+    <!-- ── CLIFF BODY (layered for 3-D look) ── -->
+    <div class="inode-cliff-wrap" style="width:${Math.round(w * .88)}px;margin-left:${Math.round(w * .06)}px;position:relative">
+      ${cliffLeftPanel}
+      ${cliffRightPanel}
+      <div class="inode-cliff-body" style="width:100%;height:${cliffH}px;background:${cliffGrad}">
+        <div class="inode-cliff-stripe" style="background:${ter.cliffStripe}"></div>
+        <div class="inode-cliff-stripe" style="left:18%;background:${ter.cliffStripe}"></div>
+        <div class="inode-cliff-stripe" style="left:38%;background:${ter.cliffStripe}"></div>
+        <div class="inode-cliff-stripe" style="left:60%;background:${ter.cliffStripe}"></div>
+        <div class="inode-cliff-stripe" style="left:80%;background:${ter.cliffStripe}"></div>
+        <div class="inode-cliff-ledge" style="top:33%"></div>
+        <div class="inode-cliff-ledge" style="top:67%"></div>
+        <div class="inode-crack" style="top:28%;background:rgba(0,0,0,.20)"></div>
+        <div class="inode-crack" style="top:60%;background:rgba(0,0,0,.15)"></div>
+        ${_biomeCliffFX(b)}
+      </div>
     </div>
 
     <!-- ── BOTTOM TIP ── -->
-    <div class="inode-cliff-tip" style="width:${Math.round(w * .52)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .24)}px">
-      ${_biomeBaseGlow(b, Math.round(w * .52), tipH)}
+    <div class="inode-cliff-tip" style="width:${Math.round(w * .48)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .26)}px">
+      ${_biomeBaseGlow(b, Math.round(w * .48), tipH)}
     </div>
 
-    <!-- ── FLOATING SHADOW (tinted by biome) ── -->
-    <div class="inode-shadow" style="width:${Math.round(w * .62)}px;margin-left:${Math.round(w * .19)}px;box-shadow:${shadowGlow}"></div>
+    <!-- ── FLOATING SHADOW ── -->
+    <div class="inode-shadow" style="width:${Math.round(w * .60)}px;margin-left:${Math.round(w * .20)}px;box-shadow:${shadowGlow}"></div>
 
     <!-- ── NAMEPLATE ── -->
     <div class="inode-nameplate" style="--biome-col:${b.color}">
@@ -3212,8 +3585,6 @@ function applyCastleSkin() {
 function setPhase(phase) {
   const dot = document.getElementById('phase-dot');
   const label = document.getElementById('phase-label');
-  /* Stamp phase on board so CSS :has() selectors can target it */
-  if (boardEl) boardEl.dataset.phase = phase;
   if (phase === 'planning') {
     dot.className = 'phase-indicator planning';
     label.textContent = '⚔️ PLANNING PHASE — Place & upgrade towers, then execute your turn';
