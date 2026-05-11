@@ -1661,6 +1661,12 @@ function buildIslandHTML(b) {
   const cliffSideW = Math.round(w * 0.08);
   const cliffLeftPanel = `<div class="inode-cliff-side inode-cliff-left"  style="width:${cliffSideW}px;height:${cliffH}px;background:${ter.cliffColors[3]};left:0"></div>`;
   const cliffRightPanel = `<div class="inode-cliff-side inode-cliff-right" style="width:${cliffSideW}px;height:${cliffH}px;background:${ter.cliffColors[3]};right:0"></div>`;
+  const floatChunks = [18, 33, 52, 74].map((left, i) =>
+    `<span class="inode-float-chunk" style="left:${left}%;--fc-size:${Math.max(8, Math.round(w * (0.05 + i * 0.008)))}px;animation-delay:${(-0.6 * i).toFixed(1)}s"></span>`
+  ).join('');
+  const waterfallHtml = (b.id === 'volcano' || b.id === 'desert')
+    ? ''
+    : `<div class="inode-waterfall wf-main"></div><div class="inode-waterfall wf-side"></div>`;
 
   return `
   <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
@@ -1702,6 +1708,8 @@ function buildIslandHTML(b) {
     <div class="inode-cliff-tip" style="width:${Math.round(w * .48)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .26)}px">
       ${_biomeBaseGlow(b, Math.round(w * .48), tipH)}
     </div>
+    <div class="inode-float-chunks">${floatChunks}</div>
+    ${waterfallHtml}
 
     <!-- ── FLOATING SHADOW ── -->
     <div class="inode-shadow" style="width:${Math.round(w * .60)}px;margin-left:${Math.round(w * .20)}px;box-shadow:${shadowGlow}"></div>
@@ -2036,25 +2044,37 @@ const STAGE_TILE_THEMES = [
   { groundClass: 'stage-10', pathDeco: ['👑', '⚔️', '✨', '👑'], groundDeco: ['👑', '⚔️', '💎', '✨'] },
 ];
 
+const TILE_VARIANTS = 5;
+
+function getBoardThemeClass() {
+  if (G.gameMode === 'story' && G.storyStage) return `stage-${G.storyStage}`;
+  if (G.activeBiome?.id) return `biome-${G.activeBiome.id}`;
+  return '';
+}
+
+function getTileVariant(x, y, themeClass) {
+  const seed = (themeClass || '').split('').reduce((a, ch) => a + ch.charCodeAt(0), 0);
+  return Math.abs((x * 17 + y * 31 + x * y * 7 + seed) % TILE_VARIANTS);
+}
+
 // ── BOARD CREATION ────────────────────────────────────────────
 function createBoard() {
   boardEl.innerHTML = '';
   const stageTheme = (G.gameMode === 'story' && G.storyStage)
     ? STAGE_TILE_THEMES[G.storyStage - 1] : null;
+  const boardThemeClass = getBoardThemeClass();
 
-  let tileIdx = 0;
   for (let y = 0; y < GRID_H; y++) {
     for (let x = 0; x < GRID_W; x++) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       cell.dataset.x = x; cell.dataset.y = y;
 
-      // Apply stage theme class + tile variation
-      if (stageTheme) {
-        cell.classList.add(stageTheme.groundClass);
-        cell.dataset.tv = tileIdx % 5;
+      // Apply assigned stage/biome class and deterministic tile variation.
+      if (boardThemeClass) {
+        cell.classList.add(boardThemeClass);
+        cell.dataset.tv = String(getTileVariant(x, y, boardThemeClass));
       }
-      tileIdx++;
 
       if (y === PATH_ROW) {
         if (x === GRID_W - 1) {
@@ -2079,7 +2099,8 @@ function createBoard() {
           if (stageTheme && x % 3 === 1) {
             const deco = document.createElement('span');
             deco.className = 'path-deco';
-            deco.textContent = stageTheme.pathDeco[x % stageTheme.pathDeco.length];
+            const idx = getTileVariant(x, y, boardThemeClass) % stageTheme.pathDeco.length;
+            deco.textContent = stageTheme.pathDeco[idx];
             cell.appendChild(deco);
           }
         }
@@ -2088,7 +2109,8 @@ function createBoard() {
         if (stageTheme && (x * 7 + y * 3) % 11 === 0) {
           const gdeco = document.createElement('span');
           gdeco.className = 'ground-deco';
-          gdeco.textContent = stageTheme.groundDeco[(x + y) % stageTheme.groundDeco.length];
+          const idx = getTileVariant(x + 3, y + 1, boardThemeClass) % stageTheme.groundDeco.length;
+          gdeco.textContent = stageTheme.groundDeco[idx];
           cell.appendChild(gdeco);
         }
         cell.addEventListener('mouseenter', () => hoverCell(x, y));

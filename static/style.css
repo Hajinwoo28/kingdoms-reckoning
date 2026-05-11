@@ -9986,6 +9986,96 @@ body {
   }
 }
 
+/* ── Extra literal floating-island elements ── */
+.inode-float-chunks {
+  position: absolute;
+  left: 50%;
+  top: 84%;
+  width: 72%;
+  height: 42%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.inode-float-chunk {
+  position: absolute;
+  width: var(--fc-size, 12px);
+  height: calc(var(--fc-size, 12px) * 0.8);
+  border-radius: 45% 55% 55% 45%;
+  background: linear-gradient(180deg, rgba(90, 80, 74, .95) 0%, rgba(52, 44, 40, .92) 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .35), inset 0 1px 1px rgba(255, 255, 255, .08);
+  animation: island-chunk-drift 3.8s ease-in-out infinite;
+}
+
+@keyframes island-chunk-drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: .72;
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(6deg);
+    opacity: .96;
+  }
+}
+
+.inode-waterfall {
+  position: absolute;
+  top: 76%;
+  width: 10%;
+  height: 34%;
+  border-radius: 0 0 40px 40px;
+  background: linear-gradient(180deg, rgba(205, 242, 255, .72) 0%, rgba(111, 196, 235, .45) 48%, rgba(100, 180, 220, 0) 100%);
+  filter: blur(.25px);
+  pointer-events: none;
+  z-index: 1;
+  animation: waterfall-flow 1.3s linear infinite;
+}
+
+.inode-waterfall::after {
+  content: "";
+  position: absolute;
+  left: -45%;
+  right: -45%;
+  bottom: -16%;
+  height: 24%;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(170, 230, 255, .36) 0%, rgba(170, 230, 255, 0) 75%);
+}
+
+.inode-waterfall.wf-main {
+  left: 44%;
+}
+
+.inode-waterfall.wf-side {
+  left: 28%;
+  width: 7%;
+  opacity: .68;
+  animation-duration: 1.6s;
+}
+
+@keyframes waterfall-flow {
+  0% {
+    transform: translateY(0) scaleY(1);
+  }
+
+  100% {
+    transform: translateY(7px) scaleY(1.03);
+  }
+}
+
+.inode-biome-abyss .inode-waterfall,
+.inode-biome-tundra .inode-waterfall {
+  opacity: .5;
+}
+
+.inode-biome-volcano .inode-float-chunk {
+  background: linear-gradient(180deg, rgba(96, 40, 26, .95) 0%, rgba(46, 18, 12, .92) 100%);
+  box-shadow: 0 3px 8px rgba(255, 90, 0, .2), inset 0 1px 1px rgba(255, 170, 120, .12);
+}
+
 /* ── Mobile landscape gameplay safety override ── */
 @media (orientation: landscape) and (pointer: coarse) and (max-width: 1024px) and (max-height: 620px) {
   .top-hud {
