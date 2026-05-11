@@ -455,6 +455,11 @@ let G = {
   waveInStage: 1,   // wave within stage (1, 2, 3)
   stagesCleared: [], // array of cleared stage IDs
   stageStars: {},    // { stageId: stars (0-3) }
+  // Strategic / tactical progression stats
+  turnNumber: 0,
+  cleanTurns: 0,
+  momentum: 0,
+  tacticalRating: 0,
 };
 let gameSettings = { music: true, sfx: true, vfx: true, fastMode: false };
 let currentShopTab = 'castles';
@@ -1968,6 +1973,7 @@ function restartGame(loginRestore = false) {
   G.totalKills = 0; G.totalBuilds = 0; G.totalUpgrades = 0;
   G.dragonKills = 0; G.teslaTowers = 0;
   G.abilitiesUsed = 0; G.towelsSold = 0;
+  G.turnNumber = 0; G.cleanTurns = 0; G.momentum = 0; G.tacticalRating = 0;
 
   // Story mode: initialize to wave 1 of current stage
   if (G.gameMode === 'story' && !loginRestore) {
@@ -2295,8 +2301,14 @@ function buildWaveQueue() {
   }
 
   const baseScale = G.gameMode === 'extreme' ? (1 + (G.wave - 1) * 0.15) : storyHpMult;
-  const hpScale = baseScale * (G.gameMode === 'extreme' ? 1.75 : 1) * (biome ? biome.enemyMods.hpMult : 1);
-  const dmgMult = biome ? biome.enemyMods.dmgMult : (isBossWave ? 1.3 : 1);
+  const towerPower = G.towers.reduce((sum, t) => sum + (t.level || 1) * 1.5 + (t.damage || 0) * 0.1 + (t.range || 1) * 0.5, 0);
+  const adaptivePressure = G.gameMode === 'extreme'
+    ? Math.min(0.45, towerPower / 220)
+    : Math.min(0.2, towerPower / 280);
+  let hpScale = baseScale * (G.gameMode === 'extreme' ? 1.75 : 1) * (biome ? biome.enemyMods.hpMult : 1);
+  let dmgMult = biome ? biome.enemyMods.dmgMult : (isBossWave ? 1.3 : 1);
+  hpScale *= (1 + adaptivePressure);
+  dmgMult *= (1 + adaptivePressure * 0.6);
   const spdBonus = biome ? biome.enemyMods.spdBonus : 0;
 
   // In biome mode, replace enemy types with biome-specific ones
@@ -2347,6 +2359,15 @@ function showWavePreview() {
   }
 
   const groups = getWaveEnemies(G.wave);
+  const totalEnemies = groups.reduce((sum, g) => sum + g.count, 0);
+  const heavyEnemies = groups
+    .filter(g => ['troll', 'knight', 'dragon'].includes(g.type))
+    .reduce((sum, g) => sum + g.count, 0);
+  const tacticalHint = G.gameMode === 'extreme'
+    ? `Extreme directive: Focus breach threats first. Heavy units ${heavyEnemies}/${totalEnemies}.`
+    : `Story directive: Build momentum with clean turns for bonus rewards.`;
+  document.getElementById('wsm-sub').textContent += ` ${tacticalHint}`;
+
   const typeCounts = {};
   groups.forEach(g => { typeCounts[g.type] = (typeCounts[g.type] || 0) + g.count; });
 
@@ -2374,9 +2395,12 @@ function closeWaveModal() { document.getElementById('wave-start-modal').style.di
 // ── EXECUTE TURN ──────────────────────────────────────────────
 async function executeTurn() {
   if (G.gameOver || G.isAnimating) return;
+  G.turnNumber++;
   G.isAnimating = true;
   setPhase('combat');
   document.getElementById('execute-btn').disabled = true;
+  let turnKills = 0;
+  let breachesThisTurn = 0;
 
   await sleep(120);
 
@@ -2440,6 +2464,7 @@ async function executeTurn() {
   let newGold = 0;
   G.enemies = G.enemies.filter(e => {
     if (e.hp <= 0) {
+      turnKills++;
       G.totalKills++;
       newGold += e.reward;
       G.score += e.reward * 2;
@@ -2480,6 +2505,7 @@ async function executeTurn() {
         }
         const actualDmg = Math.max(1, e.damage - G.tempShield);
         G.hp -= actualDmg;
+        breachesThisTurn++;
         addLog(`💀 ${e.def.name} breached the gate! (Castle -${actualDmg}HP)`, 'log-attack');
         showToast(`Castle hit! -${actualDmg}HP!`, 'terror');
         if (gameSettings.vfx) { document.getElementById('shake-wrapper').classList.add('shake'); setTimeout(() => document.getElementById('shake-wrapper').classList.remove('shake'), 450); }
@@ -2501,6 +2527,8 @@ async function executeTurn() {
   }
 
   updateHUD(); updateCastleHpBar();
+  applyTurnStrategyOutcome(turnKills, breachesThisTurn);
+  updateHUD();
 
   // Check defeat
   if (G.hp <= 0) {
@@ -2528,9 +2556,73 @@ async function executeTurn() {
 
 // ── TARGETS IN RANGE ──────────────────────────────────────────
 function getTargetsInRange(tower) {
-  return G.enemies
-    .filter(e => Math.abs(tower.x - e.x) + Math.abs(tower.y - e.y) <= tower.range)
-    .sort((a, b) => b.x - a.x); // prioritize furthest along
+  const inRange = G.enemies.filter(e => Math.abs(tower.x - e.x) + Math.abs(tower.y - e.y) <= tower.range);
+  const towerDef = TOWER_DEFS[tower.type];
+  return inRange.sort((a, b) => {
+    const distA = Math.abs(tower.x - a.x) + Math.abs(tower.y - a.y);
+    const distB = Math.abs(tower.x - b.x) + Math.abs(tower.y - b.y);
+    const baseThreatA = (a.x * 18) + (a.damage * 9) + (a.hp * 0.3) + ((a.def.speed || a.speed || 1) * 10) + (a.frozen ? -15 : 0);
+    const baseThreatB = (b.x * 18) + (b.damage * 9) + (b.hp * 0.3) + ((b.def.speed || b.speed || 1) * 10) + (b.frozen ? -15 : 0);
+    const abilityBoostA = (a.def.ability === 'breath' ? 30 : 0) + (a.def.ability === 'dash' ? 10 : 0);
+    const abilityBoostB = (b.def.ability === 'breath' ? 30 : 0) + (b.def.ability === 'dash' ? 10 : 0);
+    let scoreA = baseThreatA + abilityBoostA;
+    let scoreB = baseThreatB + abilityBoostB;
+
+    if (towerDef?.type === 'freeze') {
+      scoreA += a.frozen ? -40 : 30;
+      scoreB += b.frozen ? -40 : 30;
+      scoreA += (a.speed || 1) * 12;
+      scoreB += (b.speed || 1) * 12;
+    } else if (towerDef?.type === 'heavy') {
+      scoreA += a.hp * 0.6;
+      scoreB += b.hp * 0.6;
+    } else if (towerDef?.type === 'chain') {
+      scoreA += (6 - distA) * 6;
+      scoreB += (6 - distB) * 6;
+    }
+
+    if (G.gameMode === 'extreme') {
+      scoreA += a.x * 6;
+      scoreB += b.x * 6;
+    } else {
+      scoreA += (a.hp < (a.maxHp || a.hp) * 0.35) ? 8 : 0;
+      scoreB += (b.hp < (b.maxHp || b.hp) * 0.35) ? 8 : 0;
+    }
+
+    return scoreB - scoreA;
+  });
+}
+
+function applyTurnStrategyOutcome(turnKills, breachesThisTurn) {
+  if (breachesThisTurn === 0) {
+    G.cleanTurns += 1;
+    G.momentum = Math.min(5, G.momentum + 1);
+    if (G.cleanTurns >= 2) {
+      const streakGold = Math.min(16, 2 + G.cleanTurns * 2);
+      G.gold += streakGold;
+      G.score += streakGold * 3;
+      addLog(`🧠 Clean-turn streak x${G.cleanTurns}: +${streakGold} gold tactical bonus.`, 'log-gold');
+    }
+    if (G.gameMode === 'story' && G.momentum >= 3 && G.cleanTurns % 2 === 0) {
+      G.diamonds += 1;
+      addLog('✨ Story momentum reward: +1 diamond for disciplined defense.', 'log-wave');
+    }
+  } else {
+    G.cleanTurns = 0;
+    G.momentum = Math.max(0, G.momentum - breachesThisTurn);
+    if (G.gameMode === 'extreme') {
+      const pressurePenalty = Math.min(40, breachesThisTurn * 12);
+      G.score = Math.max(0, G.score - pressurePenalty);
+      addLog(`⚠️ Breach pressure: -${pressurePenalty} score. Protect the gate to keep tempo.`, 'log-attack');
+    }
+  }
+
+  if (G.gameMode === 'extreme' && turnKills >= 4) {
+    const tacticalBonus = Math.min(70, 15 + turnKills * 6 + G.momentum * 3);
+    G.score += tacticalBonus;
+    G.tacticalRating += 1;
+    addLog(`🔥 Tactical burst (${turnKills} kills): +${tacticalBonus} score.`, 'log-wave');
+  }
 }
 
 // ── WAVE COMPLETE ─────────────────────────────────────────────
