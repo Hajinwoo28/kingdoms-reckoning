@@ -4267,18 +4267,18 @@ body {
   }
 }
 
-/* ── TERRAIN CAP (flat oval top of cylinder) ── */
+/* ── TERRAIN CAP (organic cartoon oval) ── */
 .inode-cap {
   position: relative;
-  border-radius: 50% / 30%;
-  border-bottom: 3px solid;
+  border-radius: 48% 52% 46% 54% / 58% 58% 42% 42%;
+  border-bottom: 4px solid;
   overflow: hidden;
   z-index: 3;
   box-shadow:
-    0 4px 0 rgba(0, 0, 0, .22),
-    0 10px 28px rgba(0, 0, 0, .28),
-    inset 0 8px 18px rgba(255, 255, 255, .16),
-    inset 0 -3px 8px rgba(0, 0, 0, .28);
+    0 6px 0 rgba(0, 0, 0, .28),
+    0 14px 36px rgba(0, 0, 0, .35),
+    inset 0 12px 22px rgba(255, 255, 255, .18),
+    inset 0 -5px 10px rgba(0, 0, 0, .30);
 }
 
 /* Gloss shine */
@@ -4331,17 +4331,17 @@ body {
 }
 
 /* ── CLIFF BODY (rock face below terrain) ── */
-/* ── CLIFF BODY (straight cylinder wall) ── */
+/* ── CLIFF BODY (tapered rocky cartoon sides) ── */
 .inode-cliff-body {
   position: relative;
   z-index: 2;
-  margin-top: -3px;
-  border-radius: 0;
+  margin-top: -4px;
+  border-radius: 0 0 42% 42% / 0 0 65% 65%;
   overflow: hidden;
   box-shadow:
-    inset 4px 0 12px rgba(0, 0, 0, .28),
-    inset -4px 0 12px rgba(0, 0, 0, .28),
-    0 6px 18px rgba(0, 0, 0, .30);
+    inset 3px 0 8px rgba(0, 0, 0, .22),
+    inset -3px 0 8px rgba(0, 0, 0, .22),
+    0 8px 22px rgba(0, 0, 0, .35);
 }
 
 /* Vertical rock striations */
@@ -4363,14 +4363,14 @@ body {
   opacity: .7;
 }
 
-/* ── CYLINDER BASE (closed ellipse, not a rocky tip) ── */
+/* ── BOTTOM TIP (cartoon stalactite spike) ── */
 .inode-cliff-tip {
   position: relative;
   z-index: 1;
   margin-top: -2px;
-  border-radius: 50% / 60%;
+  border-radius: 0 0 55% 55% / 0 0 100% 100%;
   box-shadow:
-    0 10px 24px rgba(0, 0, 0, .40),
+    0 10px 22px rgba(0, 0, 0, .40),
     inset 0 -4px 8px rgba(0, 0, 0, .32);
 }
 
@@ -9589,12 +9589,10 @@ body {
 }
 
 /* ── Cliff wrap gives depth context for side panels ── */
-/* cliff wrap: same width as cap, zero horizontal margins */
+/* cliff wrap: natural taper — inline styles control the actual width */
 .inode-cliff-wrap {
   position: relative;
   display: flex;
-  width: 100% !important;
-  margin-left: 0 !important;
 }
 
 /* ── Side cliff panels (3-D left/right faces) ── */

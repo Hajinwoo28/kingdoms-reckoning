@@ -1620,9 +1620,9 @@ function buildIslandHTML(b) {
   const isMobile = window.innerWidth <= 640;
   const decoScale = isMobile ? 0.54 : 1;
   const w = pos.w;
-  const capH = Math.round(w * 0.32);   // flatter oval top
-  const cliffH = Math.round(w * 0.55);   // tall straight cylinder wall
-  const tipH = Math.round(w * 0.10);   // small closed ellipse base
+  const capH = Math.round(w * 0.48);   // tall terrain cap
+  const cliffH = Math.round(w * 0.38);   // moderate cliff
+  const tipH = Math.round(w * 0.22);   // dramatic stalactite tip
   const totalIslandH = capH + cliffH + tipH;
 
   const cvW = w + 180, cvH = totalIslandH + 280;
@@ -1662,7 +1662,9 @@ function buildIslandHTML(b) {
   const floatChunks = [18, 33, 52, 74].map((left, i) =>
     `<span class="inode-float-chunk" style="left:${left}%;--fc-size:${Math.max(8, Math.round(w * (0.05 + i * 0.008)))}px;animation-delay:${(-0.6 * i).toFixed(1)}s"></span>`
   ).join('');
-  const waterfallHtml = '';   // cylinders have no waterfall face
+  const waterfallHtml = (b.id === 'volcano' || b.id === 'desert')
+    ? ''
+    : `<div class="inode-waterfall wf-main"></div><div class="inode-waterfall wf-side"></div>`;
 
   return `
   <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
@@ -1683,7 +1685,7 @@ function buildIslandHTML(b) {
     </div>
 
     <!-- ── CLIFF BODY (layered for 3-D look) ── -->
-    <div class="inode-cliff-wrap" style="width:${w}px;margin-left:0;position:relative">
+    <div class="inode-cliff-wrap" style="width:${Math.round(w * .88)}px;margin-left:${Math.round(w * .06)}px;position:relative">
       ${cliffLeftPanel}
       ${cliffRightPanel}
       <div class="inode-cliff-body" style="width:100%;height:${cliffH}px;background:${cliffGrad}">
@@ -1701,7 +1703,7 @@ function buildIslandHTML(b) {
     </div>
 
     <!-- ── BOTTOM TIP ── -->
-    <div class="inode-cliff-tip" style="width:${w}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:0">
+    <div class="inode-cliff-tip" style="width:${Math.round(w * .48)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .26)}px">
       ${_biomeBaseGlow(b, Math.round(w * .48), tipH)}
     </div>
     <div class="inode-float-chunks">${floatChunks}</div>
