@@ -142,20 +142,20 @@ const BIOME_DEFS = {
   },
   forest: {
     id: 'forest',
-    name: 'Enchanted Forest',
-    tagline: 'Ancient magic stirs within',
-    icon: '🌲',
-    art: '🧙',
-    color: '#8B5CF6',
-    colorDark: '#5B21B6',
-    colorBg: 'rgba(139,92,246,0.12)',
-    gradient: 'linear-gradient(135deg, rgba(91,33,182,.35) 0%, rgba(7,6,26,.95) 100%)',
-    border: 'rgba(139,92,246,0.5)',
+    name: 'Nature Cave Sanctuary',
+    tagline: 'Wild roots guard a glowing hollow',
+    icon: '🌿',
+    art: '🕳️',
+    color: '#22C55E',
+    colorDark: '#166534',
+    colorBg: 'rgba(34,197,94,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(22,101,52,.36) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(34,197,94,0.55)',
     difficulty: 5,
     enemies: ['shadow_sprite', 'arcane_knight', 'phantom_troll', 'void_dragon'],
-    reward: { type: 'arcane_rune', icon: '🔮', label: 'Arcane Rune ×3', desc: '+8 diamonds & doubled diamond drops', gold: 100, dia: 8 },
+    reward: { type: 'nature_core', icon: '🍃', label: 'Nature Core ×3', desc: '+6 HP on boss-wave clear and +1 regen per turn for this run', gold: 95, dia: 7 },
     enemyMods: { hpMult: 1.5, spdBonus: 0, dmgMult: 1.8 },
-    loreText: 'Ancient sorcerers and void phantoms haunt this mystical realm.'
+    loreText: 'Beneath the roots lies a bioluminescent cave where toxic spores and cave guardians awaken.'
   },
   desert: {
     id: 'desert',
@@ -1426,10 +1426,7 @@ function _biomeAmbient(b) {
     return `<div class="inode-mist-layer" style="--mist-col:rgba(50,160,50,.18)" aria-hidden="true"></div>`;
   }
   if (b.id === 'forest') {
-    return `<div class="inode-magic-ring" aria-hidden="true">
-      <div class="inode-rune-ring" style="--rr-col:rgba(139,92,246,.5);--rr-size:82%;animation-delay:0s"></div>
-      <div class="inode-rune-ring" style="--rr-col:rgba(167,139,250,.35);--rr-size:94%;animation-delay:-2.8s"></div>
-    </div>`;
+    return `<div class="inode-mist-layer" style="--mist-col:rgba(42,175,95,.16)" aria-hidden="true"></div>`;
   }
   if (b.id === 'desert') {
     return `<div class="inode-heat-shimmer" aria-hidden="true"></div>
@@ -1455,7 +1452,8 @@ function _biomeCapOverlay(b) {
     return `<div class="inode-canopy-shimmer" aria-hidden="true"></div>`;
   }
   if (b.id === 'forest') {
-    return `<div class="inode-arcane-shimmer" aria-hidden="true"></div>`;
+    return `<div class="inode-canopy-shimmer" aria-hidden="true"></div>
+            <div class="inode-cave-mouth" aria-hidden="true"></div>`;
   }
   if (b.id === 'desert') {
     return `<div class="inode-sand-ripple" aria-hidden="true"></div>
@@ -1494,14 +1492,16 @@ function _biomeCliffFX(b) {
     return `<div class="inode-vine-row" aria-hidden="true">${vines}</div>`;
   }
   if (b.id === 'forest') {
-    // Crystal formations + arcane rune marks on cliff
-    return `<div class="inode-crystal-row" aria-hidden="true">
-      <div class="inode-crystal" style="left:12%;height:28px;animation-delay:0s"></div>
-      <div class="inode-crystal" style="left:28%;height:20px;animation-delay:-.8s"></div>
-      <div class="inode-crystal" style="left:48%;height:32px;animation-delay:-1.6s"></div>
-      <div class="inode-crystal" style="left:65%;height:22px;animation-delay:-.4s"></div>
-      <div class="inode-crystal" style="left:80%;height:26px;animation-delay:-2.1s"></div>
-    </div>`;
+    // Dripping cave shelf + roots for the nature-cave island.
+    return `<div class="inode-stalactite-row" aria-hidden="true">
+      <div class="inode-stalactite" style="left:12%;height:20px;animation-delay:0s"></div>
+      <div class="inode-stalactite" style="left:28%;height:26px;animation-delay:-.7s"></div>
+      <div class="inode-stalactite" style="left:46%;height:18px;animation-delay:-1.3s"></div>
+      <div class="inode-stalactite" style="left:64%;height:24px;animation-delay:-.4s"></div>
+      <div class="inode-stalactite" style="left:80%;height:22px;animation-delay:-1.9s"></div>
+    </div>
+    <div class="inode-water-drip inode-wd-a" aria-hidden="true"></div>
+    <div class="inode-water-drip inode-wd-b" aria-hidden="true"></div>`;
   }
   if (b.id === 'desert') {
     // Layered sand strata lines on cliff face
@@ -1580,14 +1580,12 @@ function _biomeSVGTerrain(b, w, capH) {
       <ellipse cx="${svgW * 0.50}" cy="${svgH * 0.14}" rx="${svgW * 0.10}" ry="${svgH * 0.05}" fill="rgba(255,40,0,.22)" opacity="0.8"/>`,
 
     forest: `
-      <polygon points="0,${svgH} ${svgW * 0.10},${svgH * 0.50} ${svgW * 0.20},${svgH * 0.65} ${svgW * 0.30},${svgH}" fill="rgba(80,30,160,.28)"/>
-      <polygon points="${svgW * 0.25},${svgH} ${svgW * 0.36},${svgH * 0.22} ${svgW * 0.48},${svgH * 0.42} ${svgW * 0.58},${svgH}" fill="rgba(100,40,180,.24)"/>
-      <polygon points="${svgW * 0.52},${svgH} ${svgW * 0.62},${svgH * 0.34} ${svgW * 0.72},${svgH * 0.18} ${svgW * 0.82},${svgH * 0.40} ${svgW * 0.92},${svgH}" fill="rgba(90,35,170,.26)"/>
-      <circle cx="${svgW * 0.25}" cy="${svgH * 0.35}" r="${svgW * 0.04}" fill="rgba(180,120,255,.35)"/>
-      <circle cx="${svgW * 0.55}" cy="${svgH * 0.22}" r="${svgW * 0.03}" fill="rgba(200,140,255,.40)"/>
-      <circle cx="${svgW * 0.75}" cy="${svgH * 0.30}" r="${svgW * 0.035}" fill="rgba(160,100,255,.30)"/>
-      <line x1="${svgW * 0.25}" y1="${svgH * 0.35}" x2="${svgW * 0.55}" y2="${svgH * 0.22}" stroke="rgba(180,120,255,.20)" stroke-width="1.5" stroke-dasharray="4,3"/>
-      <line x1="${svgW * 0.55}" y1="${svgH * 0.22}" x2="${svgW * 0.75}" y2="${svgH * 0.30}" stroke="rgba(180,120,255,.20)" stroke-width="1.5" stroke-dasharray="4,3"/>`,
+      <ellipse cx="${svgW * 0.50}" cy="${svgH * 0.68}" rx="${svgW * 0.17}" ry="${svgH * 0.16}" fill="rgba(20,45,22,.62)"/>
+      <ellipse cx="${svgW * 0.50}" cy="${svgH * 0.68}" rx="${svgW * 0.11}" ry="${svgH * 0.09}" fill="rgba(6,16,8,.72)"/>
+      <path d="M${svgW * 0.24},${svgH * 0.28} Q${svgW * 0.36},${svgH * 0.12} ${svgW * 0.50},${svgH * 0.24}" stroke="rgba(52,120,46,.40)" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M${svgW * 0.50},${svgH * 0.24} Q${svgW * 0.66},${svgH * 0.08} ${svgW * 0.78},${svgH * 0.22}" stroke="rgba(52,120,46,.36)" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="${svgW * 0.42}" cy="${svgH * 0.68}" r="${svgW * 0.020}" fill="rgba(115,255,185,.42)"/>
+      <circle cx="${svgW * 0.58}" cy="${svgH * 0.68}" r="${svgW * 0.018}" fill="rgba(115,255,185,.34)"/>`,
 
     desert: `
       <polygon points="0,${svgH} ${svgW * 0.15},${svgH * 0.38} ${svgW * 0.28},${svgH * 0.55} ${svgW * 0.40},${svgH}" fill="rgba(160,90,10,.30)"/>
@@ -1750,7 +1748,13 @@ function renderIslandCards() {
     return `<div class="isc-star" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(1)}px;height:${s.toFixed(1)}px;opacity:${op.toFixed(2)};animation-duration:${dur.toFixed(1)}s;animation-delay:${del.toFixed(1)}s"></div>`;
   }).join('');
 
-  const islands = Object.values(BIOME_DEFS).map(buildIslandHTML).join('');
+  // Show the five stylized hero islands used by current art direction.
+  const featuredOrder = ['tundra', 'volcano', 'jungle', 'desert', 'forest'];
+  const islands = featuredOrder
+    .map(id => BIOME_DEFS[id])
+    .filter(Boolean)
+    .map(buildIslandHTML)
+    .join('');
 
   // Detail panel
   const detailPanel = `
