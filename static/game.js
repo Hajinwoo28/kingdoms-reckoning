@@ -1540,9 +1540,223 @@ function _biomeBaseGlow(b, tipW, tipH) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  ENHANCED buildIslandHTML
+//  🎨 CARTOON ISLAND SVG BUILDER
+//  Replaces CSS div-stack (oval+cylinder) with organic SVG shapes:
+//  irregular rock body + capped terrain + hanging stalactites
 // ═══════════════════════════════════════════════════════════════
 
+// Per-biome cartoon styles: terrain cap colors, rock body colors,
+// and a function(w,cx,capCy,capRx,capRy) → SVG string of details
+const _CARTOON_BIOME = {
+  tundra: {
+    cap: ['#EEF8FF', '#B8E4F8', '#70C0E0'],
+    rock: ['#5ABCE0', '#3898BE', '#1A6898', '#0A3860'],
+    rim: '#0A3860',
+    details(w, cx, cy, rx, ry) {
+      return `
+      <ellipse cx="${cx * 0.56}" cy="${cy - ry * 0.42}" rx="${w * 0.13}" ry="${w * 0.062}" fill="rgba(255,255,255,.78)"/>
+      <ellipse cx="${cx * 1.38}" cy="${cy - ry * 0.22}" rx="${w * 0.10}" ry="${w * 0.052}" fill="rgba(255,255,255,.68)"/>
+      <rect x="${cx - w * 0.24}" y="${cy - ry * 1.02}" width="8" height="${ry * 0.92}" rx="4" fill="#C8ECFF" stroke="#0A3860" stroke-width="2.5"/>
+      <ellipse cx="${cx - w * 0.20}" cy="${cy - ry * 1.05}" rx="6" ry="9" fill="#DFFFFF" stroke="#0A3860" stroke-width="2"/>
+      <rect x="${cx + w * 0.02}" y="${cy - ry * 1.18}" width="9" height="${ry * 1.06}" rx="4" fill="#C8ECFF" stroke="#0A3860" stroke-width="2.5"/>
+      <ellipse cx="${cx + w * 0.06}" cy="${cy - ry * 1.21}" rx="7" ry="10" fill="#DFFFFF" stroke="#0A3860" stroke-width="2"/>
+      <rect x="${cx + w * 0.22}" y="${cy - ry * 0.94}" width="7" height="${ry * 0.84}" rx="3" fill="#C8ECFF" stroke="#0A3860" stroke-width="2"/>
+      <ellipse cx="${cx + w * 0.25}" cy="${cy - ry * 0.96}" rx="5" ry="7" fill="#DFFFFF" stroke="#0A3860" stroke-width="1.5"/>
+    `;
+    }
+  },
+  volcano: {
+    cap: ['#8B3A1A', '#6E2510', '#3D1000'],
+    rock: ['#7A2810', '#5C1C08', '#3E1002', '#220600'],
+    rim: '#220600',
+    details(w, cx, cy, rx, ry) {
+      return `
+      <ellipse cx="${cx}" cy="${cy - ry * 0.28}" rx="${w * 0.17}" ry="${w * 0.095}" fill="#120200" stroke="#FF5500" stroke-width="3.5"/>
+      <ellipse cx="${cx}" cy="${cy - ry * 0.24}" rx="${w * 0.10}" ry="${w * 0.055}" fill="#FF3300" opacity=".88"/>
+      <circle cx="${cx}" cy="${cy - ry * 1.15}" r="${w * 0.08}" fill="rgba(70,55,55,.42)"/>
+      <circle cx="${cx - w * 0.06}" cy="${cy - ry * 1.32}" r="${w * 0.055}" fill="rgba(55,45,45,.32)"/>
+      <path d="M${cx + w * 0.09},${cy - ry * 0.20} Q${cx + w * 0.20},${cy + ry * 0.15} ${cx + w * 0.24},${cy + ry * 0.48}" stroke="#FF7700" stroke-width="6" fill="none" stroke-linecap="round" opacity=".82"/>
+      <path d="M${cx - w * 0.07},${cy - ry * 0.18} Q${cx - w * 0.18},${cy + ry * 0.12} ${cx - w * 0.22},${cy + ry * 0.42}" stroke="#FF5500" stroke-width="5" fill="none" stroke-linecap="round" opacity=".72"/>
+    `;
+    }
+  },
+  jungle: {
+    cap: ['#82E840', '#52C01A', '#268A08'],
+    rock: ['#4A8820', '#346015', '#1E400A', '#0E2804'],
+    rim: '#0E2804',
+    details(w, cx, cy, rx, ry) {
+      return `
+      <line x1="${cx - w * 0.24}" y1="${cy + ry * 0.18}" x2="${cx - w * 0.30}" y2="${cy - ry * 1.02}" stroke="#5C3A10" stroke-width="6" stroke-linecap="round"/>
+      <ellipse cx="${cx - w * 0.30}" cy="${cy - ry * 1.06}" rx="${w * 0.16}" ry="${w * 0.075}" fill="#28C040" stroke="#0C4C10" stroke-width="3"/>
+      <line x1="${cx - w * 0.30}" y1="${cy - ry * 1.04}" x2="${cx - w * 0.44}" y2="${cy - ry * 0.76}" stroke="#1A9A28" stroke-width="3" fill="none"/>
+      <line x1="${cx - w * 0.30}" y1="${cy - ry * 1.04}" x2="${cx - w * 0.16}" y2="${cy - ry * 0.78}" stroke="#1A9A28" stroke-width="3" fill="none"/>
+      <line x1="${cx + w * 0.22}" y1="${cy + ry * 0.14}" x2="${cx + w * 0.28}" y2="${cy - ry * 0.96}" stroke="#5C3A10" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="${cx + w * 0.28}" cy="${cy - ry * 0.99}" rx="${w * 0.14}" ry="${w * 0.068}" fill="#30D048" stroke="#0C4C10" stroke-width="2.5"/>
+      <line x1="${cx + w * 0.28}" y1="${cy - ry * 0.97}" x2="${cx + w * 0.14}" y2="${cy - ry * 0.72}" stroke="#20A830" stroke-width="3" fill="none"/>
+      <line x1="${cx + w * 0.28}" y1="${cy - ry * 0.97}" x2="${cx + w * 0.42}" y2="${cy - ry * 0.70}" stroke="#20A830" stroke-width="3" fill="none"/>
+      <circle cx="${cx - w * 0.08}" cy="${cy - ry * 0.48}" r="${w * 0.032}" fill="#FF88CC" stroke="#CC3388" stroke-width="2"/>
+      <circle cx="${cx + w * 0.14}" cy="${cy - ry * 0.32}" r="${w * 0.026}" fill="#FF6688" stroke="#CC1144" stroke-width="1.5"/>
+    `;
+    }
+  },
+  desert: {
+    cap: ['#F5C84A', '#E0A030', '#A05010'],
+    rock: ['#C87820', '#A05010', '#784008', '#4A2008'],
+    rim: '#4A2008',
+    details(w, cx, cy, rx, ry) {
+      return `
+      <polygon points="${cx - w * 0.26},${cy + ry * 0.44} ${cx - w * 0.02},${cy - ry * 1.08} ${cx + w * 0.22},${cy + ry * 0.44}" fill="#E8B040" stroke="#7A3808" stroke-width="3.5" stroke-linejoin="round"/>
+      <polygon points="${cx + w * 0.10},${cy + ry * 0.38} ${cx + w * 0.30},${cy - ry * 0.60} ${cx + w * 0.48},${cy + ry * 0.38}" fill="#D8A038" stroke="#7A3808" stroke-width="3" stroke-linejoin="round"/>
+      <polygon points="${cx - w * 0.48},${cy + ry * 0.40} ${cx - w * 0.30},${cy - ry * 0.52} ${cx - w * 0.12},${cy + ry * 0.40}" fill="#DCA83A" stroke="#7A3808" stroke-width="3" stroke-linejoin="round"/>
+      <line x1="${cx - rx * 0.85}" y1="${cy + ry * 0.15}" x2="${cx + rx * 0.85}" y2="${cy + ry * 0.15}" stroke="rgba(160,80,15,.28)" stroke-width="2"/>
+      <line x1="${cx - rx * 0.85}" y1="${cy + ry * 0.35}" x2="${cx + rx * 0.85}" y2="${cy + ry * 0.35}" stroke="rgba(140,65,12,.22)" stroke-width="1.5"/>
+    `;
+    }
+  },
+  forest: {
+    cap: ['#5AD420', '#38A810', '#1E6A06'],
+    rock: ['#2A6A14', '#1C4A0A', '#122E04', '#060E00'],
+    rim: '#060E00',
+    details(w, cx, cy, rx, ry) {
+      return `
+      <ellipse cx="${cx}" cy="${cy + ry * 0.22}" rx="${w * 0.22}" ry="${w * 0.135}" fill="#080E06" stroke="#1A3808" stroke-width="4.5"/>
+      <ellipse cx="${cx}" cy="${cy + ry * 0.26}" rx="${w * 0.14}" ry="${w * 0.082}" fill="#020402"/>
+      <ellipse cx="${cx}" cy="${cy + ry * 0.26}" rx="${w * 0.07}" ry="${w * 0.038}" fill="rgba(80,255,100,.15)"/>
+      <path d="M${cx - rx * 0.72},${cy - ry * 0.50} Q${cx - rx * 0.80},${cy - ry * 0.10} ${cx - rx * 0.68},${cy + ry * 0.36}" stroke="#30B820" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/>
+      <path d="M${cx + rx * 0.68},${cy - ry * 0.42} Q${cx + rx * 0.76},${cy} ${cx + rx * 0.64},${cy + ry * 0.32}" stroke="#28A818" stroke-width="4" fill="none" stroke-linecap="round" opacity=".70"/>
+      <rect x="${cx - w * 0.18}" y="${cy + ry * 0.50}" width="7" height="14" fill="#8B4010" rx="2"/>
+      <ellipse cx="${cx - w * 0.145}" cy="${cy + ry * 0.50}" rx="11" ry="6" fill="#CC2200" stroke="#880000" stroke-width="2"/>
+      <circle cx="${cx - w * 0.145}" cy="${cy + ry * 0.49}" r="3" fill="rgba(255,255,255,.82)"/>
+    `;
+    }
+  },
+  abyss: {
+    cap: ['#0E4858', '#083040', '#031828'],
+    rock: ['#063040', '#041E28', '#021018', '#000608'],
+    rim: '#000608',
+    details(w, cx, cy, rx, ry) {
+      return `
+      <ellipse cx="${cx}" cy="${cy + ry * 0.14}" rx="${w * 0.19}" ry="${w * 0.115}" fill="#010408" stroke="#00A8D0" stroke-width="3.5"/>
+      <ellipse cx="${cx}" cy="${cy + ry * 0.17}" rx="${w * 0.10}" ry="${w * 0.060}" fill="rgba(0,180,230,.15)"/>
+      <circle cx="${cx - w * 0.32}" cy="${cy - ry * 0.40}" r="${w * 0.030}" fill="rgba(0,230,255,.62)"/>
+      <circle cx="${cx + w * 0.30}" cy="${cy - ry * 0.24}" r="${w * 0.024}" fill="rgba(0,210,248,.55)"/>
+      <circle cx="${cx - w * 0.08}" cy="${cy - ry * 0.65}" r="${w * 0.020}" fill="rgba(0,248,255,.68)"/>
+      <circle cx="${cx + w * 0.20}" cy="${cy - ry * 0.58}" r="${w * 0.022}" fill="rgba(0,220,255,.60)"/>
+      <polygon points="${cx - rx * 0.78},${cy + ry * 0.38} ${cx - rx * 0.68},${cy - ry * 0.28} ${cx - rx * 0.58},${cy + ry * 0.38}" fill="#082A3C" stroke="#00A8D0" stroke-width="3"/>
+      <polygon points="${cx + rx * 0.58},${cy + ry * 0.32} ${cx + rx * 0.68},${cy - ry * 0.22} ${cx + rx * 0.78},${cy + ry * 0.32}" fill="#082A3C" stroke="#00A8D0" stroke-width="3"/>
+    `;
+    }
+  }
+};
+
+function _cartoonIslandSVG(b, w) {
+  const style = _CARTOON_BIOME[b.id];
+  if (!style) return `<div style="width:${w}px;height:${Math.round(w * 1.28)}px"></div>`;
+
+  const H = Math.round(w * 1.28);
+  const cx = w / 2;
+
+  // Terrain cap geometry
+  const capCy = Math.round(H * 0.26);
+  const capRx = w * 0.495;
+  const capRy = Math.round(w * 0.215);
+
+  // Organic rock body: tapers from cap equator down to a round tip
+  const rY0 = capCy;                     // rock top (cap equator level)
+  const rW0 = w * 0.880;                 // rock width at top
+  const rW1 = w * 0.680;                 // rock width at 38%
+  const rW2 = w * 0.440;                 // rock width at 68%
+  const rY1 = H * 0.44;
+  const rY2 = H * 0.68;
+  const rY3 = H * 0.84;                  // tip bottom
+
+  // Slight irregularity offsets for organic feel
+  const lBulge = 10, rBulge = 12;
+
+  const rockPath = [
+    `M ${cx - rW0 / 2},${rY0}`,
+    `Q ${cx - rW0 / 2 - lBulge},${rY0 + (rY1 - rY0) * 0.45} ${cx - rW1 / 2 - 6},${rY1}`,
+    `Q ${cx - rW1 / 2 - 4},${rY1 + (rY2 - rY1) * 0.55} ${cx - rW2 / 2},${rY2}`,
+    `Q ${cx - rW2 / 2 + 10},${rY2 + (rY3 - rY2) * 0.65} ${cx},${rY3 + 22}`,
+    `Q ${cx + rW2 / 2 - 10},${rY2 + (rY3 - rY2) * 0.65} ${cx + rW2 / 2},${rY2}`,
+    `Q ${cx + rW1 / 2 + 4},${rY1 + (rY2 - rY1) * 0.55} ${cx + rW1 / 2 + 6},${rY1}`,
+    `Q ${cx + rW0 / 2 + rBulge},${rY0 + (rY1 - rY0) * 0.45} ${cx + rW0 / 2},${rY0}`,
+    `Z`
+  ].join(' ');
+
+  // Hanging stalactites
+  const stals = [
+    { dx: -w * 0.18, sw: w * 0.088, sh: w * 0.115 },
+    { dx: -w * 0.04, sw: w * 0.106, sh: w * 0.162 },
+    { dx: w * 0.10, sw: w * 0.076, sh: w * 0.098 },
+    { dx: w * 0.22, sw: w * 0.058, sh: w * 0.072 },
+  ];
+  const stalSVG = stals.map(s => {
+    const sx = cx + s.dx;
+    const sy = rY3 + 16;
+    return `<polygon points="${sx},${sy} ${sx + s.sw / 2},${sy + s.sh} ${sx + s.sw},${sy}" fill="${style.rock[3]}" stroke="#111" stroke-width="3.5" stroke-linejoin="round"/>`;
+  }).join('');
+
+  // Rock body texture: ledge lines + cracks
+  const ledge1 = H * 0.50, ledge2 = H * 0.65;
+  const ledgeW1 = rW0 * 0.80, ledgeW2 = rW1 * 0.72;
+  const texture = `
+    <line x1="${cx - ledgeW1 / 2 + 8}" y1="${ledge1}" x2="${cx + ledgeW1 / 2 - 8}" y2="${ledge1}" stroke="rgba(0,0,0,.20)" stroke-width="2"/>
+    <line x1="${cx - ledgeW2 / 2 + 6}" y1="${ledge2}" x2="${cx + ledgeW2 / 2 - 6}" y2="${ledge2}" stroke="rgba(0,0,0,.16)" stroke-width="1.5"/>
+    <line x1="${cx - rW0 / 2 + 22}" y1="${rY0 + 8}" x2="${cx - rW2 / 2 + 12}" y2="${rY2 - 6}" stroke="rgba(0,0,0,.13)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="${cx + rW0 / 2 - 24}" y1="${rY0 + 10}" x2="${cx + rW2 / 2 - 14}" y2="${rY2 - 4}" stroke="rgba(0,0,0,.11)" stroke-width="1.5" stroke-linecap="round"/>
+  `;
+
+  // Rock left-face highlight
+  const highlight = `<path d="M ${cx - rW0 / 2},${rY0} Q ${cx - rW0 / 2 - lBulge + 4},${rY0 + (rY1 - rY0) * 0.45} ${cx - rW1 / 2},${rY1} L ${cx - rW1 / 2 + 20},${rY1} L ${cx - rW0 / 2 + 24},${rY0} Z" fill="rgba(255,255,255,.09)"/>`;
+
+  const [c0, c1, c2, c3] = style.rock;
+  const [t0, t1, t2] = style.cap;
+  const gid = `cig${b.id}`;
+
+  return `<svg class="cartoon-island-svg"
+       width="${w}" height="${H}"
+       viewBox="0 0 ${w} ${H}"
+       xmlns="http://www.w3.org/2000/svg"
+       style="display:block;overflow:visible;position:relative;z-index:3">
+    <defs>
+      <radialGradient id="${gid}c" cx="38%" cy="30%" r="65%">
+        <stop offset="0%"   stop-color="${t0}"/>
+        <stop offset="55%"  stop-color="${t1}"/>
+        <stop offset="100%" stop-color="${t2}"/>
+      </radialGradient>
+      <linearGradient id="${gid}r" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="${c0}"/>
+        <stop offset="38%"  stop-color="${c1}"/>
+        <stop offset="72%"  stop-color="${c2}"/>
+        <stop offset="100%" stop-color="${c3}"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Rock body -->
+    <path d="${rockPath}" fill="url(#${gid}r)" stroke="#111" stroke-width="5" stroke-linejoin="round"/>
+    ${highlight}
+    ${texture}
+
+    <!-- Hanging stalactites -->
+    ${stalSVG}
+
+    <!-- Terrain cap -->
+    <ellipse cx="${cx}" cy="${capCy}" rx="${capRx}" ry="${capRy}"
+             fill="url(#${gid}c)" stroke="#111" stroke-width="5.5"/>
+
+    <!-- Gloss highlight -->
+    <ellipse cx="${cx - capRx * 0.14}" cy="${capCy - capRy * 0.33}" rx="${capRx * 0.50}" ry="${capRy * 0.40}" fill="rgba(255,255,255,.26)"/>
+
+    <!-- Cap bottom rim shadow -->
+    <ellipse cx="${cx}" cy="${capCy + capRy * 0.66}" rx="${capRx * 0.68}" ry="${capRy * 0.20}" fill="rgba(0,0,0,.20)"/>
+
+    <!-- Biome terrain details (drawn on top of cap) -->
+    ${style.details(w, cx, capCy, capRx, capRy)}
+  </svg>`;
+}
+
+// Legacy stub kept so nothing else breaks
 function _biomeSVGTerrain(b, w, capH) {
   const svgW = w, svgH = capH;
   // Each biome gets unique rock/mountain SVG silhouettes drawn on the cap
@@ -1617,100 +1831,66 @@ function buildIslandHTML(b) {
   if (!pos) return '';
   const ter = ISLAND_TERRAIN[b.id];
   if (!ter) return '';
+
   const isMobile = window.innerWidth <= 640;
-  const decoScale = isMobile ? 0.54 : 1;
+  const decoScale = isMobile ? 0.60 : 1;
   const w = pos.w;
-  const capH = Math.round(w * 0.48);   // tall terrain cap
-  const cliffH = Math.round(w * 0.38);   // moderate cliff
-  const tipH = Math.round(w * 0.22);   // dramatic stalactite tip
-  const totalIslandH = capH + cliffH + tipH;
 
-  const cvW = w + 180, cvH = totalIslandH + 280;
-  const cvLeft = -90, cvTop = -140;
+  // SVG island height (matches _cartoonIslandSVG)
+  const islandH = Math.round(w * 1.28);
 
-  const capGrad = `radial-gradient(ellipse at 40% 35%, ${ter.capColors[0]} 0%, ${ter.capColors[1]} 55%, ${ter.capColors[2]} 100%)`;
-  // Layered cliff: three colour bands for depth
-  const cliffGrad = `linear-gradient(180deg,
-    ${ter.cliffColors[0]} 0%,
-    ${ter.cliffColors[1]} 28%,
-    ${ter.cliffColors[2]} 62%,
-    ${ter.cliffColors[3]} 100%)`;
+  // Particle canvas covers island + surrounding glow
+  const cvW = w + 180, cvH = islandH + 240;
+  const cvLeft = -90, cvTop = -120;
 
-  const decoHtml = ter.deco.map((d, i) =>
-    `<span class="inode-deco-item" style="left:${d.x}%;top:${d.y}%;font-size:${Math.round(d.s * decoScale)}px;animation-delay:${(i * 0.55).toFixed(2)}s">${d.e}</span>`
-  ).join('');
+  // Emoji deco items rendered absolutely over the SVG cap zone
+  // Cap centre is at ~26% of island height, cap radius ~21.5% of w
+  const capCy = Math.round(islandH * 0.26);
+  const capRy = Math.round(w * 0.215);
+  const decoHtml = ter.deco.map((d, i) => {
+    // d.x / d.y are percentages of the old cap (0–100%).
+    // Remap to absolute px over the full island SVG area.
+    const px = w * (d.x / 100);
+    const py = (capCy - capRy) + (capRy * 2) * (d.y / 100) - 8;
+    return `<span class="inode-deco-item" style="position:absolute;left:${Math.round(px)}px;top:${Math.round(py)}px;font-size:${Math.round(d.s * decoScale)}px;animation-delay:${(i * 0.55).toFixed(2)}s;pointer-events:none;z-index:10">${d.e}</span>`;
+  }).join('');
 
   const starsHtml = '⭐'.repeat(b.difficulty) +
     `<span style="opacity:.22">${'⭐'.repeat(5 - b.difficulty)}</span>`;
 
-  const shadowGlow = `0 0 ${Math.round(w * 0.35)}px ${Math.round(w * 0.10)}px ${b.color}28`;
+  const shadowGlow = `0 0 ${Math.round(w * 0.38)}px ${Math.round(w * 0.12)}px ${b.color}30`;
 
-  const nodeGlowMap = {
-    volcano: `0 0 40px 8px rgba(255,80,0,.20), 0 0 80px 16px rgba(200,40,0,.12)`,
-    tundra: `0 0 40px 8px rgba(34,211,238,.16), 0 0 80px 16px rgba(100,220,255,.09)`,
-    jungle: `0 0 40px 8px rgba(16,185,129,.16), 0 0 80px 16px rgba(30,200,80,.09)`,
-    forest: `0 0 40px 8px rgba(139,92,246,.20), 0 0 80px 16px rgba(120,60,240,.12)`,
-    desert: `0 0 40px 8px rgba(245,158,11,.18), 0 0 80px 16px rgba(220,120,0,.10)`,
-    abyss: `0 0 40px 8px rgba(6,182,212,.16),  0 0 80px 16px rgba(0,150,200,.09)`,
+  // Per-biome outer drop-shadow glow on the whole island wrapper
+  const glowMap = {
+    volcano: 'drop-shadow(0 0 22px rgba(255,80,0,.35)) drop-shadow(0 0 48px rgba(200,40,0,.18))',
+    tundra: 'drop-shadow(0 0 22px rgba(34,211,238,.22)) drop-shadow(0 0 48px rgba(100,220,255,.12))',
+    jungle: 'drop-shadow(0 0 22px rgba(16,185,129,.22)) drop-shadow(0 0 48px rgba(30,200,80,.12))',
+    forest: 'drop-shadow(0 0 22px rgba(139,92,246,.28)) drop-shadow(0 0 48px rgba(120,60,240,.15))',
+    desert: 'drop-shadow(0 0 22px rgba(245,158,11,.24)) drop-shadow(0 0 48px rgba(220,120,0,.13))',
+    abyss: 'drop-shadow(0 0 22px rgba(6,182,212,.22))  drop-shadow(0 0 48px rgba(0,150,200,.12))',
   };
-  const nodeGlow = nodeGlowMap[b.id] || '';
-
-  // Extra cliff side panels for 3-D depth illusion
-  const cliffSideW = Math.round(w * 0.08);
-  const cliffLeftPanel = `<div class="inode-cliff-side inode-cliff-left"  style="width:${cliffSideW}px;height:${cliffH}px;background:${ter.cliffColors[3]};left:0"></div>`;
-  const cliffRightPanel = `<div class="inode-cliff-side inode-cliff-right" style="width:${cliffSideW}px;height:${cliffH}px;background:${ter.cliffColors[3]};right:0"></div>`;
-  const floatChunks = [18, 33, 52, 74].map((left, i) =>
-    `<span class="inode-float-chunk" style="left:${left}%;--fc-size:${Math.max(8, Math.round(w * (0.05 + i * 0.008)))}px;animation-delay:${(-0.6 * i).toFixed(1)}s"></span>`
-  ).join('');
-  const waterfallHtml = (b.id === 'volcano' || b.id === 'desert')
-    ? ''
-    : `<div class="inode-waterfall wf-main"></div><div class="inode-waterfall wf-side"></div>`;
+  const islandFilter = glowMap[b.id] || '';
 
   return `
   <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
-       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color}">
+       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color};width:${w}px;height:${islandH}px;position:absolute">
 
+    <!-- Particle canvas -->
     <canvas class="inode-particles" id="ipc-${b.id}"
             width="${cvW}" height="${cvH}"
-            style="width:${cvW}px;height:${cvH}px;top:${cvTop}px;left:${cvLeft}px"></canvas>
+            style="position:absolute;width:${cvW}px;height:${cvH}px;top:${cvTop}px;left:${cvLeft}px;pointer-events:none;z-index:1"></canvas>
 
     ${_biomeAmbient(b)}
 
-    <!-- ── TERRAIN CAP ── -->
-    <div class="inode-cap" style="width:${w}px;height:${capH}px;background:${capGrad};border-color:${ter.rimColor};box-shadow:0 6px 0 rgba(0,0,0,.28),0 14px 36px rgba(0,0,0,.32),inset 0 12px 22px rgba(255,255,255,.16),inset 0 -5px 10px rgba(0,0,0,.28),${nodeGlow}">
-      <div class="inode-cap-shine"></div>
-      ${_biomeSVGTerrain(b, w, capH)}
-      ${_biomeCapOverlay(b)}
-      <div class="inode-deco-wrap">${decoHtml}</div>
+    <!-- ── CARTOON SVG ISLAND BODY ── -->
+    <div style="position:relative;width:${w}px;height:${islandH}px;filter:${islandFilter}">
+      ${_cartoonIslandSVG(b, w)}
+      <!-- Emoji deco layer -->
+      ${decoHtml}
     </div>
-
-    <!-- ── CLIFF BODY (layered for 3-D look) ── -->
-    <div class="inode-cliff-wrap" style="width:${Math.round(w * .88)}px;margin-left:${Math.round(w * .06)}px;position:relative">
-      ${cliffLeftPanel}
-      ${cliffRightPanel}
-      <div class="inode-cliff-body" style="width:100%;height:${cliffH}px;background:${cliffGrad}">
-        <div class="inode-cliff-stripe" style="background:${ter.cliffStripe}"></div>
-        <div class="inode-cliff-stripe" style="left:18%;background:${ter.cliffStripe}"></div>
-        <div class="inode-cliff-stripe" style="left:38%;background:${ter.cliffStripe}"></div>
-        <div class="inode-cliff-stripe" style="left:60%;background:${ter.cliffStripe}"></div>
-        <div class="inode-cliff-stripe" style="left:80%;background:${ter.cliffStripe}"></div>
-        <div class="inode-cliff-ledge" style="top:33%"></div>
-        <div class="inode-cliff-ledge" style="top:67%"></div>
-        <div class="inode-crack" style="top:28%;background:rgba(0,0,0,.20)"></div>
-        <div class="inode-crack" style="top:60%;background:rgba(0,0,0,.15)"></div>
-        ${_biomeCliffFX(b)}
-      </div>
-    </div>
-
-    <!-- ── BOTTOM TIP ── -->
-    <div class="inode-cliff-tip" style="width:${Math.round(w * .48)}px;height:${tipH}px;background:${ter.cliffColors[3]};margin-left:${Math.round(w * .26)}px">
-      ${_biomeBaseGlow(b, Math.round(w * .48), tipH)}
-    </div>
-    <div class="inode-float-chunks">${floatChunks}</div>
-    ${waterfallHtml}
 
     <!-- ── FLOATING SHADOW ── -->
-    <div class="inode-shadow" style="width:${Math.round(w * .60)}px;margin-left:${Math.round(w * .20)}px;box-shadow:${shadowGlow}"></div>
+    <div class="inode-shadow" style="width:${Math.round(w * .58)}px;margin-left:${Math.round(w * .21)}px;box-shadow:${shadowGlow}"></div>
 
     <!-- ── NAMEPLATE ── -->
     <div class="inode-nameplate" style="--biome-col:${b.color}">
