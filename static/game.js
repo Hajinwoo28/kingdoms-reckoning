@@ -556,6 +556,14 @@ async function loadSavedState() {
       G._savedTowers = Array.isArray(d.towers) ? d.towers : [];
     }
   }
+  // Restore active biome from localStorage (DB doesn't store biome_id)
+  try {
+    const savedBiome = localStorage.getItem('kr_active_biome');
+    if (savedBiome && BIOME_DEFS[savedBiome] && G.gameMode === 'extreme') {
+      G.activeBiome = BIOME_DEFS[savedBiome];
+      G._biomeReward = G.activeBiome.reward;
+    }
+  } catch (_) {}
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────
@@ -610,8 +618,9 @@ window.selectMode = function (mode) {
     document.getElementById('mode-select-section').style.display = 'none';
     showIslandSelect();
   } else {
-    // Story Mode → show Stage Select first
+    // Story Mode → clear any extreme biome, go to Stage Select
     G.activeBiome = null;
+    try { localStorage.removeItem('kr_active_biome'); } catch (_) {}
     loadStageProgress();
     document.getElementById('mode-select-section').style.display = 'none';
     showStageSelect();
@@ -812,12 +821,12 @@ window.backFromStageSelect = function () {
 // Island scene position config — 5 islands evenly spaced with clear air between each
 // Width reduced so each island fits within its ~18vw column; top stagger for depth.
 const ISLAND_POSITIONS = {
-  tundra: { left: '3%', top: '20%', w: 168, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  jungle: { left: '21%', top: '16%', w: 182, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-  volcano: { left: '39%', top: '21%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-  forest: { left: '57%', top: '17%', w: 155, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-  desert: { left: '75%', top: '20%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-  abyss: { left: '88%', top: '18%', w: 148, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+  tundra:  { left: '3%',   top: '20%', w: 168, floatDur: '5.5s', floatDelay: '0s',    zIndex: 6 },
+  jungle:  { left: '21%',  top: '16%', w: 182, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  volcano: { left: '39%',  top: '21%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  forest:  { left: '57%',  top: '17%', w: 155, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  desert:  { left: '75%',  top: '20%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+  abyss:   { left: '88%',  top: '18%', w: 148, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
 };
 
 /* Responsive island sizes — called at render time so resize events work */
@@ -828,35 +837,35 @@ function getIslandPositions() {
   if (vw <= 480 && !isLandscape) {
     /* Phone portrait: 3 × 2 grid */
     return {
-      tundra: { left: '2%', top: '3%', w: 90, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '36%', top: '1%', w: 100, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '68%', top: '4%', w: 85, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '2%', top: '50%', w: 82, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '36%', top: '52%', w: 86, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '68%', top: '50%', w: 80, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+      tundra:  { left: '2%',   top: '3%',   w: 90,  floatDur: '5.5s', floatDelay: '0s',    zIndex: 6 },
+      jungle:  { left: '36%',  top: '1%',   w: 100, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '68%',  top: '4%',   w: 85,  floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest:  { left: '2%',   top: '50%',  w: 82,  floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert:  { left: '36%',  top: '52%',  w: 86,  floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss:   { left: '68%',  top: '50%',  w: 80,  floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   if (isLandscape && vw <= 960) {
     /* Landscape phone / small tablet: 5-in-a-row, compact
        top pushed down ~18-22% so islands clear the header on short screens */
     return {
-      tundra: { left: '2%', top: '20%', w: 105, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '21%', top: '16%', w: 116, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '40%', top: '21%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '59%', top: '17%', w: 96, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '78%', top: '20%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '92%', top: '18%', w: 90, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+      tundra:  { left: '2%',   top: '20%', w: 105, floatDur: '5.5s', floatDelay: '0s',    zIndex: 6 },
+      jungle:  { left: '21%',  top: '16%', w: 116, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '40%',  top: '21%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest:  { left: '59%',  top: '17%', w: 96,  floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert:  { left: '78%',  top: '20%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss:   { left: '92%',  top: '18%', w: 90,  floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   if (vw <= 960) {
     /* Tablet portrait: 3 × 2 */
     return {
-      tundra: { left: '2%', top: '8%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '36%', top: '5%', w: 142, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '68%', top: '9%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '2%', top: '53%', w: 118, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '36%', top: '55%', w: 124, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '68%', top: '53%', w: 114, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+      tundra:  { left: '2%',   top: '8%',  w: 130, floatDur: '5.5s', floatDelay: '0s',    zIndex: 6 },
+      jungle:  { left: '36%',  top: '5%',  w: 142, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '68%',  top: '9%',  w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest:  { left: '2%',   top: '53%', w: 118, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert:  { left: '36%',  top: '55%', w: 124, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss:   { left: '68%',  top: '53%', w: 114, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   return ISLAND_POSITIONS;
@@ -1566,130 +1575,118 @@ function _biomeBaseGlow(b, tipW, tipH) {
 // and a function(w,cx,capCy,capRx,capRy) → SVG string of details
 const _CARTOON_BIOME = {
   tundra: {
-    cap: ['#EEF8FF', '#B8E4F8', '#70C0E0'],
-    rock: ['#5ABCE0', '#3898BE', '#1A6898', '#0A3860'],
-    rim: '#0A3860',
-    details(w, cx, cy, rx, ry) {
-      return `
-      <ellipse cx="${cx * 0.56}" cy="${cy - ry * 0.42}" rx="${w * 0.13}" ry="${w * 0.062}" fill="rgba(255,255,255,.78)"/>
-      <ellipse cx="${cx * 1.38}" cy="${cy - ry * 0.22}" rx="${w * 0.10}" ry="${w * 0.052}" fill="rgba(255,255,255,.68)"/>
-      <rect x="${cx - w * 0.24}" y="${cy - ry * 1.02}" width="8" height="${ry * 0.92}" rx="4" fill="#C8ECFF" stroke="#0A3860" stroke-width="2.5"/>
-      <ellipse cx="${cx - w * 0.20}" cy="${cy - ry * 1.05}" rx="6" ry="9" fill="#DFFFFF" stroke="#0A3860" stroke-width="2"/>
-      <rect x="${cx + w * 0.02}" y="${cy - ry * 1.18}" width="9" height="${ry * 1.06}" rx="4" fill="#C8ECFF" stroke="#0A3860" stroke-width="2.5"/>
-      <ellipse cx="${cx + w * 0.06}" cy="${cy - ry * 1.21}" rx="7" ry="10" fill="#DFFFFF" stroke="#0A3860" stroke-width="2"/>
-      <rect x="${cx + w * 0.22}" y="${cy - ry * 0.94}" width="7" height="${ry * 0.84}" rx="3" fill="#C8ECFF" stroke="#0A3860" stroke-width="2"/>
-      <ellipse cx="${cx + w * 0.25}" cy="${cy - ry * 0.96}" rx="5" ry="7" fill="#DFFFFF" stroke="#0A3860" stroke-width="1.5"/>
-    `;
-    }
+    cap:  ['#EEF8FF','#B8E4F8','#70C0E0'],
+    rock: ['#5ABCE0','#3898BE','#1A6898','#0A3860'],
+    rim:  '#0A3860',
+    details(w,cx,cy,rx,ry) { return `
+      <ellipse cx="${cx*0.56}" cy="${cy-ry*0.42}" rx="${w*0.13}" ry="${w*0.062}" fill="rgba(255,255,255,.78)"/>
+      <ellipse cx="${cx*1.38}" cy="${cy-ry*0.22}" rx="${w*0.10}" ry="${w*0.052}" fill="rgba(255,255,255,.68)"/>
+      <rect x="${cx-w*0.24}" y="${cy-ry*1.02}" width="8" height="${ry*0.92}" rx="4" fill="#C8ECFF" stroke="#0A3860" stroke-width="2.5"/>
+      <ellipse cx="${cx-w*0.20}" cy="${cy-ry*1.05}" rx="6" ry="9" fill="#DFFFFF" stroke="#0A3860" stroke-width="2"/>
+      <rect x="${cx+w*0.02}" y="${cy-ry*1.18}" width="9" height="${ry*1.06}" rx="4" fill="#C8ECFF" stroke="#0A3860" stroke-width="2.5"/>
+      <ellipse cx="${cx+w*0.06}" cy="${cy-ry*1.21}" rx="7" ry="10" fill="#DFFFFF" stroke="#0A3860" stroke-width="2"/>
+      <rect x="${cx+w*0.22}" y="${cy-ry*0.94}" width="7" height="${ry*0.84}" rx="3" fill="#C8ECFF" stroke="#0A3860" stroke-width="2"/>
+      <ellipse cx="${cx+w*0.25}" cy="${cy-ry*0.96}" rx="5" ry="7" fill="#DFFFFF" stroke="#0A3860" stroke-width="1.5"/>
+    `;}
   },
   volcano: {
-    cap: ['#8B3A1A', '#6E2510', '#3D1000'],
-    rock: ['#7A2810', '#5C1C08', '#3E1002', '#220600'],
-    rim: '#220600',
-    details(w, cx, cy, rx, ry) {
-      return `
-      <ellipse cx="${cx}" cy="${cy - ry * 0.28}" rx="${w * 0.17}" ry="${w * 0.095}" fill="#120200" stroke="#FF5500" stroke-width="3.5"/>
-      <ellipse cx="${cx}" cy="${cy - ry * 0.24}" rx="${w * 0.10}" ry="${w * 0.055}" fill="#FF3300" opacity=".88"/>
-      <circle cx="${cx}" cy="${cy - ry * 1.15}" r="${w * 0.08}" fill="rgba(70,55,55,.42)"/>
-      <circle cx="${cx - w * 0.06}" cy="${cy - ry * 1.32}" r="${w * 0.055}" fill="rgba(55,45,45,.32)"/>
-      <path d="M${cx + w * 0.09},${cy - ry * 0.20} Q${cx + w * 0.20},${cy + ry * 0.15} ${cx + w * 0.24},${cy + ry * 0.48}" stroke="#FF7700" stroke-width="6" fill="none" stroke-linecap="round" opacity=".82"/>
-      <path d="M${cx - w * 0.07},${cy - ry * 0.18} Q${cx - w * 0.18},${cy + ry * 0.12} ${cx - w * 0.22},${cy + ry * 0.42}" stroke="#FF5500" stroke-width="5" fill="none" stroke-linecap="round" opacity=".72"/>
-    `;
-    }
+    cap:  ['#8B3A1A','#6E2510','#3D1000'],
+    rock: ['#7A2810','#5C1C08','#3E1002','#220600'],
+    rim:  '#220600',
+    details(w,cx,cy,rx,ry) { return `
+      <ellipse cx="${cx}" cy="${cy-ry*0.28}" rx="${w*0.17}" ry="${w*0.095}" fill="#120200" stroke="#FF5500" stroke-width="3.5"/>
+      <ellipse cx="${cx}" cy="${cy-ry*0.24}" rx="${w*0.10}" ry="${w*0.055}" fill="#FF3300" opacity=".88"/>
+      <circle cx="${cx}" cy="${cy-ry*1.15}" r="${w*0.08}" fill="rgba(70,55,55,.42)"/>
+      <circle cx="${cx-w*0.06}" cy="${cy-ry*1.32}" r="${w*0.055}" fill="rgba(55,45,45,.32)"/>
+      <path d="M${cx+w*0.09},${cy-ry*0.20} Q${cx+w*0.20},${cy+ry*0.15} ${cx+w*0.24},${cy+ry*0.48}" stroke="#FF7700" stroke-width="6" fill="none" stroke-linecap="round" opacity=".82"/>
+      <path d="M${cx-w*0.07},${cy-ry*0.18} Q${cx-w*0.18},${cy+ry*0.12} ${cx-w*0.22},${cy+ry*0.42}" stroke="#FF5500" stroke-width="5" fill="none" stroke-linecap="round" opacity=".72"/>
+    `;}
   },
   jungle: {
-    cap: ['#82E840', '#52C01A', '#268A08'],
-    rock: ['#4A8820', '#346015', '#1E400A', '#0E2804'],
-    rim: '#0E2804',
-    details(w, cx, cy, rx, ry) {
-      return `
-      <line x1="${cx - w * 0.24}" y1="${cy + ry * 0.18}" x2="${cx - w * 0.30}" y2="${cy - ry * 1.02}" stroke="#5C3A10" stroke-width="6" stroke-linecap="round"/>
-      <ellipse cx="${cx - w * 0.30}" cy="${cy - ry * 1.06}" rx="${w * 0.16}" ry="${w * 0.075}" fill="#28C040" stroke="#0C4C10" stroke-width="3"/>
-      <line x1="${cx - w * 0.30}" y1="${cy - ry * 1.04}" x2="${cx - w * 0.44}" y2="${cy - ry * 0.76}" stroke="#1A9A28" stroke-width="3" fill="none"/>
-      <line x1="${cx - w * 0.30}" y1="${cy - ry * 1.04}" x2="${cx - w * 0.16}" y2="${cy - ry * 0.78}" stroke="#1A9A28" stroke-width="3" fill="none"/>
-      <line x1="${cx + w * 0.22}" y1="${cy + ry * 0.14}" x2="${cx + w * 0.28}" y2="${cy - ry * 0.96}" stroke="#5C3A10" stroke-width="5" stroke-linecap="round"/>
-      <ellipse cx="${cx + w * 0.28}" cy="${cy - ry * 0.99}" rx="${w * 0.14}" ry="${w * 0.068}" fill="#30D048" stroke="#0C4C10" stroke-width="2.5"/>
-      <line x1="${cx + w * 0.28}" y1="${cy - ry * 0.97}" x2="${cx + w * 0.14}" y2="${cy - ry * 0.72}" stroke="#20A830" stroke-width="3" fill="none"/>
-      <line x1="${cx + w * 0.28}" y1="${cy - ry * 0.97}" x2="${cx + w * 0.42}" y2="${cy - ry * 0.70}" stroke="#20A830" stroke-width="3" fill="none"/>
-      <circle cx="${cx - w * 0.08}" cy="${cy - ry * 0.48}" r="${w * 0.032}" fill="#FF88CC" stroke="#CC3388" stroke-width="2"/>
-      <circle cx="${cx + w * 0.14}" cy="${cy - ry * 0.32}" r="${w * 0.026}" fill="#FF6688" stroke="#CC1144" stroke-width="1.5"/>
-    `;
-    }
+    cap:  ['#82E840','#52C01A','#268A08'],
+    rock: ['#4A8820','#346015','#1E400A','#0E2804'],
+    rim:  '#0E2804',
+    details(w,cx,cy,rx,ry) { return `
+      <line x1="${cx-w*0.24}" y1="${cy+ry*0.18}" x2="${cx-w*0.30}" y2="${cy-ry*1.02}" stroke="#5C3A10" stroke-width="6" stroke-linecap="round"/>
+      <ellipse cx="${cx-w*0.30}" cy="${cy-ry*1.06}" rx="${w*0.16}" ry="${w*0.075}" fill="#28C040" stroke="#0C4C10" stroke-width="3"/>
+      <line x1="${cx-w*0.30}" y1="${cy-ry*1.04}" x2="${cx-w*0.44}" y2="${cy-ry*0.76}" stroke="#1A9A28" stroke-width="3" fill="none"/>
+      <line x1="${cx-w*0.30}" y1="${cy-ry*1.04}" x2="${cx-w*0.16}" y2="${cy-ry*0.78}" stroke="#1A9A28" stroke-width="3" fill="none"/>
+      <line x1="${cx+w*0.22}" y1="${cy+ry*0.14}" x2="${cx+w*0.28}" y2="${cy-ry*0.96}" stroke="#5C3A10" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="${cx+w*0.28}" cy="${cy-ry*0.99}" rx="${w*0.14}" ry="${w*0.068}" fill="#30D048" stroke="#0C4C10" stroke-width="2.5"/>
+      <line x1="${cx+w*0.28}" y1="${cy-ry*0.97}" x2="${cx+w*0.14}" y2="${cy-ry*0.72}" stroke="#20A830" stroke-width="3" fill="none"/>
+      <line x1="${cx+w*0.28}" y1="${cy-ry*0.97}" x2="${cx+w*0.42}" y2="${cy-ry*0.70}" stroke="#20A830" stroke-width="3" fill="none"/>
+      <circle cx="${cx-w*0.08}" cy="${cy-ry*0.48}" r="${w*0.032}" fill="#FF88CC" stroke="#CC3388" stroke-width="2"/>
+      <circle cx="${cx+w*0.14}" cy="${cy-ry*0.32}" r="${w*0.026}" fill="#FF6688" stroke="#CC1144" stroke-width="1.5"/>
+    `;}
   },
   desert: {
-    cap: ['#F5C84A', '#E0A030', '#A05010'],
-    rock: ['#C87820', '#A05010', '#784008', '#4A2008'],
-    rim: '#4A2008',
-    details(w, cx, cy, rx, ry) {
-      return `
-      <polygon points="${cx - w * 0.26},${cy + ry * 0.44} ${cx - w * 0.02},${cy - ry * 1.08} ${cx + w * 0.22},${cy + ry * 0.44}" fill="#E8B040" stroke="#7A3808" stroke-width="3.5" stroke-linejoin="round"/>
-      <polygon points="${cx + w * 0.10},${cy + ry * 0.38} ${cx + w * 0.30},${cy - ry * 0.60} ${cx + w * 0.48},${cy + ry * 0.38}" fill="#D8A038" stroke="#7A3808" stroke-width="3" stroke-linejoin="round"/>
-      <polygon points="${cx - w * 0.48},${cy + ry * 0.40} ${cx - w * 0.30},${cy - ry * 0.52} ${cx - w * 0.12},${cy + ry * 0.40}" fill="#DCA83A" stroke="#7A3808" stroke-width="3" stroke-linejoin="round"/>
-      <line x1="${cx - rx * 0.85}" y1="${cy + ry * 0.15}" x2="${cx + rx * 0.85}" y2="${cy + ry * 0.15}" stroke="rgba(160,80,15,.28)" stroke-width="2"/>
-      <line x1="${cx - rx * 0.85}" y1="${cy + ry * 0.35}" x2="${cx + rx * 0.85}" y2="${cy + ry * 0.35}" stroke="rgba(140,65,12,.22)" stroke-width="1.5"/>
-    `;
-    }
+    cap:  ['#F5C84A','#E0A030','#A05010'],
+    rock: ['#C87820','#A05010','#784008','#4A2008'],
+    rim:  '#4A2008',
+    details(w,cx,cy,rx,ry) { return `
+      <polygon points="${cx-w*0.26},${cy+ry*0.44} ${cx-w*0.02},${cy-ry*1.08} ${cx+w*0.22},${cy+ry*0.44}" fill="#E8B040" stroke="#7A3808" stroke-width="3.5" stroke-linejoin="round"/>
+      <polygon points="${cx+w*0.10},${cy+ry*0.38} ${cx+w*0.30},${cy-ry*0.60} ${cx+w*0.48},${cy+ry*0.38}" fill="#D8A038" stroke="#7A3808" stroke-width="3" stroke-linejoin="round"/>
+      <polygon points="${cx-w*0.48},${cy+ry*0.40} ${cx-w*0.30},${cy-ry*0.52} ${cx-w*0.12},${cy+ry*0.40}" fill="#DCA83A" stroke="#7A3808" stroke-width="3" stroke-linejoin="round"/>
+      <line x1="${cx-rx*0.85}" y1="${cy+ry*0.15}" x2="${cx+rx*0.85}" y2="${cy+ry*0.15}" stroke="rgba(160,80,15,.28)" stroke-width="2"/>
+      <line x1="${cx-rx*0.85}" y1="${cy+ry*0.35}" x2="${cx+rx*0.85}" y2="${cy+ry*0.35}" stroke="rgba(140,65,12,.22)" stroke-width="1.5"/>
+    `;}
   },
   forest: {
     // "Nature Cave Sanctuary" — dark mossy rock, glowing cave mouth, bioluminescent roots
-    cap: ['#2E6B1A', '#1A4410', '#0C2608'],
-    rock: ['#183E0C', '#0E2808', '#081802', '#020A00'],
-    rim: '#020A00',
-    details(w, cx, cy, rx, ry) {
-      return `
+    cap:  ['#2E6B1A','#1A4410','#0C2608'],
+    rock: ['#183E0C','#0E2808','#081802','#020A00'],
+    rim:  '#020A00',
+    details(w,cx,cy,rx,ry) { return `
       <!-- Mossy surface patches -->
-      <ellipse cx="${cx - rx * 0.55}" cy="${cy - ry * 0.12}" rx="${w * 0.11}" ry="${w * 0.055}" fill="#1E5C10" opacity=".70"/>
-      <ellipse cx="${cx + rx * 0.48}" cy="${cy - ry * 0.20}" rx="${w * 0.09}" ry="${w * 0.045}" fill="#1A5410" opacity=".65"/>
+      <ellipse cx="${cx-rx*0.55}" cy="${cy-ry*0.12}" rx="${w*0.11}" ry="${w*0.055}" fill="#1E5C10" opacity=".70"/>
+      <ellipse cx="${cx+rx*0.48}" cy="${cy-ry*0.20}" rx="${w*0.09}" ry="${w*0.045}" fill="#1A5410" opacity=".65"/>
 
       <!-- Glowing cave mouth — large, centred, unmistakable -->
-      <ellipse cx="${cx}" cy="${cy + ry * 0.18}" rx="${w * 0.26}" ry="${w * 0.155}" fill="#060E04" stroke="#0C2808" stroke-width="4"/>
-      <ellipse cx="${cx}" cy="${cy + ry * 0.22}" rx="${w * 0.18}" ry="${w * 0.100}" fill="#020602"/>
+      <ellipse cx="${cx}" cy="${cy+ry*0.18}" rx="${w*0.26}" ry="${w*0.155}" fill="#060E04" stroke="#0C2808" stroke-width="4"/>
+      <ellipse cx="${cx}" cy="${cy+ry*0.22}" rx="${w*0.18}" ry="${w*0.100}" fill="#020602"/>
       <!-- Inner glow -->
-      <ellipse cx="${cx}" cy="${cy + ry * 0.24}" rx="${w * 0.10}" ry="${w * 0.055}" fill="rgba(60,255,120,.18)"/>
-      <ellipse cx="${cx}" cy="${cy + ry * 0.25}" rx="${w * 0.05}" ry="${w * 0.026}" fill="rgba(80,255,140,.28)"/>
+      <ellipse cx="${cx}" cy="${cy+ry*0.24}" rx="${w*0.10}" ry="${w*0.055}" fill="rgba(60,255,120,.18)"/>
+      <ellipse cx="${cx}" cy="${cy+ry*0.25}" rx="${w*0.05}" ry="${w*0.026}" fill="rgba(80,255,140,.28)"/>
 
       <!-- Gnarled root arching left -->
-      <path d="M${cx - rx * 0.15},${cy + ry * 0.12} Q${cx - rx * 0.55},${cy - ry * 0.28} ${cx - rx * 0.78},${cy - ry * 0.05}" stroke="#3A6820" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M${cx-rx*0.15},${cy+ry*0.12} Q${cx-rx*0.55},${cy-ry*0.28} ${cx-rx*0.78},${cy-ry*0.05}" stroke="#3A6820" stroke-width="5" fill="none" stroke-linecap="round"/>
       <!-- Gnarled root arching right -->
-      <path d="M${cx + rx * 0.12},${cy + ry * 0.10} Q${cx + rx * 0.52},${cy - ry * 0.25} ${cx + rx * 0.76},${cy - ry * 0.08}" stroke="#2E5818" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M${cx+rx*0.12},${cy+ry*0.10} Q${cx+rx*0.52},${cy-ry*0.25} ${cx+rx*0.76},${cy-ry*0.08}" stroke="#2E5818" stroke-width="4" fill="none" stroke-linecap="round"/>
 
       <!-- Bioluminescent mushrooms -->
-      <rect x="${cx - w * 0.30}" y="${cy + ry * 0.38}" width="6" height="12" fill="#5C3A10" rx="2"/>
-      <ellipse cx="${cx - w * 0.27}" cy="${cy + ry * 0.38}" rx="10" ry="5" fill="#60FF80" stroke="#20A830" stroke-width="1.5"/>
-      <rect x="${cx + w * 0.18}" y="${cy + ry * 0.42}" width="5" height="10" fill="#5C3A10" rx="2"/>
-      <ellipse cx="${cx + w * 0.205}" cy="${cy + ry * 0.42}" rx="8" ry="4" fill="#80FFB0" stroke="#28B840" stroke-width="1.5"/>
+      <rect x="${cx-w*0.30}" y="${cy+ry*0.38}" width="6" height="12" fill="#5C3A10" rx="2"/>
+      <ellipse cx="${cx-w*0.27}" cy="${cy+ry*0.38}" rx="10" ry="5" fill="#60FF80" stroke="#20A830" stroke-width="1.5"/>
+      <rect x="${cx+w*0.18}" y="${cy+ry*0.42}" width="5" height="10" fill="#5C3A10" rx="2"/>
+      <ellipse cx="${cx+w*0.205}" cy="${cy+ry*0.42}" rx="8" ry="4" fill="#80FFB0" stroke="#28B840" stroke-width="1.5"/>
 
       <!-- Floating spores / fireflies -->
-      <circle cx="${cx - w * 0.14}" cy="${cy - ry * 0.55}" r="${w * 0.018}" fill="rgba(80,255,120,.72)"/>
-      <circle cx="${cx + w * 0.22}" cy="${cy - ry * 0.40}" r="${w * 0.014}" fill="rgba(100,255,160,.65)"/>
-      <circle cx="${cx - w * 0.32}" cy="${cy - ry * 0.30}" r="${w * 0.012}" fill="rgba(60,220,100,.58)"/>
-    `;
-    }
+      <circle cx="${cx-w*0.14}" cy="${cy-ry*0.55}" r="${w*0.018}" fill="rgba(80,255,120,.72)"/>
+      <circle cx="${cx+w*0.22}" cy="${cy-ry*0.40}" r="${w*0.014}" fill="rgba(100,255,160,.65)"/>
+      <circle cx="${cx-w*0.32}" cy="${cy-ry*0.30}" r="${w*0.012}" fill="rgba(60,220,100,.58)"/>
+    `;}
   },
   abyss: {
-    cap: ['#0E4858', '#083040', '#031828'],
-    rock: ['#063040', '#041E28', '#021018', '#000608'],
-    rim: '#000608',
-    details(w, cx, cy, rx, ry) {
-      return `
-      <ellipse cx="${cx}" cy="${cy + ry * 0.14}" rx="${w * 0.19}" ry="${w * 0.115}" fill="#010408" stroke="#00A8D0" stroke-width="3.5"/>
-      <ellipse cx="${cx}" cy="${cy + ry * 0.17}" rx="${w * 0.10}" ry="${w * 0.060}" fill="rgba(0,180,230,.15)"/>
-      <circle cx="${cx - w * 0.32}" cy="${cy - ry * 0.40}" r="${w * 0.030}" fill="rgba(0,230,255,.62)"/>
-      <circle cx="${cx + w * 0.30}" cy="${cy - ry * 0.24}" r="${w * 0.024}" fill="rgba(0,210,248,.55)"/>
-      <circle cx="${cx - w * 0.08}" cy="${cy - ry * 0.65}" r="${w * 0.020}" fill="rgba(0,248,255,.68)"/>
-      <circle cx="${cx + w * 0.20}" cy="${cy - ry * 0.58}" r="${w * 0.022}" fill="rgba(0,220,255,.60)"/>
-      <polygon points="${cx - rx * 0.78},${cy + ry * 0.38} ${cx - rx * 0.68},${cy - ry * 0.28} ${cx - rx * 0.58},${cy + ry * 0.38}" fill="#082A3C" stroke="#00A8D0" stroke-width="3"/>
-      <polygon points="${cx + rx * 0.58},${cy + ry * 0.32} ${cx + rx * 0.68},${cy - ry * 0.22} ${cx + rx * 0.78},${cy + ry * 0.32}" fill="#082A3C" stroke="#00A8D0" stroke-width="3"/>
-    `;
-    }
+    cap:  ['#0E4858','#083040','#031828'],
+    rock: ['#063040','#041E28','#021018','#000608'],
+    rim:  '#000608',
+    details(w,cx,cy,rx,ry) { return `
+      <ellipse cx="${cx}" cy="${cy+ry*0.14}" rx="${w*0.19}" ry="${w*0.115}" fill="#010408" stroke="#00A8D0" stroke-width="3.5"/>
+      <ellipse cx="${cx}" cy="${cy+ry*0.17}" rx="${w*0.10}" ry="${w*0.060}" fill="rgba(0,180,230,.15)"/>
+      <circle cx="${cx-w*0.32}" cy="${cy-ry*0.40}" r="${w*0.030}" fill="rgba(0,230,255,.62)"/>
+      <circle cx="${cx+w*0.30}" cy="${cy-ry*0.24}" r="${w*0.024}" fill="rgba(0,210,248,.55)"/>
+      <circle cx="${cx-w*0.08}" cy="${cy-ry*0.65}" r="${w*0.020}" fill="rgba(0,248,255,.68)"/>
+      <circle cx="${cx+w*0.20}" cy="${cy-ry*0.58}" r="${w*0.022}" fill="rgba(0,220,255,.60)"/>
+      <polygon points="${cx-rx*0.78},${cy+ry*0.38} ${cx-rx*0.68},${cy-ry*0.28} ${cx-rx*0.58},${cy+ry*0.38}" fill="#082A3C" stroke="#00A8D0" stroke-width="3"/>
+      <polygon points="${cx+rx*0.58},${cy+ry*0.32} ${cx+rx*0.68},${cy-ry*0.22} ${cx+rx*0.78},${cy+ry*0.32}" fill="#082A3C" stroke="#00A8D0" stroke-width="3"/>
+    `;}
   }
 };
 
 function _cartoonIslandSVG(b, w) {
   const style = _CARTOON_BIOME[b.id];
-  if (!style) return `<div style="width:${w}px;height:${Math.round(w * 1.28)}px"></div>`;
+  if (!style) return `<div style="width:${w}px;height:${Math.round(w*1.28)}px"></div>`;
 
-  const H = Math.round(w * 1.28);
+  const H  = Math.round(w * 1.28);
   const cx = w / 2;
 
   // Terrain cap geometry
@@ -1710,44 +1707,44 @@ function _cartoonIslandSVG(b, w) {
   const lBulge = 10, rBulge = 12;
 
   const rockPath = [
-    `M ${cx - rW0 / 2},${rY0}`,
-    `Q ${cx - rW0 / 2 - lBulge},${rY0 + (rY1 - rY0) * 0.45} ${cx - rW1 / 2 - 6},${rY1}`,
-    `Q ${cx - rW1 / 2 - 4},${rY1 + (rY2 - rY1) * 0.55} ${cx - rW2 / 2},${rY2}`,
-    `Q ${cx - rW2 / 2 + 10},${rY2 + (rY3 - rY2) * 0.65} ${cx},${rY3 + 22}`,
-    `Q ${cx + rW2 / 2 - 10},${rY2 + (rY3 - rY2) * 0.65} ${cx + rW2 / 2},${rY2}`,
-    `Q ${cx + rW1 / 2 + 4},${rY1 + (rY2 - rY1) * 0.55} ${cx + rW1 / 2 + 6},${rY1}`,
-    `Q ${cx + rW0 / 2 + rBulge},${rY0 + (rY1 - rY0) * 0.45} ${cx + rW0 / 2},${rY0}`,
+    `M ${cx - rW0/2},${rY0}`,
+    `Q ${cx - rW0/2 - lBulge},${rY0+(rY1-rY0)*0.45} ${cx - rW1/2 - 6},${rY1}`,
+    `Q ${cx - rW1/2 - 4},${rY1+(rY2-rY1)*0.55} ${cx - rW2/2},${rY2}`,
+    `Q ${cx - rW2/2 + 10},${rY2+(rY3-rY2)*0.65} ${cx},${rY3 + 22}`,
+    `Q ${cx + rW2/2 - 10},${rY2+(rY3-rY2)*0.65} ${cx + rW2/2},${rY2}`,
+    `Q ${cx + rW1/2 + 4},${rY1+(rY2-rY1)*0.55} ${cx + rW1/2 + 6},${rY1}`,
+    `Q ${cx + rW0/2 + rBulge},${rY0+(rY1-rY0)*0.45} ${cx + rW0/2},${rY0}`,
     `Z`
   ].join(' ');
 
   // Hanging stalactites
   const stals = [
-    { dx: -w * 0.18, sw: w * 0.088, sh: w * 0.115 },
-    { dx: -w * 0.04, sw: w * 0.106, sh: w * 0.162 },
-    { dx: w * 0.10, sw: w * 0.076, sh: w * 0.098 },
-    { dx: w * 0.22, sw: w * 0.058, sh: w * 0.072 },
+    { dx: -w*0.18, sw: w*0.088, sh: w*0.115 },
+    { dx: -w*0.04, sw: w*0.106, sh: w*0.162 },
+    { dx:  w*0.10, sw: w*0.076, sh: w*0.098 },
+    { dx:  w*0.22, sw: w*0.058, sh: w*0.072 },
   ];
   const stalSVG = stals.map(s => {
     const sx = cx + s.dx;
     const sy = rY3 + 16;
-    return `<polygon points="${sx},${sy} ${sx + s.sw / 2},${sy + s.sh} ${sx + s.sw},${sy}" fill="${style.rock[3]}" stroke="#111" stroke-width="3.5" stroke-linejoin="round"/>`;
+    return `<polygon points="${sx},${sy} ${sx+s.sw/2},${sy+s.sh} ${sx+s.sw},${sy}" fill="${style.rock[3]}" stroke="#111" stroke-width="3.5" stroke-linejoin="round"/>`;
   }).join('');
 
   // Rock body texture: ledge lines + cracks
   const ledge1 = H * 0.50, ledge2 = H * 0.65;
   const ledgeW1 = rW0 * 0.80, ledgeW2 = rW1 * 0.72;
   const texture = `
-    <line x1="${cx - ledgeW1 / 2 + 8}" y1="${ledge1}" x2="${cx + ledgeW1 / 2 - 8}" y2="${ledge1}" stroke="rgba(0,0,0,.20)" stroke-width="2"/>
-    <line x1="${cx - ledgeW2 / 2 + 6}" y1="${ledge2}" x2="${cx + ledgeW2 / 2 - 6}" y2="${ledge2}" stroke="rgba(0,0,0,.16)" stroke-width="1.5"/>
-    <line x1="${cx - rW0 / 2 + 22}" y1="${rY0 + 8}" x2="${cx - rW2 / 2 + 12}" y2="${rY2 - 6}" stroke="rgba(0,0,0,.13)" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="${cx + rW0 / 2 - 24}" y1="${rY0 + 10}" x2="${cx + rW2 / 2 - 14}" y2="${rY2 - 4}" stroke="rgba(0,0,0,.11)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="${cx-ledgeW1/2+8}" y1="${ledge1}" x2="${cx+ledgeW1/2-8}" y2="${ledge1}" stroke="rgba(0,0,0,.20)" stroke-width="2"/>
+    <line x1="${cx-ledgeW2/2+6}" y1="${ledge2}" x2="${cx+ledgeW2/2-6}" y2="${ledge2}" stroke="rgba(0,0,0,.16)" stroke-width="1.5"/>
+    <line x1="${cx-rW0/2+22}" y1="${rY0+8}" x2="${cx-rW2/2+12}" y2="${rY2-6}" stroke="rgba(0,0,0,.13)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="${cx+rW0/2-24}" y1="${rY0+10}" x2="${cx+rW2/2-14}" y2="${rY2-4}" stroke="rgba(0,0,0,.11)" stroke-width="1.5" stroke-linecap="round"/>
   `;
 
   // Rock left-face highlight
-  const highlight = `<path d="M ${cx - rW0 / 2},${rY0} Q ${cx - rW0 / 2 - lBulge + 4},${rY0 + (rY1 - rY0) * 0.45} ${cx - rW1 / 2},${rY1} L ${cx - rW1 / 2 + 20},${rY1} L ${cx - rW0 / 2 + 24},${rY0} Z" fill="rgba(255,255,255,.09)"/>`;
+  const highlight = `<path d="M ${cx-rW0/2},${rY0} Q ${cx-rW0/2-lBulge+4},${rY0+(rY1-rY0)*0.45} ${cx-rW1/2},${rY1} L ${cx-rW1/2+20},${rY1} L ${cx-rW0/2+24},${rY0} Z" fill="rgba(255,255,255,.09)"/>`;
 
-  const [c0, c1, c2, c3] = style.rock;
-  const [t0, t1, t2] = style.cap;
+  const [c0,c1,c2,c3] = style.rock;
+  const [t0,t1,t2]    = style.cap;
   const gid = `cig${b.id}`;
 
   return `<svg class="cartoon-island-svg"
@@ -1782,10 +1779,10 @@ function _cartoonIslandSVG(b, w) {
              fill="url(#${gid}c)" stroke="#111" stroke-width="5.5"/>
 
     <!-- Gloss highlight -->
-    <ellipse cx="${cx - capRx * 0.14}" cy="${capCy - capRy * 0.33}" rx="${capRx * 0.50}" ry="${capRy * 0.40}" fill="rgba(255,255,255,.26)"/>
+    <ellipse cx="${cx - capRx*0.14}" cy="${capCy - capRy*0.33}" rx="${capRx*0.50}" ry="${capRy*0.40}" fill="rgba(255,255,255,.26)"/>
 
     <!-- Cap bottom rim shadow -->
-    <ellipse cx="${cx}" cy="${capCy + capRy * 0.66}" rx="${capRx * 0.68}" ry="${capRy * 0.20}" fill="rgba(0,0,0,.20)"/>
+    <ellipse cx="${cx}" cy="${capCy + capRy*0.66}" rx="${capRx*0.68}" ry="${capRy*0.20}" fill="rgba(0,0,0,.20)"/>
 
     <!-- Biome terrain details (drawn on top of cap) -->
     ${style.details(w, cx, capCy, capRx, capRy)}
@@ -1899,11 +1896,11 @@ function buildIslandHTML(b) {
   // Per-biome outer drop-shadow glow on the whole island wrapper
   const glowMap = {
     volcano: 'drop-shadow(0 0 22px rgba(255,80,0,.35)) drop-shadow(0 0 48px rgba(200,40,0,.18))',
-    tundra: 'drop-shadow(0 0 22px rgba(34,211,238,.22)) drop-shadow(0 0 48px rgba(100,220,255,.12))',
-    jungle: 'drop-shadow(0 0 22px rgba(16,185,129,.22)) drop-shadow(0 0 48px rgba(30,200,80,.12))',
-    forest: 'drop-shadow(0 0 22px rgba(139,92,246,.28)) drop-shadow(0 0 48px rgba(120,60,240,.15))',
-    desert: 'drop-shadow(0 0 22px rgba(245,158,11,.24)) drop-shadow(0 0 48px rgba(220,120,0,.13))',
-    abyss: 'drop-shadow(0 0 22px rgba(6,182,212,.22))  drop-shadow(0 0 48px rgba(0,150,200,.12))',
+    tundra:  'drop-shadow(0 0 22px rgba(34,211,238,.22)) drop-shadow(0 0 48px rgba(100,220,255,.12))',
+    jungle:  'drop-shadow(0 0 22px rgba(16,185,129,.22)) drop-shadow(0 0 48px rgba(30,200,80,.12))',
+    forest:  'drop-shadow(0 0 22px rgba(139,92,246,.28)) drop-shadow(0 0 48px rgba(120,60,240,.15))',
+    desert:  'drop-shadow(0 0 22px rgba(245,158,11,.24)) drop-shadow(0 0 48px rgba(220,120,0,.13))',
+    abyss:   'drop-shadow(0 0 22px rgba(6,182,212,.22))  drop-shadow(0 0 48px rgba(0,150,200,.12))',
   };
   const islandFilter = glowMap[b.id] || '';
 
@@ -2135,8 +2132,9 @@ window.selectBiome = function (biomeId) {
   const biome = BIOME_DEFS[biomeId];
   if (!biome) return;
   G.activeBiome = biome;
-  // Apply biome reward passive effects
   G._biomeReward = biome.reward;
+  // Persist so refreshes / continues keep the biome-themed board
+  try { localStorage.setItem('kr_active_biome', biomeId); } catch (_) {}
   document.getElementById('island-select-section').style.display = 'none';
   document.getElementById('game-section').style.display = 'flex';
   document.getElementById('display-username').textContent = _pendingUsername;
@@ -2152,7 +2150,16 @@ window.backFromIslandSelect = function () {
 
 
 window.continueGame = function () {
-  // Restore saved state with existing mode
+  // Restore biome from localStorage before recreating board
+  if (G.gameMode === 'extreme' && !G.activeBiome) {
+    try {
+      const savedBiome = localStorage.getItem('kr_active_biome');
+      if (savedBiome && BIOME_DEFS[savedBiome]) {
+        G.activeBiome = BIOME_DEFS[savedBiome];
+        G._biomeReward = G.activeBiome.reward;
+      }
+    } catch (_) {}
+  }
   document.getElementById('mode-select-section').style.display = 'none';
   document.getElementById('game-section').style.display = 'flex';
   document.getElementById('display-username').textContent = _pendingUsername;
