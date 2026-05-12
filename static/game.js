@@ -797,12 +797,12 @@ window.backFromStageSelect = function () {
 // Island scene position config — 5 islands evenly spaced with clear air between each
 // Width reduced so each island fits within its ~18vw column; top stagger for depth.
 const ISLAND_POSITIONS = {
-  tundra: { left: '3%', top: '10%', w: 168, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  jungle: { left: '21%', top: '6%', w: 182, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-  volcano: { left: '39%', top: '11%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-  forest: { left: '57%', top: '7%', w: 155, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-  desert: { left: '75%', top: '10%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-  abyss: { left: '88%', top: '8%', w: 148, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+  tundra: { left: '3%', top: '20%', w: 168, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  jungle: { left: '21%', top: '16%', w: 182, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  volcano: { left: '39%', top: '21%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  forest: { left: '57%', top: '17%', w: 155, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  desert: { left: '75%', top: '20%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+  abyss: { left: '88%', top: '18%', w: 148, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
 };
 
 /* Responsive island sizes — called at render time so resize events work */
