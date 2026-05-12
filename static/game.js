@@ -794,14 +794,15 @@ window.backFromStageSelect = function () {
   document.getElementById('mode-select-section').style.display = 'flex';
 };
 
-// Island scene position config — positions relative to viewport (fixed scene)
+// Island scene position config — 5 islands evenly spaced with clear air between each
+// Width reduced so each island fits within its ~18vw column; top stagger for depth.
 const ISLAND_POSITIONS = {
-  tundra: { left: '1%', top: '12%', w: 260, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  jungle: { left: '18%', top: '9%', w: 295, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-  volcano: { left: '36%', top: '13%', w: 240, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-  forest: { left: '52%', top: '10%', w: 225, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-  desert: { left: '68%', top: '13%', w: 235, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-  abyss: { left: '82%', top: '11%', w: 215, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+  tundra: { left: '3%', top: '10%', w: 168, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  jungle: { left: '21%', top: '6%', w: 182, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  volcano: { left: '39%', top: '11%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  forest: { left: '57%', top: '7%', w: 155, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  desert: { left: '75%', top: '10%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+  abyss: { left: '88%', top: '8%', w: 148, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
 };
 
 /* Responsive island sizes — called at render time so resize events work */
@@ -812,34 +813,34 @@ function getIslandPositions() {
   if (vw <= 480 && !isLandscape) {
     /* Phone portrait: 3 × 2 grid */
     return {
-      tundra: { left: '2%', top: '3%', w: 108, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '36%', top: '1%', w: 120, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '68%', top: '4%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '2%', top: '50%', w: 95, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '36%', top: '52%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '68%', top: '50%', w: 92, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+      tundra: { left: '2%', top: '3%', w: 90, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '36%', top: '1%', w: 100, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '68%', top: '4%', w: 85, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '2%', top: '50%', w: 82, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '36%', top: '52%', w: 86, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '68%', top: '50%', w: 80, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   if (isLandscape && vw <= 960) {
-    /* Landscape phone / small tablet: 6-in-a-row, compact */
+    /* Landscape phone / small tablet: 5-in-a-row, compact */
     return {
-      tundra: { left: '1%', top: '10%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '17%', top: '7%', w: 148, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '34%', top: '11%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '50%', top: '9%', w: 115, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '66%', top: '11%', w: 120, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '82%', top: '9%', w: 110, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+      tundra: { left: '2%', top: '10%', w: 112, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '21%', top: '7%', w: 122, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '40%', top: '11%', w: 105, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '59%', top: '8%', w: 100, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '78%', top: '10%', w: 106, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '88%', top: '8%', w: 96, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   if (vw <= 960) {
     /* Tablet portrait: 3 × 2 */
     return {
-      tundra: { left: '2%', top: '10%', w: 170, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '35%', top: '7%', w: 192, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '67%', top: '11%', w: 158, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '2%', top: '53%', w: 150, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '35%', top: '55%', w: 158, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '67%', top: '53%', w: 144, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+      tundra: { left: '2%', top: '8%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '36%', top: '5%', w: 142, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '68%', top: '9%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '2%', top: '53%', w: 118, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '36%', top: '55%', w: 124, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '68%', top: '53%', w: 114, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   return ISLAND_POSITIONS;
