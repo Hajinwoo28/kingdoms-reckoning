@@ -10420,19 +10420,19 @@ body {
 ══════════════════════════════════════════════════════ */
 .inode-biome-forest .inode-cap {
   background:
-    radial-gradient(ellipse at 30% 18%, rgba(160, 255, 120, .32) 0%, transparent 42%),
-    linear-gradient(175deg, #4ACA18 0%, #34A80E 28%, #228A06 55%, #165E02 80%, #0A3800 100%);
-  border-bottom-color: rgba(8, 40, 0, .65) !important;
+    radial-gradient(ellipse at 30% 18%, rgba(80, 255, 120, .18) 0%, transparent 42%),
+    linear-gradient(175deg, #2E6B1A 0%, #1A4410 28%, #0C2608 55%, #071604 80%, #030C02 100%);
+  border-bottom-color: rgba(2, 10, 0, .75) !important;
 }
 
 .inode-biome-forest .inode-cliff-body {
-  background: linear-gradient(180deg, #245A12 0%, #164A08 35%, #0C3402 70%, #081E00 100%);
-  filter: brightness(0.72) saturate(1.2);
+  background: linear-gradient(180deg, #183E0C 0%, #0E2808 35%, #081802 70%, #020A00 100%);
+  filter: brightness(0.75) saturate(1.1);
 }
 
 .inode-biome-forest .inode-cliff-tip {
-  background: linear-gradient(180deg, #0C3402 0%, #081E00 45%, #040E00 100%);
-  filter: brightness(0.58);
+  background: linear-gradient(180deg, #081802 0%, #020A00 45%, #010500 100%);
+  filter: brightness(0.60);
 }
 
 /* Cave mouth — more dramatic */

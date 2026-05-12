@@ -1631,19 +1631,38 @@ const _CARTOON_BIOME = {
     }
   },
   forest: {
-    cap: ['#5AD420', '#38A810', '#1E6A06'],
-    rock: ['#2A6A14', '#1C4A0A', '#122E04', '#060E00'],
-    rim: '#060E00',
+    // "Nature Cave Sanctuary" — dark mossy rock, glowing cave mouth, bioluminescent roots
+    cap: ['#2E6B1A', '#1A4410', '#0C2608'],
+    rock: ['#183E0C', '#0E2808', '#081802', '#020A00'],
+    rim: '#020A00',
     details(w, cx, cy, rx, ry) {
       return `
-      <ellipse cx="${cx}" cy="${cy + ry * 0.22}" rx="${w * 0.22}" ry="${w * 0.135}" fill="#080E06" stroke="#1A3808" stroke-width="4.5"/>
-      <ellipse cx="${cx}" cy="${cy + ry * 0.26}" rx="${w * 0.14}" ry="${w * 0.082}" fill="#020402"/>
-      <ellipse cx="${cx}" cy="${cy + ry * 0.26}" rx="${w * 0.07}" ry="${w * 0.038}" fill="rgba(80,255,100,.15)"/>
-      <path d="M${cx - rx * 0.72},${cy - ry * 0.50} Q${cx - rx * 0.80},${cy - ry * 0.10} ${cx - rx * 0.68},${cy + ry * 0.36}" stroke="#30B820" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/>
-      <path d="M${cx + rx * 0.68},${cy - ry * 0.42} Q${cx + rx * 0.76},${cy} ${cx + rx * 0.64},${cy + ry * 0.32}" stroke="#28A818" stroke-width="4" fill="none" stroke-linecap="round" opacity=".70"/>
-      <rect x="${cx - w * 0.18}" y="${cy + ry * 0.50}" width="7" height="14" fill="#8B4010" rx="2"/>
-      <ellipse cx="${cx - w * 0.145}" cy="${cy + ry * 0.50}" rx="11" ry="6" fill="#CC2200" stroke="#880000" stroke-width="2"/>
-      <circle cx="${cx - w * 0.145}" cy="${cy + ry * 0.49}" r="3" fill="rgba(255,255,255,.82)"/>
+      <!-- Mossy surface patches -->
+      <ellipse cx="${cx - rx * 0.55}" cy="${cy - ry * 0.12}" rx="${w * 0.11}" ry="${w * 0.055}" fill="#1E5C10" opacity=".70"/>
+      <ellipse cx="${cx + rx * 0.48}" cy="${cy - ry * 0.20}" rx="${w * 0.09}" ry="${w * 0.045}" fill="#1A5410" opacity=".65"/>
+
+      <!-- Glowing cave mouth — large, centred, unmistakable -->
+      <ellipse cx="${cx}" cy="${cy + ry * 0.18}" rx="${w * 0.26}" ry="${w * 0.155}" fill="#060E04" stroke="#0C2808" stroke-width="4"/>
+      <ellipse cx="${cx}" cy="${cy + ry * 0.22}" rx="${w * 0.18}" ry="${w * 0.100}" fill="#020602"/>
+      <!-- Inner glow -->
+      <ellipse cx="${cx}" cy="${cy + ry * 0.24}" rx="${w * 0.10}" ry="${w * 0.055}" fill="rgba(60,255,120,.18)"/>
+      <ellipse cx="${cx}" cy="${cy + ry * 0.25}" rx="${w * 0.05}" ry="${w * 0.026}" fill="rgba(80,255,140,.28)"/>
+
+      <!-- Gnarled root arching left -->
+      <path d="M${cx - rx * 0.15},${cy + ry * 0.12} Q${cx - rx * 0.55},${cy - ry * 0.28} ${cx - rx * 0.78},${cy - ry * 0.05}" stroke="#3A6820" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- Gnarled root arching right -->
+      <path d="M${cx + rx * 0.12},${cy + ry * 0.10} Q${cx + rx * 0.52},${cy - ry * 0.25} ${cx + rx * 0.76},${cy - ry * 0.08}" stroke="#2E5818" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+      <!-- Bioluminescent mushrooms -->
+      <rect x="${cx - w * 0.30}" y="${cy + ry * 0.38}" width="6" height="12" fill="#5C3A10" rx="2"/>
+      <ellipse cx="${cx - w * 0.27}" cy="${cy + ry * 0.38}" rx="10" ry="5" fill="#60FF80" stroke="#20A830" stroke-width="1.5"/>
+      <rect x="${cx + w * 0.18}" y="${cy + ry * 0.42}" width="5" height="10" fill="#5C3A10" rx="2"/>
+      <ellipse cx="${cx + w * 0.205}" cy="${cy + ry * 0.42}" rx="8" ry="4" fill="#80FFB0" stroke="#28B840" stroke-width="1.5"/>
+
+      <!-- Floating spores / fireflies -->
+      <circle cx="${cx - w * 0.14}" cy="${cy - ry * 0.55}" r="${w * 0.018}" fill="rgba(80,255,120,.72)"/>
+      <circle cx="${cx + w * 0.22}" cy="${cy - ry * 0.40}" r="${w * 0.014}" fill="rgba(100,255,160,.65)"/>
+      <circle cx="${cx - w * 0.32}" cy="${cy - ry * 0.30}" r="${w * 0.012}" fill="rgba(60,220,100,.58)"/>
     `;
     }
   },
