@@ -622,6 +622,21 @@ function showIslandSelect() {
   const screen = document.getElementById('island-select-section');
   screen.style.display = 'flex';
   renderIslandCards();
+
+  // Re-render islands when device rotates so positions/sizes update correctly
+  if (!window._islandOrientationBound) {
+    window._islandOrientationBound = true;
+    const rerender = () => {
+      if (document.getElementById('island-select-section').style.display !== 'none') {
+        renderIslandCards();
+      }
+    };
+    window.addEventListener('orientationchange', () => setTimeout(rerender, 320));
+    window.addEventListener('resize', () => {
+      clearTimeout(window._islandResizeTimer);
+      window._islandResizeTimer = setTimeout(rerender, 250);
+    });
+  }
 }
 
 // ── STORY STAGE SELECT ────────────────────────────────────────
@@ -822,14 +837,15 @@ function getIslandPositions() {
     };
   }
   if (isLandscape && vw <= 960) {
-    /* Landscape phone / small tablet: 5-in-a-row, compact */
+    /* Landscape phone / small tablet: 5-in-a-row, compact
+       top pushed down ~18-22% so islands clear the header on short screens */
     return {
-      tundra: { left: '2%', top: '10%', w: 112, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '21%', top: '7%', w: 122, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '40%', top: '11%', w: 105, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '59%', top: '8%', w: 100, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '78%', top: '10%', w: 106, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '88%', top: '8%', w: 96, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+      tundra: { left: '2%', top: '20%', w: 105, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '21%', top: '16%', w: 116, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '40%', top: '21%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '59%', top: '17%', w: 96, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '78%', top: '20%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '92%', top: '18%', w: 90, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   if (vw <= 960) {

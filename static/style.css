@@ -9942,40 +9942,67 @@ body {
   clip-path: polygon(0% 100%, 5% 60%, 12% 80%, 20% 35%, 30% 65%, 40% 20%, 50% 50%, 60% 15%, 70% 55%, 80% 30%, 88% 72%, 94% 50%, 100% 100%);
 }
 
-/* ── Landscape 6-island scene ── */
+/* ── Landscape mobile island scene ── */
 @media (orientation: landscape) and (max-height: 500px) {
+
+  /* Scene scrolls horizontally so all 5 islands are reachable */
   .island-scene {
     overflow-x: auto !important;
     overflow-y: hidden !important;
-    min-width: 100% !important;
+    -webkit-overflow-scrolling: touch !important;
+    min-width: 700px !important;
   }
 
+  /* DO NOT override width/height — set inline by JS per island */
   .island-node {
-    width: 100% !important;
-    max-width: 100% !important;
-    aspect-ratio: 1 / 1.1 !important;
-    flex-shrink: 0 !important;
+    width: unset !important;
+    max-width: unset !important;
+    aspect-ratio: unset !important;
   }
 
+  /* Nameplate: compact but legible */
   .inode-nameplate {
-    bottom: -32px !important;
-    min-width: 65px !important;
-  }
-
-  .inode-np-name {
-    font-size: 6.5px !important;
-  }
-
-  .inode-np-tagline {
-    font-size: 5.5px !important;
-  }
-
-  .inode-np-stars {
-    font-size: 7px !important;
+    padding: 5px 10px !important;
+    gap: 2px !important;
+    min-width: 90px !important;
+    max-width: 140px !important;
+    border-radius: 10px !important;
+    margin-top: 4px !important;
   }
 
   .inode-np-icon {
-    font-size: 10px !important;
+    font-size: 14px !important;
+  }
+
+  .inode-np-name {
+    font-size: 9px !important;
+    letter-spacing: .02em !important;
+  }
+
+  .inode-np-tagline {
+    font-size: 8px !important;
+  }
+
+  .inode-np-stars {
+    font-size: 9px !important;
+  }
+
+  /* Choose-island header: shrink so islands have vertical room */
+  .is-header,
+  .island-select-header {
+    padding: 4px 12px !important;
+    gap: 4px !important;
+  }
+
+  .is-title,
+  .island-select-title {
+    font-size: 15px !important;
+    line-height: 1.1 !important;
+  }
+
+  .is-subtitle,
+  .island-select-subtitle {
+    display: none !important;
   }
 }
 
