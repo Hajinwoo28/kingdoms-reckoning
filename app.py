@@ -65,8 +65,11 @@ def init_db():
         c.execute('''CREATE TABLE IF NOT EXISTS scores (
             id SERIAL PRIMARY KEY,
             player VARCHAR(50) NOT NULL,
-            score INTEGER NOT NULL
+            score INTEGER NOT NULL,
+            game_mode VARCHAR(20) DEFAULT 'story'
         )''')
+        # Migrate: add game_mode to scores if it doesn't exist yet
+        c.execute("ALTER TABLE scores ADD COLUMN IF NOT EXISTS game_mode VARCHAR(20) DEFAULT 'story'")
         c.execute('''CREATE TABLE IF NOT EXISTS player_saves (
             username VARCHAR(50) PRIMARY KEY,
             gold INTEGER DEFAULT 40,
@@ -279,11 +282,16 @@ def load_state():
 def save_score():
     if 'username' not in session:
         return jsonify({"error": "Unauthorized"}), 401
-    score = (request.get_json(force=True, silent=True) or {}).get('score', 0)
+    body = request.get_json(force=True, silent=True) or {}
+    score = body.get('score', 0)
+    game_mode = body.get('game_mode', 'story')
+    if game_mode not in ('story', 'extreme'):
+        game_mode = 'story'
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('INSERT INTO scores (player, score) VALUES (%s, %s)', (session['username'], score))
+        c.execute('INSERT INTO scores (player, score, game_mode) VALUES (%s, %s, %s)',
+                  (session['username'], score, game_mode))
         conn.commit()
         c.close()
         conn.close()
@@ -293,11 +301,28 @@ def save_score():
 
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
+    mode = request.args.get('mode', None)
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('SELECT player, MAX(score) FROM scores GROUP BY player ORDER BY MAX(score) DESC LIMIT 10')
-        scores = [{"player": row[0], "score": row[1]} for row in c.fetchall()]
+        if mode in ('story', 'extreme'):
+            c.execute(
+                'SELECT player, MAX(score) FROM scores WHERE game_mode=%s GROUP BY player ORDER BY MAX(score) DESC LIMIT 10',
+                (mode,)
+            )
+            scores = [{"player": row[0], "score": row[1], "game_mode": mode} for row in c.fetchall()]
+        else:
+            # Return both modes as a combined object for the two-tab UI
+            result = {}
+            for m in ('story', 'extreme'):
+                c.execute(
+                    'SELECT player, MAX(score) FROM scores WHERE game_mode=%s GROUP BY player ORDER BY MAX(score) DESC LIMIT 10',
+                    (m,)
+                )
+                result[m] = [{"player": row[0], "score": row[1], "game_mode": m} for row in c.fetchall()]
+            c.close()
+            conn.close()
+            return jsonify(result)
         c.close()
         conn.close()
         return jsonify(scores)

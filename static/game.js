@@ -612,7 +612,7 @@ window.selectMode = function (mode) {
   G._savedTowers = [];
   G.wave = 1;
   G.score = 0;
-  G.gold = 100;
+  G.gold = mode === 'extreme' ? 40 : 80;
   G.diamonds = 0;
   if (mode === 'extreme') {
     document.getElementById('mode-select-section').style.display = 'none';
@@ -797,7 +797,7 @@ window.selectStage = function (stageId) {
   G.storyStage = stageId;
   G.waveInStage = 1;
   G.wave = 1; // reset wave counter for display
-  G.gold = 100;
+  G.gold = 80;
   G.diamonds = 0;
   G.score = 0;
   G._savedTowers = [];
@@ -2932,7 +2932,8 @@ async function waveComplete() {
     const stageData = STORY_STAGES[G.storyStage - 1];
 
     if (isBossWave) {
-      // Stage complete!
+      // Stage complete! — submit score to Hall of Glory before anything else
+      await _submitScore(G.score, 'story');
       await saveGame();
       const hpLeft = G.hp;
       const maxHp = G.maxHp;
@@ -3013,6 +3014,9 @@ async function waveComplete() {
   addLog(`🏆 Wave ${G.wave} cleared! +${goldRwd + biomeGold}🪙 +${diaRwd + biomeDia}💎 +${waveScore}pts${scoreMult > 1 ? ' (2× Extreme!)' : ''}`, 'log-wave');
   showToast(isMilestone ? `🎯 MILESTONE! Wave ${G.wave}! +${diaRwd + biomeDia}💎` : `Wave ${G.wave} cleared! +${goldRwd + biomeGold}🪙`, 'tdiamond');
 
+  // Snapshot score to Hall of Glory on every 5-wave milestone in extreme mode
+  if (isMilestone) await _submitScore(G.score, 'extreme');
+
   await saveGame();
 
   const wcm = document.getElementById('wave-complete-modal');
@@ -3054,6 +3058,23 @@ window.closeStageComplete = function () {
   showStageSelect();
 };
 
+// ── SCORE SUBMISSION HELPER ────────────────────────────────────
+// Central point for all Hall of Glory submissions.
+// Dedupes rapid calls within the same wave via a 3-second cooldown.
+let _lastScoreSubmit = 0;
+async function _submitScore(score, mode) {
+  const now = Date.now();
+  if (now - _lastScoreSubmit < 3000) return; // debounce
+  _lastScoreSubmit = now;
+  try {
+    await fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ score, game_mode: mode || G.gameMode || 'story' })
+    });
+  } catch (_) { /* network failure — silent, not critical */ }
+}
+
 // ── GAME OVER ─────────────────────────────────────────────────
 async function handleGameOver() {
   G.gameOver = true;
@@ -3067,7 +3088,7 @@ async function handleGameOver() {
   document.getElementById('game-over-modal').style.display = 'flex';
   gameSettings.fastMode = false;
   document.querySelectorAll('#btn-set-fastMode,#btn-set-fastMode2').forEach(b => { b.classList.replace('tog-on', 'tog-off'); b.textContent = 'OFF'; });
-  await fetch('/api/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ score: G.score }) });
+  await _submitScore(G.score, G.gameMode);
   await saveGame();
 }
 
@@ -4306,24 +4327,61 @@ function openSettings() {
 function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
 
 // ── LEADERBOARD ───────────────────────────────────────────────
-function openLeaderboard() { fetchLeaderboard(); document.getElementById('leaderboard-modal').style.display = 'flex'; }
+// ── HALL OF GLORY — two-tab leaderboard ───────────────────────
+let _lbActiveTab = 'story'; // persists across modal opens
+
+function openLeaderboard() {
+  fetchLeaderboard();
+  document.getElementById('leaderboard-modal').style.display = 'flex';
+}
 function closeLeaderboard() { document.getElementById('leaderboard-modal').style.display = 'none'; }
+
+window._lbSetTab = function (mode) {
+  _lbActiveTab = mode;
+  document.querySelectorAll('.lb-tab-btn').forEach(b => {
+    b.classList.toggle('lb-tab-active', b.dataset.mode === mode);
+  });
+  if (window._lbCache) _renderLbTab(window._lbCache[mode] || [], mode);
+};
+
+function _renderLbTab(scores, mode) {
+  const list = document.getElementById('leaderboard-list');
+  const me = (document.getElementById('display-username').textContent || '').trim();
+  list.innerHTML = '';
+  if (!scores.length) {
+    list.innerHTML = `<li style="color:var(--col-dim);text-align:center;padding:20px">
+      No ${mode === 'extreme' ? 'Extreme' : 'Story'} scores yet — be the first champion!
+    </li>`;
+    return;
+  }
+  scores.forEach((s, i) => {
+    const li = document.createElement('li');
+    const isMe = s.player === me;
+    if (isMe) li.classList.add('me');
+    const rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+    li.innerHTML =
+      `<span class="lb-rank">${rank}</span>` +
+      `<span class="lb-name">${s.player}${isMe ? ' <span class="lb-you">(You)</span>' : ''}</span>` +
+      `<span class="lb-score">${s.score.toLocaleString()} pts</span>`;
+    list.appendChild(li);
+  });
+}
+
 async function fetchLeaderboard() {
+  const list = document.getElementById('leaderboard-list');
+  list.innerHTML = '<li style="color:var(--col-dim);text-align:center;padding:20px">Loading…</li>';
   try {
     const res = await fetch('/api/leaderboard');
-    const scores = await res.json();
-    const list = document.getElementById('leaderboard-list');
-    const me = document.getElementById('display-username').textContent;
-    list.innerHTML = '';
-    if (!scores.length) { list.innerHTML = '<li style="color:var(--col-dim);text-align:center;padding:20px">No scores yet. Be first!</li>'; return; }
-    scores.forEach((s, i) => {
-      const li = document.createElement('li');
-      if (s.player === me) li.classList.add('me');
-      const rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
-      li.innerHTML = `<span class="lb-rank">${rank}</span><span class="lb-name">${s.player}${s.player === me ? ' (You)' : ''}</span><span class="lb-score">${s.score} pts</span>`;
-      list.appendChild(li);
+    const data = await res.json();
+    // Backend returns { story: [...], extreme: [...] }
+    window._lbCache = data;
+    _renderLbTab(data[_lbActiveTab] || [], _lbActiveTab);
+    document.querySelectorAll('.lb-tab-btn').forEach(b => {
+      b.classList.toggle('lb-tab-active', b.dataset.mode === _lbActiveTab);
     });
-  } catch { }
+  } catch {
+    list.innerHTML = '<li style="color:#F87171;text-align:center;padding:20px">Could not load scores.</li>';
+  }
 }
 
 // ── INIT ──────────────────────────────────────────────────────
