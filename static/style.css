@@ -1292,6 +1292,88 @@ body {
   position: relative;
 }
 
+/* ── Per-biome board backgrounds — gap color matches the tile palette ── */
+.board:has(.biome-forest.cell) {
+  background: linear-gradient(160deg, #0A1C0A 0%, #071408 50%, #040C04 100%);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, .30) inset, 0 0 0 6px rgba(16, 80, 30, .20) inset;
+}
+
+.board:has(.biome-desert.cell) {
+  background: linear-gradient(160deg, #9A7030 0%, #7E5820 50%, #624010 100%);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, .35) inset, 0 0 0 6px rgba(160, 80, 0, .22) inset;
+}
+
+.board:has(.biome-tundra.cell) {
+  background: linear-gradient(160deg, #2A5C7A 0%, #1E4A62 50%, #143852 100%);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, .35) inset, 0 0 0 6px rgba(14, 116, 144, .22) inset;
+}
+
+.board:has(.biome-volcano.cell) {
+  background: linear-gradient(160deg, #2E0A00 0%, #220600 50%, #180400 100%);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, .35) inset, 0 0 0 6px rgba(150, 40, 0, .22) inset;
+}
+
+.board:has(.biome-jungle.cell) {
+  background: linear-gradient(160deg, #1A4A10 0%, #123808 50%, #0C2A04 100%);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, .32) inset, 0 0 0 6px rgba(6, 95, 40, .20) inset;
+}
+
+.board:has(.biome-abyss.cell) {
+  background: linear-gradient(160deg, #040E1E 0%, #020A16 50%, #01060E 100%);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, .28) inset, 0 0 0 6px rgba(4, 80, 100, .18) inset;
+}
+
+/* ── Per-stage board backgrounds — gap color matches each stage's tile palette ── */
+.board:has(.stage-1.cell) {
+  background: linear-gradient(160deg, #163010 0%, #0E2208 50%, #081604 100%);
+  box-shadow: 0 0 0 3px rgba(60, 140, 30, .40) inset, 0 0 0 6px rgba(30, 90, 10, .22) inset;
+}
+
+.board:has(.stage-2.cell) {
+  background: linear-gradient(160deg, #2A2830 0%, #1C1A22 50%, #121018 100%);
+  box-shadow: 0 0 0 3px rgba(130, 120, 150, .35) inset, 0 0 0 6px rgba(70, 60, 90, .20) inset;
+}
+
+.board:has(.stage-3.cell) {
+  background: linear-gradient(160deg, #0E0818 0%, #080410 50%, #04020C 100%);
+  box-shadow: 0 0 0 3px rgba(100, 60, 140, .35) inset, 0 0 0 6px rgba(60, 20, 90, .20) inset;
+}
+
+.board:has(.stage-4.cell) {
+  background: linear-gradient(160deg, #1E2230 0%, #141820 50%, #0C1018 100%);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, .30) inset, 0 0 0 6px rgba(40, 80, 160, .18) inset;
+}
+
+.board:has(.stage-5.cell) {
+  background: linear-gradient(160deg, #160A04 0%, #0E0602 50%, #080301 100%);
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, .30) inset, 0 0 0 6px rgba(160, 60, 10, .18) inset;
+}
+
+.board:has(.stage-6.cell) {
+  background: linear-gradient(160deg, #0C0300 0%, #070200 50%, #040100 100%);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, .28) inset, 0 0 0 6px rgba(140, 80, 0, .16) inset;
+}
+
+.board:has(.stage-7.cell) {
+  background: linear-gradient(160deg, #2A2018 0%, #1C1610 50%, #120E08 100%);
+  box-shadow: 0 0 0 3px rgba(232, 121, 249, .25) inset, 0 0 0 6px rgba(130, 40, 160, .16) inset;
+}
+
+.board:has(.stage-8.cell) {
+  background: linear-gradient(160deg, #060410 0%, #040208 50%, #020106 100%);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, .28) inset, 0 0 0 6px rgba(10, 80, 100, .16) inset;
+}
+
+.board:has(.stage-9.cell) {
+  background: linear-gradient(160deg, #120202 0%, #0C0101 50%, #060101 100%);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, .28) inset, 0 0 0 6px rgba(140, 20, 20, .16) inset;
+}
+
+.board:has(.stage-10.cell) {
+  background: linear-gradient(160deg, #1C1602 0%, #120E01 50%, #0A0A01 100%);
+  box-shadow: 0 0 0 3px rgba(240, 200, 66, .30) inset, 0 0 0 6px rgba(140, 100, 0, .18) inset;
+}
+
 .cell {
   position: relative;
   border-radius: 5px;
