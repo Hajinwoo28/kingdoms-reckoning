@@ -517,7 +517,9 @@ async function saveGame(silent = false) {
         gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
         castle_skin: G.castleSkin, tower_skin: G.towerSkin,
         streak: G.streak, last_login: today, best_wave: G.bestWave,
-        towers: towersPayload, game_mode: G.gameMode
+        towers: towersPayload, game_mode: G.gameMode,
+        stages_cleared: G.stagesCleared || [],
+        stage_stars: G.stageStars || {}
       })
     });
     const data = await res.json();
@@ -554,6 +556,9 @@ async function loadSavedState() {
       G.bestWave = d.best_wave || 0;
       G.gameMode = d.game_mode || 'story';
       G._savedTowers = Array.isArray(d.towers) ? d.towers : [];
+      // Stage progress — always loaded from server, never from localStorage
+      G.stagesCleared = Array.isArray(d.stages_cleared) ? d.stages_cleared : [];
+      G.stageStars = (d.stage_stars && typeof d.stage_stars === 'object') ? d.stage_stars : {};
     }
   }
   // Restore active biome from localStorage (DB doesn't store biome_id)
@@ -650,26 +655,16 @@ function showIslandSelect() {
 
 // ── STORY STAGE SELECT ────────────────────────────────────────
 function loadStageProgress() {
-  try {
-    const raw = localStorage.getItem('kr_story_stages');
-    if (raw) {
-      const d = JSON.parse(raw);
-      G.stagesCleared = d.cleared || [];
-      G.stageStars = d.stars || {};
-    } else {
-      G.stagesCleared = [];
-      G.stageStars = {};
-    }
-  } catch (_) { G.stagesCleared = []; G.stageStars = {}; }
+  // Stage progress is loaded from the server in loadSavedState().
+  // G.stagesCleared and G.stageStars are already populated — just ensure defaults.
+  if (!Array.isArray(G.stagesCleared)) G.stagesCleared = [];
+  if (!G.stageStars || typeof G.stageStars !== 'object') G.stageStars = {};
 }
 
 function saveStageProgress() {
-  try {
-    localStorage.setItem('kr_story_stages', JSON.stringify({
-      cleared: G.stagesCleared,
-      stars: G.stageStars,
-    }));
-  } catch (_) { }
+  // Persist stage progress to the server by triggering a silent auto-save.
+  // This keeps stage progress tied to the player's account, not the browser.
+  scheduleAutoSave();
 }
 
 function isStageUnlocked(stageId) {
