@@ -5350,74 +5350,148 @@ body {
 }
 
 /* ── FOREST (Enchanted): Arcane purple tiles ────────────────── */
+/* ── biome-forest — Nature Cave Sanctuary (dark mossy cave-green) ── */
 .biome-forest.cell {
-  background: linear-gradient(155deg, #3E1A74 0%, #2C1058 55%, #1A0840 100%) !important;
-  border-color: rgba(139, 92, 246, .45);
+  background: linear-gradient(155deg, #1A3A1A 0%, #0F2510 55%, #081508 100%) !important;
+  border-color: rgba(34, 197, 94, .35);
 }
 
 .biome-forest.cell[data-tv="0"] {
-  background: linear-gradient(155deg, #4A2280 0%, #361468 55%, #220C4E 100%) !important;
+  background: linear-gradient(155deg, #1E4020 0%, #132A14 55%, #0A1A0A 100%) !important;
 }
 
 .biome-forest.cell[data-tv="1"] {
-  background: linear-gradient(170deg, #321260 0%, #240C4A 55%, #160634 100%) !important;
+  background: linear-gradient(170deg, #162E16 0%, #0C1E0D 55%, #061006 100%) !important;
 }
 
 .biome-forest.cell[data-tv="2"] {
-  background: linear-gradient(140deg, #52288A 0%, #3E1870 55%, #2A1054 100%) !important;
+  background: linear-gradient(140deg, #224824 0%, #163218 55%, #0C2010 100%) !important;
 }
 
 .biome-forest.cell[data-tv="3"] {
-  background: linear-gradient(155deg, #280E5A 0%, #1C0844 55%, #10042E 100%) !important;
+  background: linear-gradient(155deg, #122412 0%, #0A180B 55%, #050E05 100%) !important;
 }
 
 .biome-forest.cell[data-tv="4"] {
-  background: linear-gradient(165deg, #441E78 0%, #321264 55%, #200A4A 100%) !important;
+  background: linear-gradient(165deg, #1C3C1E 0%, #112816 55%, #091609 100%) !important;
 }
 
 .biome-forest.cell:hover:not(.path-cell):not(.base-cell) {
-  background: linear-gradient(155deg, #6030A8 0%, #4C1E8C 55%, #361070 100%) !important;
-  border-color: rgba(167, 139, 250, .8);
-  box-shadow: inset 0 0 10px rgba(139, 92, 246, .3), 0 0 8px rgba(109, 40, 217, .4);
+  background: linear-gradient(155deg, #2A5C2C 0%, #1E4420 55%, #143016 100%) !important;
+  border-color: rgba(74, 222, 128, .75);
+  box-shadow: inset 0 0 10px rgba(34, 197, 94, .25), 0 0 8px rgba(16, 101, 40, .4);
 }
 
+/* Cave-floor path — dark mossy stone with bioluminescent tint */
 .biome-forest.path-cell {
-  background: linear-gradient(155deg, #2A1260 0%, #1E0A48 55%, #140632 100%) !important;
-  border-color: rgba(139, 92, 246, .4) !important;
+  background: linear-gradient(155deg, #0E2A10 0%, #081C09 55%, #040E04 100%) !important;
+  border-color: rgba(34, 197, 94, .3) !important;
 }
 
 .biome-forest.path-cell[data-tv="0"] {
-  background: linear-gradient(155deg, #321468 0%, #241050 55%, #160838 100%) !important;
+  background: linear-gradient(155deg, #122E14 0%, #0C1E0D 55%, #060E06 100%) !important;
 }
 
 .biome-forest.path-cell[data-tv="1"] {
-  background: linear-gradient(170deg, #220E54 0%, #180840 55%, #0E042C 100%) !important;
+  background: linear-gradient(170deg, #0A200B 0%, #061608 55%, #030C03 100%) !important;
 }
 
 .biome-forest.path-cell[data-tv="2"] {
-  background: linear-gradient(140deg, #3A186E 0%, #2A1058 55%, #1C0840 100%) !important;
+  background: linear-gradient(140deg, #163418 0%, #0E2410 55%, #07140A 100%) !important;
 }
 
 .biome-forest.path-cell[data-tv="3"] {
-  background: linear-gradient(155deg, #1E0C4E 0%, #14083C 55%, #0C0428 100%) !important;
+  background: linear-gradient(155deg, #08180A 0%, #05100A 55%, #030806 100%) !important;
 }
 
 .biome-forest.path-cell[data-tv="4"] {
-  background: linear-gradient(165deg, #2E1464 0%, #200E4C 55%, #140836 100%) !important;
+  background: linear-gradient(165deg, #103010 0%, #0A200C 55%, #051005 100%) !important;
 }
 
 .biome-forest.path-cell::after {
-  background: repeating-linear-gradient(90deg, transparent 0%, transparent 42%, rgba(160, 100, 255, .1) 42%, rgba(160, 100, 255, .1) 58%) !important;
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 42%, rgba(57, 255, 80, .08) 42%, rgba(57, 255, 80, .08) 58%) !important;
 }
 
 .biome-forest.base-cell {
-  background: linear-gradient(155deg, #2A1260 0%, #1E0A48 55%, #140632 100%) !important;
-  border-color: rgba(139, 92, 246, .65) !important;
+  background: linear-gradient(155deg, #0E2A10 0%, #081C09 55%, #040E04 100%) !important;
+  border-color: rgba(34, 197, 94, .6) !important;
 }
 
 .biome-forest.can-place {
-  border-color: rgba(139, 92, 246, .6) !important;
-  box-shadow: inset 0 0 5px rgba(139, 92, 246, .2) !important;
+  border-color: rgba(34, 197, 94, .55) !important;
+  box-shadow: inset 0 0 5px rgba(34, 197, 94, .18) !important;
+}
+
+/* ── biome-desert — Sand Dune Wastes (warm sandy/tan tones) ─────── */
+.biome-desert.cell {
+  background: linear-gradient(155deg, #C8A060 0%, #A8803A 55%, #886020 100%) !important;
+  border-color: rgba(245, 158, 11, .4);
+}
+
+.biome-desert.cell[data-tv="0"] {
+  background: linear-gradient(155deg, #D4A855 0%, #B88838 55%, #9C6C20 100%) !important;
+}
+
+.biome-desert.cell[data-tv="1"] {
+  background: linear-gradient(170deg, #BC9850 0%, #9C7830 55%, #7E5C18 100%) !important;
+}
+
+.biome-desert.cell[data-tv="2"] {
+  background: linear-gradient(140deg, #DCAC58 0%, #BC8C3C 55%, #9A6C22 100%) !important;
+}
+
+.biome-desert.cell[data-tv="3"] {
+  background: linear-gradient(155deg, #B49248 0%, #947228 55%, #765616 100%) !important;
+}
+
+.biome-desert.cell[data-tv="4"] {
+  background: linear-gradient(165deg, #C8A05C 0%, #AA8040 55%, #8A6024 100%) !important;
+}
+
+.biome-desert.cell:hover:not(.path-cell):not(.base-cell) {
+  background: linear-gradient(155deg, #E8C070 0%, #C8A050 55%, #A88030 100%) !important;
+  border-color: rgba(251, 191, 36, .85);
+  box-shadow: inset 0 0 10px rgba(245, 158, 11, .3), 0 0 8px rgba(180, 83, 9, .45);
+}
+
+/* Cracked dry-earth path */
+.biome-desert.path-cell {
+  background: linear-gradient(155deg, #A07840 0%, #845A26 55%, #6A4010 100%) !important;
+  border-color: rgba(245, 158, 11, .35) !important;
+}
+
+.biome-desert.path-cell[data-tv="0"] {
+  background: linear-gradient(155deg, #AC8048 0%, #8C6230 55%, #704818 100%) !important;
+}
+
+.biome-desert.path-cell[data-tv="1"] {
+  background: linear-gradient(170deg, #987038 0%, #7C5422 55%, #603C0E 100%) !important;
+}
+
+.biome-desert.path-cell[data-tv="2"] {
+  background: linear-gradient(140deg, #B48850 0%, #946A34 55%, #744E1C 100%) !important;
+}
+
+.biome-desert.path-cell[data-tv="3"] {
+  background: linear-gradient(155deg, #906830 0%, #744E1C 55%, #5A380C 100%) !important;
+}
+
+.biome-desert.path-cell[data-tv="4"] {
+  background: linear-gradient(165deg, #A87840 0%, #886028 55%, #6A4414 100%) !important;
+}
+
+.biome-desert.path-cell::after {
+  background: repeating-linear-gradient(90deg, transparent 0%, transparent 42%, rgba(245, 200, 80, .1) 42%, rgba(245, 200, 80, .1) 58%) !important;
+}
+
+.biome-desert.base-cell {
+  background: linear-gradient(155deg, #A07840 0%, #845A26 55%, #6A4010 100%) !important;
+  border-color: rgba(245, 158, 11, .6) !important;
+}
+
+.biome-desert.can-place {
+  border-color: rgba(245, 158, 11, .55) !important;
+  box-shadow: inset 0 0 5px rgba(245, 158, 11, .2) !important;
 }
 
 
