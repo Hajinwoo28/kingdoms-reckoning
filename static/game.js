@@ -455,6 +455,7 @@ let G = {
   waveInStage: 1,   // wave within stage (1, 2, 3)
   stagesCleared: [], // array of cleared stage IDs
   stageStars: {},    // { stageId: stars (0-3) }
+  extremeProgress: 1, // 1-based index of highest unlocked extreme island (server-authoritative)
   // Strategic / tactical progression stats
   turnNumber: 0,
   cleanTurns: 0,
@@ -517,7 +518,10 @@ async function saveGame(silent = false) {
         gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
         castle_skin: G.castleSkin, tower_skin: G.towerSkin,
         streak: G.streak, last_login: today, best_wave: G.bestWave,
-        towers: towersPayload, game_mode: G.gameMode
+        towers: towersPayload, game_mode: G.gameMode,
+        stages_cleared: G.stagesCleared || [],
+        stage_stars: G.stageStars || {},
+        extreme_progress: G.extremeProgress || 1
       })
     });
     const data = await res.json();
@@ -554,6 +558,10 @@ async function loadSavedState() {
       G.bestWave = d.best_wave || 0;
       G.gameMode = d.game_mode || 'story';
       G._savedTowers = Array.isArray(d.towers) ? d.towers : [];
+      // Per-player progress — loaded from server, never from localStorage
+      G.stagesCleared = Array.isArray(d.stages_cleared) ? d.stages_cleared : [];
+      G.stageStars = (d.stage_stars && typeof d.stage_stars === 'object') ? d.stage_stars : {};
+      G.extremeProgress = d.extreme_progress || 1;
     }
   }
   // Restore active biome from localStorage (DB doesn't store biome_id)
@@ -650,27 +658,14 @@ function showIslandSelect() {
 
 // ── STORY STAGE SELECT ────────────────────────────────────────
 function loadStageProgress() {
-  try {
-    const raw = localStorage.getItem('kr_story_stages');
-    if (raw) {
-      const d = JSON.parse(raw);
-      G.stagesCleared = d.cleared || [];
-      G.stageStars = d.stars || {};
-    } else {
-      G.stagesCleared = [];
-      G.stageStars = {};
-    }
-  } catch (_) { G.stagesCleared = []; G.stageStars = {}; }
+  // Progress is loaded from the server in loadGame() and stored in G.
+  // Ensure safe defaults if called before login (guest / offline).
+  if (!Array.isArray(G.stagesCleared)) G.stagesCleared = [];
+  if (!G.stageStars || typeof G.stageStars !== 'object') G.stageStars = {};
 }
 
-function saveStageProgress() {
-  try {
-    localStorage.setItem('kr_story_stages', JSON.stringify({
-      cleared: G.stagesCleared,
-      stars: G.stageStars,
-    }));
-  } catch (_) { }
-}
+// saveStageProgress removed — progress is persisted via saveGame() to the server.
+// Each player's progress is stored per-account in player_saves.stages_cleared.
 
 function isStageUnlocked(stageId) {
   if (stageId === 1) return true;
@@ -1877,6 +1872,28 @@ function buildIslandHTML(b) {
   const ter = ISLAND_TERRAIN[b.id];
   if (!ter) return '';
 
+  // ── Per-player island lock (extreme mode) ──────────────────
+  const _FEATURED_ORDER = ['tundra', 'volcano', 'jungle', 'desert', 'forest'];
+  const islandIndex = _FEATURED_ORDER.indexOf(b.id) + 1;
+  const islandUnlocked = islandIndex <= (G.extremeProgress || 1);
+  const prevIslandName = islandIndex > 1
+    ? (BIOME_DEFS[_FEATURED_ORDER[islandIndex - 2]]?.name || 'previous island')
+    : null;
+  const lockOverlay = islandUnlocked ? '' : `
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.65);
+                border-radius:12px;display:flex;flex-direction:column;
+                align-items:center;justify-content:center;z-index:20;
+                pointer-events:none;gap:6px">
+      <span style="font-size:2.6rem;line-height:1">\u{1F512}</span>
+      <span style="font-family:Cinzel,serif;font-size:11px;color:#bbb;
+                   letter-spacing:.08em;text-align:center;padding:0 12px">
+        Clear ${prevIslandName} to unlock
+      </span>
+    </div>`;
+  const clickHandler = islandUnlocked
+    ? `islandNodeClick('${b.id}')`
+    : `showToast('🔒 Complete ${prevIslandName || 'the previous island'} first!','tinfo')`;
+
   const isMobile = window.innerWidth <= 640;
   const decoScale = isMobile ? 0.60 : 1;
   const w = pos.w;
@@ -1917,8 +1934,8 @@ function buildIslandHTML(b) {
   const islandFilter = glowMap[b.id] || '';
 
   return `
-  <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="islandNodeClick('${b.id}')"
-       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color};width:${w}px;height:${islandH}px;position:absolute">
+  <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="${clickHandler}"
+       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color};width:${w}px;height:${islandH}px;position:absolute;cursor:${islandUnlocked ? 'pointer' : 'not-allowed'}">
 
     <!-- Particle canvas -->
     <canvas class="inode-particles" id="ipc-${b.id}"
@@ -1932,16 +1949,18 @@ function buildIslandHTML(b) {
       ${_cartoonIslandSVG(b, w)}
       <!-- Emoji deco layer -->
       ${decoHtml}
+      <!-- Lock overlay (hidden if island is unlocked for this player) -->
+      ${lockOverlay}
     </div>
 
     <!-- ── FLOATING SHADOW ── -->
     <div class="inode-shadow" style="width:${Math.round(w * .58)}px;margin-left:${Math.round(w * .21)}px;box-shadow:${shadowGlow}"></div>
 
     <!-- ── NAMEPLATE ── -->
-    <div class="inode-nameplate" style="--biome-col:${b.color}">
+    <div class="inode-nameplate" style="--biome-col:${b.color};opacity:${islandUnlocked ? 1 : 0.55}">
       <span class="inode-np-icon">${b.icon}</span>
       <span class="inode-np-name">${b.name}</span>
-      <span class="inode-np-tagline">${b.tagline}</span>
+      <span class="inode-np-tagline">${islandUnlocked ? b.tagline : '🔒 Locked'}</span>
       <span class="inode-np-stars">${starsHtml}</span>
     </div>
   </div>`;
@@ -2940,10 +2959,10 @@ async function waveComplete() {
       const hpPct = hpLeft / maxHp;
       const starsEarned = hpPct > 0.66 ? 3 : hpPct > 0.33 ? 2 : 1;
 
-      // Save stage completion
+      // Save stage completion (server-side, per-player)
       if (!G.stagesCleared.includes(G.storyStage)) G.stagesCleared.push(G.storyStage);
       G.stageStars[G.storyStage] = Math.max(starsEarned, G.stageStars[G.storyStage] || 0);
-      saveStageProgress();
+      saveGame(true); // persists stages_cleared + stage_stars to server for THIS player
 
       addLog(`🏆 Stage ${G.storyStage} "${stageData.name}" CLEARED! ${'★'.repeat(starsEarned)} +${goldRwd + biomeGold}🪙 +${diaRwd + biomeDia}💎`, 'log-wave');
       showToast(`🏆 Stage ${G.storyStage} Cleared! ${'★'.repeat(starsEarned)}`, 'tdiamond');
@@ -3016,6 +3035,11 @@ async function waveComplete() {
 
   // Snapshot score to Hall of Glory on every 5-wave milestone in extreme mode
   if (isMilestone) await _submitScore(G.score, 'extreme');
+
+  // Unlock next island when THIS player survives to wave 10 on current island
+  if (G.gameMode === 'extreme' && G.wave === 10 && G.activeBiome) {
+    onIslandCleared(G.activeBiome.id);
+  }
 
   await saveGame();
 
@@ -3090,6 +3114,23 @@ async function handleGameOver() {
   document.querySelectorAll('#btn-set-fastMode,#btn-set-fastMode2').forEach(b => { b.classList.replace('tog-on', 'tog-off'); b.textContent = 'OFF'; });
   await _submitScore(G.score, G.gameMode);
   await saveGame();
+}
+
+// ── EXTREME ISLAND UNLOCK ─────────────────────────────────────
+// Called when the player clears a "checkpoint wave" (wave 10) on an island.
+// Unlocks the next island for THIS player only and persists to the server.
+function onIslandCleared(biomeId) {
+  const FEATURED_ORDER = ['tundra', 'volcano', 'jungle', 'desert', 'forest'];
+  const idx = FEATURED_ORDER.indexOf(biomeId) + 1;  // 1-based
+  if (idx < 1) return;
+  if (idx >= (G.extremeProgress || 1)) {
+    G.extremeProgress = idx + 1;
+    saveGame(true);
+    const nextName = idx < FEATURED_ORDER.length
+      ? (BIOME_DEFS[FEATURED_ORDER[idx]]?.name || 'the next island')
+      : null;
+    if (nextName) showToast(`🏝️ ${nextName} unlocked!`, 'tdiamond');
+  }
 }
 
 window.retryWave = function () {

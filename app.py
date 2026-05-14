@@ -87,7 +87,7 @@ def init_db():
             stage_stars TEXT DEFAULT '{}'
         )''')
         # Migrate existing tables — add columns if they don't exist yet
-        for col, defval in [('streak', '0'), ('last_login', 'NULL'), ('best_wave', '0'), ('towers_json', "''''[]''''"), ('game_mode', "''''story''''"), ('stages_cleared', "''''[]''''"), ('stage_stars', "''''{}''''")]:
+        for col, defval in [('streak', '0'), ('last_login', 'NULL'), ('best_wave', '0'), ('towers_json', "''''[]''''"), ('game_mode', "''''story''''"), ('stages_cleared', "''''[]''''"), ('stage_stars', "''''{}''''"), ('extreme_progress', '1')]:
             try:
                 if col == 'last_login':
                     c.execute(f"ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS last_login DATE DEFAULT NULL")
@@ -202,17 +202,19 @@ def save_state():
         game_mode = data.get('game_mode', 'story')
         stages_cleared = _json.dumps(data.get('stages_cleared', []))
         stage_stars = _json.dumps(data.get('stage_stars', {}))
+        extreme_progress = int(data.get('extreme_progress', 1))
         try:
             c.execute('''UPDATE player_saves SET
                 gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
                 streak=%s, last_login=%s, best_wave=%s, towers_json=%s, game_mode=%s,
-                stages_cleared=%s, stage_stars=%s
+                stages_cleared=%s, stage_stars=%s, extreme_progress=%s
                 WHERE username=%s''',
                 (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
                  data.get('score', 0), data.get('castle_skin', 'Wooden'),
                  data.get('tower_skin', 'Basic'), data.get('streak', 0),
                  data.get('last_login'), data.get('best_wave', 0),
-                 towers_json, game_mode, stages_cleared, stage_stars, session['username']))
+                 towers_json, game_mode, stages_cleared, stage_stars,
+                 extreme_progress, session['username']))
         except Exception:
             # towers_json column may not exist yet — add it and retry
             conn.rollback()
@@ -221,16 +223,18 @@ def save_state():
                 c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS game_mode VARCHAR(20) DEFAULT 'story'")
                 c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS stages_cleared TEXT DEFAULT '[]'")
                 c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS stage_stars TEXT DEFAULT '{}'")
+                c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS extreme_progress INTEGER DEFAULT 1")
                 c.execute('''UPDATE player_saves SET
                     gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
                     streak=%s, last_login=%s, best_wave=%s, towers_json=%s, game_mode=%s,
-                    stages_cleared=%s, stage_stars=%s
+                    stages_cleared=%s, stage_stars=%s, extreme_progress=%s
                     WHERE username=%s''',
                     (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
                      data.get('score', 0), data.get('castle_skin', 'Wooden'),
                      data.get('tower_skin', 'Basic'), data.get('streak', 0),
                      data.get('last_login'), data.get('best_wave', 0),
-                     towers_json, game_mode, stages_cleared, stage_stars, session['username']))
+                     towers_json, game_mode, stages_cleared, stage_stars,
+                     extreme_progress, session['username']))
             except Exception:
                 # Final fallback — save everything except towers
                 conn.rollback()
@@ -263,13 +267,14 @@ def load_state():
         c = conn.cursor()
         import json as _json
         try:
-            c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave, towers_json, game_mode, stages_cleared, stage_stars FROM player_saves WHERE username=%s',
+            c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave, towers_json, game_mode, stages_cleared, stage_stars, extreme_progress FROM player_saves WHERE username=%s',
                       (session['username'],))
             row = c.fetchone()
             towers_col = row[9] if row else None
             mode_col = row[10] if row else 'story'
             stages_cleared_col = row[11] if row else '[]'
             stage_stars_col = row[12] if row else '{}'
+            extreme_progress_col = row[13] if row else 1
         except Exception:
             conn.rollback()
             c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave FROM player_saves WHERE username=%s',
@@ -279,6 +284,7 @@ def load_state():
             mode_col = 'story'
             stages_cleared_col = '[]'
             stage_stars_col = '{}'
+            extreme_progress_col = 1
         c.close()
         conn.close()
         if row:
@@ -298,7 +304,8 @@ def load_state():
                             "score": row[3], "castle_skin": row[4], "tower_skin": row[5],
                             "streak": row[6] or 0, "last_login": str(row[7]) if row[7] else None,
                             "best_wave": row[8] or 0, "towers": towers, "game_mode": mode_col or 'story',
-                            "stages_cleared": stages_cleared, "stage_stars": stage_stars})
+                            "stages_cleared": stages_cleared, "stage_stars": stage_stars,
+                            "extreme_progress": int(extreme_progress_col or 1)})
         return jsonify({"error": "No save found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
