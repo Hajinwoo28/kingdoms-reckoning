@@ -2241,6 +2241,9 @@ function restartGame(loginRestore = false) {
   renderBoard();
   updateHUD();
   setPhase('planning');
+  // Always re-enable execute button on game start / stage entry
+  // (it may have been left disabled from a prior combat phase)
+  document.getElementById('execute-btn').disabled = false;
   showWavePreview();
   updateModeBadge();
 }
@@ -2734,11 +2737,13 @@ async function executeTurn() {
 
   renderBoard(); await sleep(150);
 
-  // Enemies move
+  // Enemies move — step-by-step (1 tile at a time) so every path tile is
+  // traversed and rendered, eliminating any visual tile gap.
   if (!G.frozenTurn) {
     const toRemove = [];
-    G.enemies.forEach(e => {
-      if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; return; }
+    // Use for...of (not forEach) so we can await between tile steps
+    for (const e of [...G.enemies]) {
+      if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; continue; }
       // Troll regeneration
       if (e.def.ability === 'regen' && e.hp < e.maxHp && e.hp > 0) {
         const regen = e.def.regenAmt || 8;
@@ -2747,9 +2752,18 @@ async function executeTurn() {
       }
       // Goblin dash (extra move chance)
       const extraMove = (e.def.ability === 'dash' && Math.random() < (e.def.abilityChance || 0.25)) ? 1 : 0;
-      e.x += e.speed + extraMove;
       if (extraMove > 0) addLog(`💨 Goblin dashed forward!`, 'log-ability');
-      if (e.x >= GRID_W - 1) {
+      const totalSteps = e.speed + extraMove;
+      // Advance one tile at a time — renders on each step so enemies
+      // visibly pass through every path tile (no tile gap).
+      let breached = false;
+      for (let step = 0; step < totalSteps; step++) {
+        e.x += 1;
+        renderBoard();
+        await sleep(gameSettings.fastMode ? 18 : 55);
+        if (e.x >= GRID_W - 1) { breached = true; break; }
+      }
+      if (breached) {
         // Dragon breath — damages a random tower on breach
         if (e.def.ability === 'breath' && G.towers.length > 0) {
           const idx = Math.floor(Math.random() * G.towers.length);
@@ -2767,9 +2781,9 @@ async function executeTurn() {
         if (gameSettings.vfx) { document.getElementById('shake-wrapper').classList.add('shake'); setTimeout(() => document.getElementById('shake-wrapper').classList.remove('shake'), 450); }
         toRemove.push(e);
       }
-    });
+    }
     G.enemies = G.enemies.filter(e => !toRemove.includes(e));
-    renderBoard(); await sleep(200);
+    renderBoard(); await sleep(150);
   } else {
     addLog('❄️ Enemies frozen — skipping their move.', 'log-ability');
   }
