@@ -517,9 +517,7 @@ async function saveGame(silent = false) {
         gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
         castle_skin: G.castleSkin, tower_skin: G.towerSkin,
         streak: G.streak, last_login: today, best_wave: G.bestWave,
-        towers: towersPayload, game_mode: G.gameMode,
-        stages_cleared: G.stagesCleared || [],
-        stage_stars: G.stageStars || {}
+        towers: towersPayload, game_mode: G.gameMode
       })
     });
     const data = await res.json();
@@ -556,9 +554,6 @@ async function loadSavedState() {
       G.bestWave = d.best_wave || 0;
       G.gameMode = d.game_mode || 'story';
       G._savedTowers = Array.isArray(d.towers) ? d.towers : [];
-      // Stage progress — always loaded from server, never from localStorage
-      G.stagesCleared = Array.isArray(d.stages_cleared) ? d.stages_cleared : [];
-      G.stageStars = (d.stage_stars && typeof d.stage_stars === 'object') ? d.stage_stars : {};
     }
   }
   // Restore active biome from localStorage (DB doesn't store biome_id)
@@ -655,16 +650,26 @@ function showIslandSelect() {
 
 // ── STORY STAGE SELECT ────────────────────────────────────────
 function loadStageProgress() {
-  // Stage progress is loaded from the server in loadSavedState().
-  // G.stagesCleared and G.stageStars are already populated — just ensure defaults.
-  if (!Array.isArray(G.stagesCleared)) G.stagesCleared = [];
-  if (!G.stageStars || typeof G.stageStars !== 'object') G.stageStars = {};
+  try {
+    const raw = localStorage.getItem('kr_story_stages');
+    if (raw) {
+      const d = JSON.parse(raw);
+      G.stagesCleared = d.cleared || [];
+      G.stageStars = d.stars || {};
+    } else {
+      G.stagesCleared = [];
+      G.stageStars = {};
+    }
+  } catch (_) { G.stagesCleared = []; G.stageStars = {}; }
 }
 
 function saveStageProgress() {
-  // Persist stage progress to the server by triggering a silent auto-save.
-  // This keeps stage progress tied to the player's account, not the browser.
-  scheduleAutoSave();
+  try {
+    localStorage.setItem('kr_story_stages', JSON.stringify({
+      cleared: G.stagesCleared,
+      stars: G.stageStars,
+    }));
+  } catch (_) { }
 }
 
 function isStageUnlocked(stageId) {
@@ -2241,9 +2246,6 @@ function restartGame(loginRestore = false) {
   renderBoard();
   updateHUD();
   setPhase('planning');
-  // Always re-enable execute button on game start / stage entry
-  // (it may have been left disabled from a prior combat phase)
-  document.getElementById('execute-btn').disabled = false;
   showWavePreview();
   updateModeBadge();
 }
@@ -2733,17 +2735,15 @@ async function executeTurn() {
     }
     return true;
   });
-  if (newGold > 0) { G.gold += newGold; addLog(`💰 +${newGold} gold from kills.`, 'log-gold'); showToast(`+${newGold}🪙`, 'tsuccess'); }
+  if (newGold > 0) { G.gold += newGold; addLog(`💰 +${newGold} gold from kills.`, 'log-gold'); showToast(`+${newGold}🪙`, 'tsuccess'); renderTowerSelector(); }
 
   renderBoard(); await sleep(150);
 
-  // Enemies move — step-by-step (1 tile at a time) so every path tile is
-  // traversed and rendered, eliminating any visual tile gap.
+  // Enemies move
   if (!G.frozenTurn) {
     const toRemove = [];
-    // Use for...of (not forEach) so we can await between tile steps
-    for (const e of [...G.enemies]) {
-      if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; continue; }
+    G.enemies.forEach(e => {
+      if (e.frozen && e.frozenTurns > 0) { e.frozenTurns--; if (e.frozenTurns <= 0) e.frozen = false; return; }
       // Troll regeneration
       if (e.def.ability === 'regen' && e.hp < e.maxHp && e.hp > 0) {
         const regen = e.def.regenAmt || 8;
@@ -2752,18 +2752,9 @@ async function executeTurn() {
       }
       // Goblin dash (extra move chance)
       const extraMove = (e.def.ability === 'dash' && Math.random() < (e.def.abilityChance || 0.25)) ? 1 : 0;
+      e.x += e.speed + extraMove;
       if (extraMove > 0) addLog(`💨 Goblin dashed forward!`, 'log-ability');
-      const totalSteps = e.speed + extraMove;
-      // Advance one tile at a time — renders on each step so enemies
-      // visibly pass through every path tile (no tile gap).
-      let breached = false;
-      for (let step = 0; step < totalSteps; step++) {
-        e.x += 1;
-        renderBoard();
-        await sleep(gameSettings.fastMode ? 18 : 55);
-        if (e.x >= GRID_W - 1) { breached = true; break; }
-      }
-      if (breached) {
+      if (e.x >= GRID_W - 1) {
         // Dragon breath — damages a random tower on breach
         if (e.def.ability === 'breath' && G.towers.length > 0) {
           const idx = Math.floor(Math.random() * G.towers.length);
@@ -2781,9 +2772,9 @@ async function executeTurn() {
         if (gameSettings.vfx) { document.getElementById('shake-wrapper').classList.add('shake'); setTimeout(() => document.getElementById('shake-wrapper').classList.remove('shake'), 450); }
         toRemove.push(e);
       }
-    }
+    });
     G.enemies = G.enemies.filter(e => !toRemove.includes(e));
-    renderBoard(); await sleep(150);
+    renderBoard(); await sleep(200);
   } else {
     addLog('❄️ Enemies frozen — skipping their move.', 'log-ability');
   }
@@ -2925,7 +2916,7 @@ async function waveComplete() {
     }
   }
 
-  G.gold += goldRwd + biomeGold; G.diamonds += diaRwd + biomeDia; G.score += waveScore;
+  G.gold += goldRwd + biomeGold; G.diamonds += diaRwd + biomeDia; G.score += waveScore; renderTowerSelector();
   if (G.wave > G.bestWave) G.bestWave = G.wave;
   if (G.activeBiome) saveIslandStat(G.activeBiome.id, G.wave, G.score);
   updateQuestProgress('wave');
@@ -3761,7 +3752,7 @@ window.claimQuest = function (qid) {
   G.gold += q.rwd.gold; G.diamonds += q.rwd.dia;
   addLog(`🎁 "${q.title}" reward claimed! +${q.rwd.gold}🪙 +${q.rwd.dia}💎`, 'log-quest');
   showToast(`+${q.rwd.gold}🪙 +${q.rwd.dia}💎`, 'tdiamond');
-  updateHUD(); renderQuests();
+  updateHUD(); renderTowerSelector(); renderQuests();
 };
 
 function renderQuests() {
@@ -3910,7 +3901,7 @@ window.buyCastle = function (key) {
     G.castleSkin = key;
     applyCastleSkin(); showToast(`${skin.name} equipped!`, 'tdiamond');
   } else showToast('Not enough currency!', 'terror');
-  updateHUD(); renderShop();
+  updateHUD(); renderShop(); renderTowerSelector();
 };
 window.equipCastle = function (key) {
   if (!G.castleOwned.includes(key)) return;
@@ -3929,7 +3920,7 @@ window.buyTowerSkin = function (key) {
     G.diamonds -= skin.cost; G.towerSkinOwned.push(key); G.towerSkin = key;
     showToast(`${skin.name} equipped!`, 'tdiamond');
   } else return showToast('Not enough currency!', 'terror');
-  updateHUD(); renderBoard(); renderShop();
+  updateHUD(); renderBoard(); renderShop(); renderTowerSelector();
 };
 window.equipTowerSkin = function (key) {
   if (!G.towerSkinOwned.includes(key)) return;
@@ -3946,7 +3937,7 @@ window.usePowerup = function (id) {
   if (pu.currency === 'gold') G.gold -= pu.cost;
   else G.diamonds -= pu.cost;
   if (pu.effect === 'repairCastle') { G.hp = Math.min(G.maxHp, G.hp + pu.val); updateCastleHpBar(); showToast(`Castle repaired! +${pu.val}HP`, 'tsuccess'); }
-  else if (pu.effect === 'addGold') { G.gold += pu.val; showToast(`+${pu.val}🪙 added!`, 'tsuccess'); }
+  else if (pu.effect === 'addGold') { G.gold += pu.val; showToast(`+${pu.val}🪙 added!`, 'tsuccess'); renderTowerSelector(); }
   else if (pu.effect === 'tempShield') { G.tempShield += pu.val; showToast(`Shield active! -${pu.val} enemy damage`, 'tsuccess'); }
   addLog(`⚡ Power-up used: ${pu.name}`, 'log-ability');
   updateHUD(); renderShop();
@@ -4047,7 +4038,7 @@ window.claimDaily = function (idx) {
   addLog(`🎁 Daily "${q.title}" claimed! +${q.rwd.gold}🪙 +${q.rwd.dia}💎`, 'log-quest');
   showToast(`+${q.rwd.gold}🪙 +${q.rwd.dia}💎 (Daily!)`, 'tdiamond');
   saveDailyChallenges();
-  updateHUD(); renderDailyChallenges();
+  updateHUD(); renderTowerSelector(); renderDailyChallenges();
 };
 
 function renderDailyChallenges() {
