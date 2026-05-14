@@ -477,13 +477,34 @@ async function checkAuth() {
   if (data.username) showGame(data.username);
 }
 async function register() {
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value;
+  const u = document.getElementById('username') ? document.getElementById('username').value.trim() : '';
+  const p = document.getElementById('password') ? document.getElementById('password').value : '';
   if (!u || !p) return setAuthMsg('Enter ID and Seal.', true);
   const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
   setAuthMsg(data.error || data.message, !!data.error);
 }
+async function registerNew() {
+  const u = (document.getElementById('reg-username') || {}).value?.trim() || '';
+  const p = (document.getElementById('reg-password') || {}).value || '';
+  const c = (document.getElementById('reg-confirm') || {}).value || '';
+  const terms = document.getElementById('reg-terms');
+  if (!u || !p) return setAuthMsg('Please fill in all fields.', true);
+  if (p !== c) return setAuthMsg('Passwords do not match.', true);
+  if (terms && !terms.checked) return setAuthMsg('You must agree to the Terms of Service.', true);
+  const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+  const data = await res.json();
+  if (!data.error) { setAuthMsg(data.message || 'Account created! Please login.', false); switchAuthTab('login'); }
+  else setAuthMsg(data.error, true);
+}
+function switchAuthTab(tab) {
+  document.getElementById('auth-panel-register').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('auth-panel-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('auth-message').textContent = '';
+}
+window.switchAuthTab = switchAuthTab;
 async function login() {
   const u = document.getElementById('username').value.trim();
   const p = document.getElementById('password').value;
@@ -613,6 +634,21 @@ function showModeSelect() {
   // Show "Continue" button only if player has a saved game past wave 1
   const hasSave = G.wave > 1 || (G._savedTowers && G._savedTowers.length > 0);
   document.getElementById('ms-continue-btn').style.display = hasSave ? 'block' : 'none';
+  // Populate player profile HUD
+  const uname = _pendingUsername || 'Commander';
+  const nameEl = document.getElementById('ms-player-name');
+  const scoreEl = document.getElementById('ms-player-score');
+  const levelEl = document.getElementById('ms-level-badge');
+  if (nameEl) nameEl.textContent = uname;
+  if (scoreEl) scoreEl.textContent = (G.score || 0).toLocaleString();
+  if (levelEl) { const lvl = Math.max(1, Math.floor(Math.sqrt((G.score || 0) / 100)) + 1); levelEl.textContent = lvl; }
+  // Currency display
+  const diaEl = document.getElementById('ms-cur-diamonds');
+  const goldEl = document.getElementById('ms-cur-gold');
+  const krEl = document.getElementById('ms-cur-kr');
+  if (diaEl) diaEl.textContent = G.diamonds || 0;
+  if (goldEl) goldEl.textContent = G.gold || 0;
+  if (krEl) krEl.textContent = G.bestWave || 0;
 }
 
 window.selectMode = function (mode) {

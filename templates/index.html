@@ -483,11 +483,47 @@
     <!-- MODE SELECT SCREEN -->
     <div id="mode-select-section" class="mode-select-screen" style="display:none">
       <div class="ms-bg-overlay"></div>
+
+      <!-- TOP BAR: Player profile left + currencies right -->
+      <div class="ms-top-bar">
+        <div class="ms-player-profile">
+          <div class="ms-avatar-wrap">
+            <div class="ms-avatar">⚔️</div>
+            <div class="ms-level-badge" id="ms-level-badge">1</div>
+            <div class="ms-online-dot"></div>
+          </div>
+          <div class="ms-player-info">
+            <div class="ms-player-score" id="ms-player-score">0</div>
+            <div class="ms-player-name" id="ms-player-name">Commander</div>
+          </div>
+        </div>
+
+        <div class="ms-currencies">
+          <div class="ms-currency-chip diamonds">
+            <span class="ms-cur-icon">💎</span>
+            <span class="ms-cur-val" id="ms-cur-diamonds">0</span>
+            <button class="ms-cur-plus" onclick="openShop()">+</button>
+          </div>
+          <div class="ms-currency-chip kr">
+            <span class="ms-cur-icon">🔮</span>
+            <span class="ms-cur-val" id="ms-cur-kr">0</span>
+            <button class="ms-cur-plus" onclick="openShop()">+</button>
+          </div>
+          <div class="ms-currency-chip gold">
+            <span class="ms-cur-icon">🪙</span>
+            <span class="ms-cur-val" id="ms-cur-gold">0</span>
+            <button class="ms-cur-plus" onclick="openShop()">+</button>
+          </div>
+        </div>
+      </div>
+
       <div class="ms-content">
         <div class="ms-logo">
           <div class="ms-logo-icon">⚔️</div>
           <h1 class="ms-title">Kingdom's<br><span class="ms-title-accent">Reckoning</span></h1>
-          <p class="ms-tagline">CHOOSE YOUR DESTINY</p>
+          <p class="ms-tagline">TACTICAL TURN-BASED TOWER DEFENSE</p>
+          <div class="ms-logo-divider"><span>◆</span></div>
+          <p class="ms-destiny-label">— CHOOSE YOUR DESTINY —</p>
         </div>
         <div class="ms-cards">
 
@@ -502,7 +538,7 @@
               <li>⚔️ Standard enemy strength</li>
               <li>📖 Full quest progression</li>
             </ul>
-            <button class="ms-start-btn story-start-btn">▶ Start a New Game</button>
+            <button class="ms-start-btn story-start-btn">▶ START A NEW GAME</button>
           </div>
 
           <!-- EXTREME MODE -->
@@ -516,7 +552,7 @@
               <li>💀 Enemies are 1.75× stronger</li>
               <li>🏆 2× score multiplier</li>
             </ul>
-            <button class="ms-start-btn extreme-start-btn">▶ Start a New Game</button>
+            <button class="ms-start-btn extreme-start-btn">▶ START A NEW GAME</button>
           </div>
 
         </div>
@@ -524,25 +560,82 @@
         <button class="ms-continue-btn" id="ms-continue-btn" onclick="continueGame()" style="display:none">
           ↩ Continue Saved Game
         </button>
-        <button class="ms-logout-btn" onclick="logout()">⇤ Logout</button>
+        <button class="ms-logout-btn" onclick="logout()">⇤ LOGOUT</button>
       </div>
     </div>
 
     <!-- AUTH SCREEN -->
     <div id="auth-section" class="auth-screen">
+      <!-- Above-card title -->
+      <div class="auth-masthead">
+        <div class="auth-masthead-icon">⚔️</div>
+        <h1 class="auth-masthead-title">Kingdom's<br>Reckoning</h1>
+        <p class="auth-masthead-sub">TACTICAL TURN-BASED TOWER DEFENSE</p>
+        <div class="auth-divider-line"><span class="auth-divider-gem">◆</span></div>
+      </div>
+
       <div class="auth-card">
-        <div class="auth-emblem">⚔️</div>
-        <h1 class="auth-game-title">Kingdom's<br>Reckoning</h1>
-        <p class="auth-tagline">TACTICAL TURN-BASED TOWER DEFENSE</p>
-        <div class="auth-form">
-          <input type="text" id="username" placeholder="Commander ID" class="auth-input" autocomplete="off">
-          <input type="password" id="password" placeholder="War Seal" class="auth-input">
-          <div class="auth-btn-row">
-            <button class="btn-auth-primary" onclick="login()">ENTER REALM</button>
-            <button class="btn-auth-secondary" onclick="register()">ENLIST</button>
-          </div>
-          <p id="auth-message" class="auth-msg"></p>
+        <!-- Tab Header -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-register" onclick="switchAuthTab('register')">Register</button>
+          <button class="auth-tab" id="tab-login" onclick="switchAuthTab('login')">Login</button>
         </div>
+
+        <!-- REGISTER PANEL -->
+        <div id="auth-panel-register" class="auth-panel">
+          <div class="auth-panel-emblem">⚔️</div>
+          <h2 class="auth-panel-title">Welcome, Commander</h2>
+          <p class="auth-panel-sub">CREATE YOUR ACCOUNT TO LEAD YOUR KINGDOM</p>
+
+          <div class="auth-form">
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">👤</span>
+              <input type="text" id="reg-username" placeholder="USERNAME" class="auth-input" autocomplete="off">
+            </div>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="reg-password" placeholder="PASSWORD" class="auth-input">
+            </div>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="reg-confirm" placeholder="CONFIRM PASSWORD" class="auth-input">
+            </div>
+            <label class="auth-terms-row">
+              <input type="checkbox" id="reg-terms" class="auth-checkbox">
+              <span class="auth-terms-text">I agree to the <a href="#" class="auth-link" onclick="return false">Terms of Service</a> and <a href="#" class="auth-link" onclick="return false">Privacy Policy</a></span>
+            </label>
+            <button class="btn-auth-primary" onclick="registerNew()">REGISTER</button>
+            <div class="auth-switch-row">
+              <div class="auth-or-line"><span>OR</span></div>
+              <p class="auth-switch-text">ALREADY A COMMANDER? <a href="#" class="auth-link-gold" onclick="switchAuthTab('login');return false">LOGIN NOW</a></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOGIN PANEL -->
+        <div id="auth-panel-login" class="auth-panel" style="display:none">
+          <div class="auth-panel-emblem">⚔️</div>
+          <h2 class="auth-panel-title">Welcome Back</h2>
+          <p class="auth-panel-sub">ENTER YOUR CREDENTIALS TO CONTINUE</p>
+
+          <div class="auth-form">
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">👤</span>
+              <input type="text" id="username" placeholder="COMMANDER ID" class="auth-input" autocomplete="off">
+            </div>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="password" placeholder="WAR SEAL" class="auth-input">
+            </div>
+            <button class="btn-auth-primary" onclick="login()">ENTER REALM</button>
+            <div class="auth-switch-row">
+              <div class="auth-or-line"><span>OR</span></div>
+              <p class="auth-switch-text">NEW COMMANDER? <a href="#" class="auth-link-gold" onclick="switchAuthTab('register');return false">ENLIST NOW</a></p>
+            </div>
+          </div>
+        </div>
+
+        <p id="auth-message" class="auth-msg"></p>
       </div>
     </div>
 
