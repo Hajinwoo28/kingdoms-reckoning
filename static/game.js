@@ -478,44 +478,82 @@ async function checkAuth() {
 }
 
 // ── Tab switcher ────────────────────────────────────────────────
+// ── Auth tab init — hides all panes & shows only the active one via style.display
+//    Works regardless of which CSS stylesheet is loaded
+function initAuthTabs() {
+  const panes = document.querySelectorAll('.auth-tab-pane');
+  if (!panes.length) return;
+  // Hide all panes first
+  panes.forEach(p => { p.style.display = 'none'; p.classList.remove('active'); });
+  // Show register pane (first) by default
+  const first = document.getElementById('pane-register') || panes[0];
+  if (first) { first.style.display = 'block'; first.classList.add('active'); }
+  // Mark register tab button as active
+  const regBtn = document.getElementById('tab-register') || document.querySelector('.auth-tab-btn');
+  if (regBtn) regBtn.classList.add('active');
+}
+
 window.authSwitchTab = function(tab) {
+  // Hide ALL panes via both style and class
+  document.querySelectorAll('.auth-tab-pane').forEach(p => {
+    p.style.display = 'none';
+    p.classList.remove('active');
+  });
+  // Deactivate all tab buttons
   document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.auth-tab-pane').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  document.getElementById('pane-' + tab).classList.add('active');
-  document.getElementById('auth-message').textContent = '';
+
+  // Show the selected pane
+  const pane = document.getElementById('pane-' + tab);
+  if (pane) { pane.style.display = 'block'; pane.classList.add('active'); }
+
+  // Activate the selected tab button
+  const btn = document.getElementById('tab-' + tab);
+  if (btn) btn.classList.add('active');
+
+  // Clear any auth messages
+  const msg = document.getElementById('auth-message');
+  if (msg) msg.textContent = '';
 };
 
 // ── Input resolver — finds an auth input using every known strategy ──
 function _findInput(ids, placeholders, container, type, index) {
+  const sel = type === 'text'
+    ? 'input:not([type="password"]):not([type="checkbox"]):not([type="submit"]):not([type="button"]):not([type="hidden"])'
+    : 'input[type="password"]';
+
   // 1. Try exact IDs
   for (const id of ids) {
     const el = document.getElementById(id);
     if (el) return el;
   }
-  // 2. Try placeholder text (case-insensitive, partial match)
+
+  // 2. Try placeholder text inside container first, then document-wide
   for (const ph of placeholders) {
-    const el = document.querySelector('input[placeholder*="' + ph + '" i]');
+    const scope = (container && container !== document.body) ? container : document;
+    const el = scope.querySelector('input[placeholder*="' + ph + '" i]');
     if (el) return el;
   }
-  // 3. Try by type + position inside container
-  if (container && type) {
-    const matches = Array.from(container.querySelectorAll(
-      type === 'text'
-        ? 'input:not([type="password"]):not([type="checkbox"]):not([type="submit"]):not([type="button"]):not([type="hidden"])'
-        : 'input[type="password"]'
-    ));
+
+  // 3. Try by type + position inside the given container
+  if (container && container !== document.body) {
+    const matches = Array.from(container.querySelectorAll(sel));
     if (matches[index] !== undefined) return matches[index];
   }
-  // 4. Global fallback: find across whole document
-  if (type) {
-    const all = Array.from(document.querySelectorAll(
-      type === 'text'
-        ? 'input:not([type="password"]):not([type="checkbox"]):not([type="submit"]):not([type="button"]):not([type="hidden"])'
-        : 'input[type="password"]'
-    ));
-    if (all[index] !== undefined) return all[index];
+
+  // 4. Global fallback: search only VISIBLE panes to avoid grabbing wrong-pane inputs
+  const visiblePanes = Array.from(
+    document.querySelectorAll('.auth-tab-pane, #pane-register, #pane-login, .auth-form')
+  ).filter(p => p.offsetParent !== null || p.style.display === 'block');
+
+  for (const vp of visiblePanes) {
+    const matches = Array.from(vp.querySelectorAll(sel));
+    if (matches[index] !== undefined) return matches[index];
   }
+
+  // 5. Last resort: entire document
+  const all = Array.from(document.querySelectorAll(sel));
+  if (all[index] !== undefined) return all[index];
+
   return null;
 }
 
@@ -4540,3 +4578,9 @@ async function fetchLeaderboard() {
 
 // ── INIT ──────────────────────────────────────────────────────
 checkAuth();
+// Enforce tab visibility on load — fixes both-panes-visible issue
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAuthTabs);
+} else {
+  initAuthTabs();
+}

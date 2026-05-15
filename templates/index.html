@@ -193,6 +193,13 @@
       }
     }
   </style>
+  <!-- Auth tab pane visibility — inline so it works even if external CSS fails -->
+  <style>
+    .auth-tab-pane          { display: none !important; }
+    .auth-tab-pane.active   { display: block !important; }
+    .auth-tab-btn           { opacity: .55; cursor: pointer; }
+    .auth-tab-btn.active    { opacity: 1; font-weight: 700; }
+  </style>
 </head>
 
 <body>
