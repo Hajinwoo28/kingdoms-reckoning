@@ -488,13 +488,21 @@ window.authSwitchTab = function(tab) {
 
 // ── Tabbed register ─────────────────────────────────────────────
 async function registerTabbed() {
-  const u = (document.getElementById('username').value || '').trim();
-  const p = document.getElementById('password').value || '';
-  const cp = document.getElementById('confirm-password').value || '';
-  const terms = document.getElementById('terms-check').checked;
+  // Null-safe: try new tabbed IDs first, then legacy IDs
+  const uEl  = document.getElementById('username')         || document.getElementById('reg-username');
+  const pEl  = document.getElementById('password')         || document.getElementById('reg-password');
+  const cpEl = document.getElementById('confirm-password') || document.getElementById('reg-confirm');
+  const tEl  = document.getElementById('terms-check');
+
+  const u  = (uEl  ? uEl.value  : '').trim();
+  const p  =  pEl  ? pEl.value  : '';
+  const cp =  cpEl ? cpEl.value : p;      // no confirm field = skip the match check
+  const terms = tEl ? tEl.checked : true; // no checkbox = treat as accepted
+
   if (!u || !p) return setAuthMsg('Enter a username and password.', true);
-  if (p !== cp) return setAuthMsg('Passwords do not match.', true);
-  if (!terms) return setAuthMsg('Please accept the Terms of Service.', true);
+  if (cpEl && p !== cp) return setAuthMsg('Passwords do not match.', true);
+  if (tEl && !terms)    return setAuthMsg('Please accept the Terms of Service.', true);
+
   const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
   if (data.error) return setAuthMsg(data.error, true);
@@ -507,8 +515,11 @@ async function registerTabbed() {
 
 // ── Tabbed login ────────────────────────────────────────────────
 async function loginTabbed() {
-  const u = (document.getElementById('username-login').value || '').trim();
-  const p = document.getElementById('password-login').value || '';
+  // Null-safe: try new tabbed IDs first, then legacy IDs
+  const uEl = document.getElementById('username-login') || document.getElementById('username');
+  const pEl = document.getElementById('password-login') || document.getElementById('password');
+  const u = (uEl ? uEl.value : '').trim();
+  const p = pEl ? pEl.value : '';
   if (!u || !p) return setAuthMsg('Enter your Commander ID and War Seal.', true);
   const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
