@@ -476,38 +476,60 @@ async function checkAuth() {
   const data = await res.json();
   if (data.username) showGame(data.username);
 }
+
+// ── Tab switcher ────────────────────────────────────────────────
+window.authSwitchTab = function(tab) {
+  document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.auth-tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('pane-' + tab).classList.add('active');
+  document.getElementById('auth-message').textContent = '';
+};
+
+// ── Tabbed register ─────────────────────────────────────────────
+async function registerTabbed() {
+  const u = (document.getElementById('username').value || '').trim();
+  const p = document.getElementById('password').value || '';
+  const cp = document.getElementById('confirm-password').value || '';
+  const terms = document.getElementById('terms-check').checked;
+  if (!u || !p) return setAuthMsg('Enter a username and password.', true);
+  if (p !== cp) return setAuthMsg('Passwords do not match.', true);
+  if (!terms) return setAuthMsg('Please accept the Terms of Service.', true);
+  const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+  const data = await res.json();
+  if (data.error) return setAuthMsg(data.error, true);
+  // Server auto-logged the new player in — go straight to Choose Your Destiny
+  if (data.username) {
+    setAuthMsg('Welcome, Commander! Preparing your realm...', false);
+    setTimeout(() => showGame(data.username), 900);
+  }
+}
+
+// ── Tabbed login ────────────────────────────────────────────────
+async function loginTabbed() {
+  const u = (document.getElementById('username-login').value || '').trim();
+  const p = document.getElementById('password-login').value || '';
+  if (!u || !p) return setAuthMsg('Enter your Commander ID and War Seal.', true);
+  const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+  const data = await res.json();
+  if (data.username) showGame(data.username);
+  else setAuthMsg(data.error, true);
+}
+
+// ── Legacy wrappers (kept so any HTML onclick="register()" still works) ──
 async function register() {
-  const u = document.getElementById('username') ? document.getElementById('username').value.trim() : '';
-  const p = document.getElementById('password') ? document.getElementById('password').value : '';
+  const u = (document.getElementById('username') && document.getElementById('username').value || '').trim();
+  const p = document.getElementById('password') && document.getElementById('password').value || '';
   if (!u || !p) return setAuthMsg('Enter ID and Seal.', true);
   const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
   setAuthMsg(data.error || data.message, !!data.error);
 }
-async function registerNew() {
-  const u = (document.getElementById('reg-username') || {}).value?.trim() || '';
-  const p = (document.getElementById('reg-password') || {}).value || '';
-  const c = (document.getElementById('reg-confirm') || {}).value || '';
-  const terms = document.getElementById('reg-terms');
-  if (!u || !p) return setAuthMsg('Please fill in all fields.', true);
-  if (p !== c) return setAuthMsg('Passwords do not match.', true);
-  if (terms && !terms.checked) return setAuthMsg('You must agree to the Terms of Service.', true);
-  const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
-  const data = await res.json();
-  if (!data.error) { setAuthMsg(data.message || 'Account created! Please login.', false); switchAuthTab('login'); }
-  else setAuthMsg(data.error, true);
-}
-function switchAuthTab(tab) {
-  document.getElementById('auth-panel-register').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('auth-panel-login').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
-  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-  document.getElementById('auth-message').textContent = '';
-}
-window.switchAuthTab = switchAuthTab;
 async function login() {
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value;
+  const uEl = document.getElementById('username-login') || document.getElementById('username');
+  const pEl = document.getElementById('password-login') || document.getElementById('password');
+  const u = (uEl && uEl.value || '').trim();
+  const p = (pEl && pEl.value) || '';
   if (!u || !p) return setAuthMsg('Enter ID and Seal.', true);
   const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
@@ -542,7 +564,8 @@ async function saveGame(silent = false) {
         towers: towersPayload, game_mode: G.gameMode,
         stages_cleared: G.stagesCleared || [],
         stage_stars: G.stageStars || {},
-        extreme_progress: G.extremeProgress || 1
+        extreme_progress: G.extremeProgress || 1,
+        story_progress: G.storyProgress || 1
       })
     });
     const data = await res.json();
@@ -583,6 +606,8 @@ async function loadSavedState() {
       G.stagesCleared = Array.isArray(d.stages_cleared) ? d.stages_cleared : [];
       G.stageStars = (d.stage_stars && typeof d.stage_stars === 'object') ? d.stage_stars : {};
       G.extremeProgress = d.extreme_progress || 1;
+      // Per-player story progress — server is source of truth
+      G.storyProgress = d.story_progress || 1;
     }
   }
   // Restore active biome from localStorage (DB doesn't store biome_id)
@@ -634,21 +659,6 @@ function showModeSelect() {
   // Show "Continue" button only if player has a saved game past wave 1
   const hasSave = G.wave > 1 || (G._savedTowers && G._savedTowers.length > 0);
   document.getElementById('ms-continue-btn').style.display = hasSave ? 'block' : 'none';
-  // Populate player profile HUD
-  const uname = _pendingUsername || 'Commander';
-  const nameEl = document.getElementById('ms-player-name');
-  const scoreEl = document.getElementById('ms-player-score');
-  const levelEl = document.getElementById('ms-level-badge');
-  if (nameEl) nameEl.textContent = uname;
-  if (scoreEl) scoreEl.textContent = (G.score || 0).toLocaleString();
-  if (levelEl) { const lvl = Math.max(1, Math.floor(Math.sqrt((G.score || 0) / 100)) + 1); levelEl.textContent = lvl; }
-  // Currency display
-  const diaEl = document.getElementById('ms-cur-diamonds');
-  const goldEl = document.getElementById('ms-cur-gold');
-  const krEl = document.getElementById('ms-cur-kr');
-  if (diaEl) diaEl.textContent = G.diamonds || 0;
-  if (goldEl) goldEl.textContent = G.gold || 0;
-  if (krEl) krEl.textContent = G.bestWave || 0;
 }
 
 window.selectMode = function (mode) {
@@ -705,6 +715,9 @@ function loadStageProgress() {
 
 function isStageUnlocked(stageId) {
   if (stageId === 1) return true;
+  // Server-authoritative numeric progress gate
+  if (stageId <= (G.storyProgress || 1)) return true;
+  // Legacy fallback: stages_cleared array
   return G.stagesCleared.includes(stageId - 1);
 }
 
@@ -2997,8 +3010,10 @@ async function waveComplete() {
 
       // Save stage completion (server-side, per-player)
       if (!G.stagesCleared.includes(G.storyStage)) G.stagesCleared.push(G.storyStage);
+      // Advance numeric story progress gate
+      if (G.storyStage >= (G.storyProgress || 1)) G.storyProgress = G.storyStage + 1;
       G.stageStars[G.storyStage] = Math.max(starsEarned, G.stageStars[G.storyStage] || 0);
-      saveGame(true); // persists stages_cleared + stage_stars to server for THIS player
+      saveGame(true); // persists stages_cleared + stage_stars + story_progress to server for THIS player
 
       addLog(`🏆 Stage ${G.storyStage} "${stageData.name}" CLEARED! ${'★'.repeat(starsEarned)} +${goldRwd + biomeGold}🪙 +${diaRwd + biomeDia}💎`, 'log-wave');
       showToast(`🏆 Stage ${G.storyStage} Cleared! ${'★'.repeat(starsEarned)}`, 'tdiamond');
