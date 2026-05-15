@@ -493,7 +493,7 @@ function initAuthTabs() {
   if (regBtn) regBtn.classList.add('active');
 }
 
-window.authSwitchTab = function(tab) {
+window.authSwitchTab = function (tab) {
   // Hide ALL panes via both style and class
   document.querySelectorAll('.auth-tab-pane').forEach(p => {
     p.style.display = 'none';
@@ -561,25 +561,25 @@ function _findInput(ids, placeholders, container, type, index) {
 async function registerTabbed(btn) {
   // Walk up from the clicked button to find the containing pane (most reliable)
   const pane = (btn && btn.closest && btn.closest('#pane-register, [id*="register"], .auth-tab-pane, .auth-card, form'))
-            || document.getElementById('pane-register')
-            || document.querySelector('.auth-tab-pane.active, .auth-tab-pane:first-of-type')
-            || document.querySelector('.auth-card')
-            || document.body;
+    || document.getElementById('pane-register')
+    || document.querySelector('.auth-tab-pane.active, .auth-tab-pane:first-of-type')
+    || document.querySelector('.auth-card')
+    || document.body;
 
-  const uEl  = _findInput(['username',         'reg-username',  'user'],     ['USER',     'NAME',     'COMMANDER'], pane, 'text',     0);
-  const pEl  = _findInput(['password',         'reg-password',  'pass'],     ['PASSWORD', 'PASS',     'WAR SEAL'],  pane, 'password', 0);
-  const cpEl = _findInput(['confirm-password', 'reg-confirm',   'password2'],['CONFIRM',  'REPEAT',   'RE-ENTER'],  pane, 'password', 1);
-  const tEl  = document.getElementById('terms-check')
-            || (pane ? pane.querySelector('input[type="checkbox"]') : null);
+  const uEl = _findInput(['username', 'reg-username', 'user'], ['USER', 'NAME', 'COMMANDER'], pane, 'text', 0);
+  const pEl = _findInput(['password', 'reg-password', 'pass'], ['PASSWORD', 'PASS', 'WAR SEAL'], pane, 'password', 0);
+  const cpEl = _findInput(['confirm-password', 'reg-confirm', 'password2'], ['CONFIRM', 'REPEAT', 'RE-ENTER'], pane, 'password', 1);
+  const tEl = document.getElementById('terms-check')
+    || (pane ? pane.querySelector('input[type="checkbox"]') : null);
 
-  const u  = uEl  ? uEl.value.trim() : '';
-  const p  = pEl  ? pEl.value        : '';
-  const cp = cpEl ? cpEl.value       : p;
-  const terms = tEl ? tEl.checked    : true;
+  const u = uEl ? uEl.value.trim() : '';
+  const p = pEl ? pEl.value : '';
+  const cp = cpEl ? cpEl.value : p;
+  const terms = tEl ? tEl.checked : true;
 
   if (!u || !p) return setAuthMsg('Enter a username and password.', true);
   if (cpEl && p !== cp) return setAuthMsg('Passwords do not match.', true);
-  if (tEl && !terms)    return setAuthMsg('Please accept the Terms of Service.', true);
+  if (tEl && !terms) return setAuthMsg('Please accept the Terms of Service.', true);
 
   const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
@@ -593,16 +593,16 @@ async function registerTabbed(btn) {
 // ── Tabbed login — accepts optional btn element ──
 async function loginTabbed(btn) {
   const pane = (btn && btn.closest && btn.closest('#pane-login, [id*="login"], .auth-tab-pane, .auth-card, form'))
-            || document.getElementById('pane-login')
-            || document.querySelector('.auth-tab-pane.active, .auth-tab-pane:last-of-type')
-            || document.querySelector('.auth-card')
-            || document.body;
+    || document.getElementById('pane-login')
+    || document.querySelector('.auth-tab-pane.active, .auth-tab-pane:last-of-type')
+    || document.querySelector('.auth-card')
+    || document.body;
 
-  const uEl = _findInput(['username-login', 'username', 'user'],  ['USER', 'NAME', 'COMMANDER'], pane, 'text',     0);
-  const pEl = _findInput(['password-login', 'password', 'pass'],  ['PASSWORD', 'PASS', 'SEAL'],  pane, 'password', 0);
+  const uEl = _findInput(['username-login', 'username', 'user'], ['USER', 'NAME', 'COMMANDER'], pane, 'text', 0);
+  const pEl = _findInput(['password-login', 'password', 'pass'], ['PASSWORD', 'PASS', 'SEAL'], pane, 'password', 0);
 
   const u = uEl ? uEl.value.trim() : '';
-  const p = pEl ? pEl.value        : '';
+  const p = pEl ? pEl.value : '';
   if (!u || !p) return setAuthMsg('Enter your Commander ID and War Seal.', true);
   const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
@@ -612,9 +612,9 @@ async function loginTabbed(btn) {
 
 // ── Global aliases — covers any HTML version that uses older or alternate names ──
 window.registerTabbed = registerTabbed;
-window.loginTabbed    = loginTabbed;
-window.registerNew    = (btn) => registerTabbed(btn);   // alias: registerNew → registerTabbed
-window.loginNew       = (btn) => loginTabbed(btn);      // alias: loginNew    → loginTabbed
+window.loginTabbed = loginTabbed;
+window.registerNew = (btn) => registerTabbed(btn);   // alias: registerNew → registerTabbed
+window.loginNew = (btn) => loginTabbed(btn);      // alias: loginNew    → loginTabbed
 
 // ── Legacy wrappers (kept so any HTML onclick="register()" still works) ──
 async function register() {
@@ -639,8 +639,10 @@ async function login() {
 async function logout() { await fetch('/api/logout', { method: 'POST' }); location.reload(); }
 function setAuthMsg(msg, err = false) {
   const el = document.getElementById('auth-message');
+  if (!el) return;
   el.textContent = msg;
-  el.style.color = err ? '#F87171' : '#4ADE80';
+  el.style.color = err ? '#f87171' : '#86efac';
+  el.className = 'auth-msg ' + (err ? 'error' : 'success');
 }
 
 // ── SAVE / LOAD ───────────────────────────────────────────────
