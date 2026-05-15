@@ -488,16 +488,32 @@ window.authSwitchTab = function(tab) {
 
 // ── Tabbed register ─────────────────────────────────────────────
 async function registerTabbed() {
-  // Null-safe: try new tabbed IDs first, then legacy IDs
-  const uEl  = document.getElementById('username')         || document.getElementById('reg-username');
-  const pEl  = document.getElementById('password')         || document.getElementById('reg-password');
-  const cpEl = document.getElementById('confirm-password') || document.getElementById('reg-confirm');
-  const tEl  = document.getElementById('terms-check');
+  // Resolve the register pane — works with any HTML structure
+  const pane = document.getElementById('pane-register')
+            || document.querySelector('.auth-tab-pane.active')
+            || document.querySelector('.auth-form')
+            || document.body;
 
-  const u  = (uEl  ? uEl.value  : '').trim();
-  const p  =  pEl  ? pEl.value  : '';
-  const cp =  cpEl ? cpEl.value : p;      // no confirm field = skip the match check
-  const terms = tEl ? tEl.checked : true; // no checkbox = treat as accepted
+  // 1. ID-based lookups first (new tabbed HTML)
+  // 2. Fall back to querying by input type/position within the pane
+  const uEl  = document.getElementById('username')
+            || document.getElementById('reg-username')
+            || pane.querySelector('input[type="text"], input[type="search"], input:not([type="password"]):not([type="checkbox"]):not([type="submit"])');
+
+  const allPwds = Array.from(pane.querySelectorAll('input[type="password"]'));
+  const pEl  = document.getElementById('password')
+            || document.getElementById('reg-password')
+            || allPwds[0] || null;
+  const cpEl = document.getElementById('confirm-password')
+            || document.getElementById('reg-confirm')
+            || allPwds[1] || null;
+  const tEl  = document.getElementById('terms-check')
+            || pane.querySelector('input[type="checkbox"]');
+
+  const u  = (uEl  ? uEl.value.trim()  : '');
+  const p  =  pEl  ? pEl.value         : '';
+  const cp =  cpEl ? cpEl.value        : p;      // no confirm field → skip match check
+  const terms = tEl ? tEl.checked      : true;   // no checkbox     → treat as accepted
 
   if (!u || !p) return setAuthMsg('Enter a username and password.', true);
   if (cpEl && p !== cp) return setAuthMsg('Passwords do not match.', true);
@@ -515,11 +531,21 @@ async function registerTabbed() {
 
 // ── Tabbed login ────────────────────────────────────────────────
 async function loginTabbed() {
-  // Null-safe: try new tabbed IDs first, then legacy IDs
-  const uEl = document.getElementById('username-login') || document.getElementById('username');
-  const pEl = document.getElementById('password-login') || document.getElementById('password');
-  const u = (uEl ? uEl.value : '').trim();
-  const p = pEl ? pEl.value : '';
+  // Resolve the login pane — works with any HTML structure
+  const pane = document.getElementById('pane-login')
+            || document.querySelector('.auth-tab-pane.active')
+            || document.querySelector('.auth-form')
+            || document.body;
+
+  const uEl = document.getElementById('username-login')
+           || document.getElementById('username')
+           || pane.querySelector('input[type="text"], input:not([type="password"]):not([type="checkbox"]):not([type="submit"])');
+  const pEl = document.getElementById('password-login')
+           || document.getElementById('password')
+           || pane.querySelector('input[type="password"]');
+
+  const u = (uEl ? uEl.value.trim() : '');
+  const p =  pEl ? pEl.value        : '';
   if (!u || !p) return setAuthMsg('Enter your Commander ID and War Seal.', true);
   const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
