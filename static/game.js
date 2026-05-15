@@ -516,6 +516,12 @@ async function loginTabbed() {
   else setAuthMsg(data.error, true);
 }
 
+// ── Global aliases — covers any HTML version that uses older or alternate names ──
+window.registerTabbed = registerTabbed;
+window.loginTabbed    = loginTabbed;
+window.registerNew    = registerTabbed;   // alias: registerNew → registerTabbed
+window.loginNew       = loginTabbed;      // alias: loginNew    → loginTabbed
+
 // ── Legacy wrappers (kept so any HTML onclick="register()" still works) ──
 async function register() {
   const u = (document.getElementById('username') && document.getElementById('username').value || '').trim();
