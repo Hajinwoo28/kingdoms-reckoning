@@ -21,7 +21,63 @@
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    /* ── PORTRAIT ROTATION OVERLAY ─────────────────────────── */
+    /* ── Portrait rotation overlay styling already defined ── */
+
+    /* ── Hall of Glory button (below profile avatar) ── */
+    .ms-hud-profile-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .ms-hud-glory-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px 5px 8px;
+      background: linear-gradient(135deg, rgba(201, 162, 39, .18) 0%, rgba(120, 80, 20, .12) 100%);
+      border: 1px solid rgba(201, 162, 39, .40);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all .2s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .ms-hud-glory-btn:hover {
+      background: linear-gradient(135deg, rgba(201, 162, 39, .32) 0%, rgba(160, 100, 20, .20) 100%);
+      border-color: rgba(201, 162, 39, .75);
+      transform: translateY(-1px);
+      box-shadow: 0 0 14px rgba(201, 162, 39, .3);
+    }
+
+    .ms-hud-glory-icon {
+      font-size: 14px;
+      filter: drop-shadow(0 0 5px rgba(240, 200, 60, .7));
+    }
+
+    .ms-hud-glory-label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: #e8c84a;
+      text-transform: uppercase;
+    }
+
+    /* ── Mode card description paragraph ── */
+    .ms-card-mode-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(12px, 1.5vh, 15px);
+      line-height: 1.55;
+      color: rgba(200, 190, 210, .72);
+      text-align: center;
+      margin: 0;
+      padding: 0 4px;
+      font-style: italic;
+    }
+
     #rotate-overlay {
       display: none;
       position: fixed;
@@ -938,22 +994,26 @@
 
       <!-- ── TOP HUD BAR ── -->
       <div class="ms-hud-bar">
-        <!-- Left: Player profile -->
-        <div class="ms-hud-profile">
-          <div class="ms-hud-avatar">
-            <span class="ms-hud-avatar-icon">⚔️</span>
-            <span class="ms-hud-level-badge" id="ms-level-badge">1</span>
+        <!-- Left: Player profile + Hall of Glory -->
+        <div class="ms-hud-profile-wrap">
+          <div class="ms-hud-profile">
+            <div class="ms-hud-avatar">
+              <span class="ms-hud-avatar-icon">⚔️</span>
+              <span class="ms-hud-level-badge" id="ms-level-badge">1</span>
+            </div>
+            <div class="ms-hud-info">
+              <span class="ms-hud-score" id="ms-hud-score">0</span>
+              <span class="ms-hud-username" id="ms-hud-username">Commander</span>
+            </div>
           </div>
-          <div class="ms-hud-info">
-            <span class="ms-hud-score" id="ms-hud-score">0</span>
-            <span class="ms-hud-username" id="ms-hud-username">Commander</span>
-          </div>
+          <button class="ms-hud-glory-btn" onclick="openLeaderboard()" title="Hall of Glory — Top Commanders">
+            <span class="ms-hud-glory-icon">🏆</span>
+            <span class="ms-hud-glory-label">Hall of Glory</span>
+          </button>
         </div>
 
-        <!-- Center: Logo -->
-        <div class="ms-hud-logo">
-          <span class="ms-hud-logo-icon">⚔️</span>
-        </div>
+        <!-- Center: empty spacer (logo removed per design update) -->
+        <div class="ms-hud-logo" style="visibility:hidden;pointer-events:none" aria-hidden="true"></div>
 
         <!-- Right: Currencies — Diamonds / Runestones / Moon Relics -->
         <div class="ms-hud-currencies">
@@ -991,6 +1051,9 @@
             <div class="ms-card-badge story-badge">STORY MODE</div>
             <div class="ms-card-art">🏰</div>
             <h2 class="ms-card-title">Story Mode</h2>
+            <p class="ms-card-mode-desc">Embark on a structured campaign across 10 unique stages. Build towers, master
+              tactics, and unlock new challenges at your own pace — ideal for commanders learning the art of tower
+              defense.</p>
             <ul class="ms-card-desc">
               <li>🪙 Start with 80 Gold</li>
               <li>❤️ 15 Castle HP</li>
@@ -1005,6 +1068,9 @@
             <div class="ms-card-badge extreme-badge">EXTREME MODE</div>
             <div class="ms-card-art">🐉</div>
             <h2 class="ms-card-title">Extreme Mode</h2>
+            <p class="ms-card-mode-desc">Choose an island biome and survive endless waves of brutal enemies. Resources
+              are scarce, foes hit harder, and only the sharpest commanders prevail — built for veterans seeking the
+              ultimate test.</p>
             <ul class="ms-card-desc">
               <li>🪙 Start with 40 Gold only</li>
               <li>❤️ 10 Castle HP</li>

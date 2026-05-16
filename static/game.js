@@ -597,6 +597,7 @@ async function registerTabbed(btn) {
   if (data.username) {
     G.accountId = data.account_id || 0;
     G.username = data.username;
+    G._isNewRegistration = true; // flag to show mode-select tutorial
     setAuthMsg('Welcome, Commander! Preparing your realm...', false);
     setTimeout(() => showGame(data.username), 900);
   }
@@ -810,7 +811,144 @@ function showModeSelect() {
   const hasSave = G.wave > 1 || (G._savedTowers && G._savedTowers.length > 0);
   const contBtn = document.getElementById('ms-continue-btn');
   if (contBtn) contBtn.style.display = hasSave ? 'block' : 'none';
+
+  // ── New-player tutorial on mode-select screen ──────────────────────────
+  const tutDone = localStorage.getItem('kr_tutorial_done');
+  if (G._isNewRegistration && !tutDone) {
+    G._isNewRegistration = false;
+    setTimeout(startModeSelectTutorial, 700);
+  }
 }
+
+// ── MODE-SELECT TUTORIAL (shown to new players on first visit) ────────────
+const MODE_SELECT_TUTORIAL_STEPS = [
+  {
+    title: 'Welcome to Kingdom\'s Reckoning!',
+    body: 'Greetings, Commander! You\'ve entered a realm under siege. This is your Command Center — where you choose your destiny and prepare for battle. Let me guide you through your options.',
+    keys: []
+  },
+  {
+    title: '🏰 Story Mode — Learn the Art of War',
+    body: 'Story Mode is perfect for new commanders. You\'ll fight through 10 unique stages, each with 3 waves of enemies. You start with 80 Gold and 15 Castle HP. Complete quests, earn rewards, and discover the full game at a comfortable pace.',
+    keys: ['📖 Full quest system', '🗺️ Stage-by-stage campaign', '⚔️ Normal enemy strength']
+  },
+  {
+    title: '🐉 Extreme Mode — For Veteran Commanders',
+    body: 'Think you\'re ready for a real challenge? Extreme Mode drops you on a hostile island with only 40 Gold, 10 Castle HP, and enemies that hit 1.75× harder. Your reward: 2× the score multiplier and eternal glory on the leaderboards.',
+    keys: ['💀 1.75× enemy strength', '🏝️ Choose your island biome', '🏆 2× score — fight for the Hall of Glory']
+  },
+  {
+    title: '🏆 Hall of Glory — Rise to the Top',
+    body: 'At the top-left, you\'ll find your profile and the Hall of Glory button — that\'s the leaderboard. Every score you earn can land you among the realm\'s greatest commanders. Now choose your destiny and begin your reign!',
+    keys: ['💎 Earn Diamonds in-game', '🪨 Collect Runestones from stages', '🌙 Win Moon Relics from streaks']
+  }
+];
+
+let _msTutStep = 0;
+
+function startModeSelectTutorial() {
+  _msTutStep = 0;
+  _showMsTutStep();
+}
+
+function _showMsTutStep() {
+  const step = MODE_SELECT_TUTORIAL_STEPS[_msTutStep];
+  if (!step) { _endMsTutorial(); return; }
+
+  const modal = document.getElementById('tutorial-modal');
+  if (!modal) return;
+
+  modal.style.display = 'flex';
+  modal.style.zIndex = '10000';
+
+  // Reuse existing tutorial modal elements
+  const title = document.getElementById('tut-title');
+  const body = document.getElementById('tut-body');
+  const counter = document.getElementById('tut-counter');
+  const pips = document.getElementById('tut-pips');
+  const keysRow = document.getElementById('tut-keys-row');
+  const cursor = document.getElementById('tut-cursor');
+  const portrait = document.getElementById('tut-npc-portrait');
+
+  if (title) title.textContent = step.title;
+  if (counter) counter.textContent = `STEP ${_msTutStep + 1} / ${MODE_SELECT_TUTORIAL_STEPS.length}`;
+  if (cursor) cursor.style.display = 'inline';
+
+  // Pips
+  if (pips) {
+    pips.innerHTML = MODE_SELECT_TUTORIAL_STEPS.map((_, i) => {
+      const cls = i < _msTutStep ? 'done' : i === _msTutStep ? 'active' : '';
+      return `<div class="tut-pip ${cls}"></div>`;
+    }).join('');
+  }
+
+  // Key hints
+  if (keysRow) {
+    if (step.keys && step.keys.length > 0) {
+      keysRow.style.display = 'flex';
+      keysRow.innerHTML = step.keys.map(k => `<span class="tut-key">${k}</span>`).join('');
+    } else {
+      keysRow.style.display = 'none';
+    }
+  }
+
+  // Override next button to use our step function
+  const cta = document.getElementById('tut-cta');
+  if (cta) {
+    cta.textContent = _msTutStep < MODE_SELECT_TUTORIAL_STEPS.length - 1 ? 'Got it →' : 'Start Playing!';
+    cta.onclick = _nextMsTutStep;
+  }
+
+  // Override skip button
+  const skipBtn = modal.querySelector('.tut-btn-skip');
+  if (skipBtn) skipBtn.onclick = _endMsTutorial;
+
+  // Remove spotlight/arrow overlays (not needed on mode select)
+  const spotlight = document.getElementById('tut-spotlight');
+  const arrow = document.getElementById('tut-arrow');
+  if (spotlight) spotlight.style.display = 'none';
+  if (arrow) arrow.style.display = 'none';
+
+  // Typewriter effect for body
+  if (body) {
+    body.textContent = '';
+    let i = 0;
+    const text = step.body;
+    const interval = setInterval(() => {
+      body.textContent = text.slice(0, i);
+      i++;
+      if (i > text.length) {
+        clearInterval(interval);
+        if (cursor) cursor.style.display = 'none';
+      }
+    }, 18);
+  }
+}
+
+function _nextMsTutStep() {
+  _msTutStep++;
+  if (_msTutStep >= MODE_SELECT_TUTORIAL_STEPS.length) {
+    _endMsTutorial();
+  } else {
+    _showMsTutStep();
+  }
+}
+
+function _endMsTutorial() {
+  const modal = document.getElementById('tutorial-modal');
+  if (modal) modal.style.display = 'none';
+  const spotlight = document.getElementById('tut-spotlight');
+  const arrow = document.getElementById('tut-arrow');
+  if (spotlight) spotlight.style.display = 'none';
+  if (arrow) arrow.style.display = 'none';
+  // Restore original tutorial button handlers
+  const cta = document.getElementById('tut-cta');
+  if (cta) cta.onclick = nextTutorialStep;
+  const modal2 = document.getElementById('tutorial-modal');
+  const skipBtn = modal2 && modal2.querySelector('.tut-btn-skip');
+  if (skipBtn) skipBtn.onclick = skipTutorial;
+}
+// ────────────────────────────────────────────────────────────────────────────
 
 window.selectMode = function (mode) {
   G.gameMode = mode;
@@ -2465,6 +2603,9 @@ function restartGame(loginRestore = false) {
   renderBoard();
   updateHUD();
   setPhase('planning');
+  // ── Execute button fix: always re-enable when a new game/stage starts ──
+  const _execBtn = document.getElementById('execute-btn');
+  if (_execBtn) _execBtn.disabled = false;
   showWavePreview();
   updateModeBadge();
 }
