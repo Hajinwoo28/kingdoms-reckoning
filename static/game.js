@@ -4352,73 +4352,277 @@ function updateStreakDisplay() {
   if (el) el.textContent = G.streak;
 }
 
-// ── TUTORIAL SYSTEM ───────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  IMMERSIVE TUTORIAL SYSTEM — Kingdom's Reckoning
+// ══════════════════════════════════════════════════════════════
+
 const TUTORIAL_STEPS = [
   {
     title: 'Welcome, Commander!',
-    body: "Kingdom's Reckoning is a turn-based tower defense. Enemies march from the left — stop them before they breach your castle on the right.",
-    highlight: null, cta: 'Next →'
+    body: "Kingdom's Reckoning is a turn-based tower defense. Enemies march from the left — stop them before they breach your castle. Your kingdom's fate rests in your hands.",
+    keys: [],
+    highlight: null,
+    achievement: null,
+    popup: 'center',
+    arrow: null,
+    cta: 'Begin Training →'
   },
   {
-    title: 'Pick a Tower',
-    body: 'Select a tower type from the Tower Command panel on the right. Each tower has unique abilities — try the Archer Tower first (🏹 30 gold).',
-    highlight: '.towers-panel', cta: 'Got it →'
+    title: '⚔ Choose Your Tower',
+    body: "Select a tower type from the Tower Command panel on the right. Each tower has unique abilities. Start with the 🏹 Archer Tower — fast, affordable, and reliable at 30 gold.",
+    keys: ['Click tower icon', 'Hover for stats'],
+    highlight: '.towers-panel',
+    achievement: { icon: '🗼', name: 'Tower Forged', xp: '+20 XP' },
+    popup: 'left',
+    arrow: { target: '.towers-panel', side: 'left' },
+    cta: 'Understood →'
   },
   {
-    title: 'Place on the Board',
-    body: 'Click any non-path tile (avoid the middle row — that\'s the enemy path). Hover a tile to see the tower\'s attack range highlighted in green.',
-    highlight: '.game-center', cta: 'Got it →'
+    title: '🗺 Place on the Board',
+    body: "Click any non-path tile on the board to deploy your selected tower. Avoid the middle row — that is the enemy path. Hover a tile to preview the attack range in green.",
+    keys: ['Click tile', 'Hover = preview range'],
+    highlight: '.game-center',
+    achievement: { icon: '📍', name: 'First Placement', xp: '+30 XP' },
+    popup: 'right',
+    arrow: { target: '.game-center', side: 'top' },
+    cta: 'Got it →'
   },
   {
-    title: 'Execute Your Turn',
-    body: 'Hit ⚔️ EXECUTE TURN. Your towers fire, then enemies move one step. Repeat: plan → execute until the wave is cleared.',
-    highlight: '.execute-btn', cta: 'Got it →'
+    title: '⚡ Execute Your Turn',
+    body: "Press ⚔️ EXECUTE TURN when you're ready. Your towers will fire, then enemies advance one step. Master this cycle — Plan. Place. Execute. Victory.",
+    keys: ['⚔ Execute Turn', 'Repeat each wave'],
+    highlight: '.execute-btn',
+    achievement: { icon: '⚔️', name: 'First Strike', xp: '+40 XP' },
+    popup: 'top',
+    arrow: { target: '.execute-btn', side: 'bottom' },
+    cta: 'Ready →'
   },
   {
-    title: 'Use Abilities & Shop',
-    body: 'Spend 💎 Diamonds on powerful abilities (Meteor, Freeze). Visit the 🛒 Shop to upgrade your castle and tower skins for bonuses.',
-    highlight: '.ability-bar', cta: 'Got it →'
+    title: '✨ Abilities & Spells',
+    body: "Spend 💎 Diamonds to unleash devastating abilities. ☄️ Meteor destroys all enemies. ❄️ Freeze halts the horde. ⚡ Chain Strike devastates groups. Save them for critical moments!",
+    keys: ['☄️ Meteor — 5💎', '❄️ Freeze — 2💎', '⚡ Strike — 3💎', '🛡 Repair — 4💎'],
+    highlight: '.ability-bar',
+    achievement: { icon: '✨', name: 'Spellcaster', xp: '+35 XP' },
+    popup: 'top',
+    arrow: { target: '.ability-bar', side: 'bottom' },
+    cta: 'Powerful →'
   },
   {
-    title: 'Complete Daily Challenges',
-    body: '3 Daily Challenges refresh every day. Complete them for bonus gold and diamonds — and keep your login streak going for weekly bonuses!',
-    highlight: '.quests-panel', cta: 'Let\'s Fight! ⚔️'
+    title: '📜 Daily Challenges',
+    body: "Three Daily Challenges refresh every 24 hours. Complete them for bonus gold and diamonds. Keep your 🔥 login streak alive for weekly bonus rewards!",
+    keys: ['Q — Quest log', 'Daily reset at midnight'],
+    highlight: '.quests-panel',
+    achievement: { icon: '📜', name: 'Lore Keeper', xp: '+25 XP' },
+    popup: 'right',
+    arrow: { target: '.quests-panel', side: 'right' },
+    cta: 'Let\'s Fight! ⚔️'
   }
 ];
 
 let tutorialStep = 0;
+let _tutTypewriterTimer = null;
 
+// ── Core entry point ──────────────────────────────────────────
 function startTutorial() {
   tutorialStep = 0;
-  showTutorialStep();
+  _tutShowStep();
 }
 
-function showTutorialStep() {
+// ── Show a step ───────────────────────────────────────────────
+function _tutShowStep() {
   const step = TUTORIAL_STEPS[tutorialStep];
   if (!step) { endTutorial(); return; }
-  document.getElementById('tut-title').textContent = step.title;
-  document.getElementById('tut-body').textContent = step.body;
-  document.getElementById('tut-cta').textContent = step.cta;
-  document.getElementById('tut-counter').textContent = `${tutorialStep + 1} / ${TUTORIAL_STEPS.length}`;
-  document.getElementById('tutorial-modal').style.display = 'flex';
-  // Highlight target element
+
+  const modal = document.getElementById('tutorial-modal');
+  const spotlight = document.getElementById('tut-spotlight');
+
+  // Clear previous highlights
   document.querySelectorAll('.tut-highlight').forEach(e => e.classList.remove('tut-highlight'));
+
+  // ── Update step counter & pips ──
+  document.getElementById('tut-counter').textContent =
+    `STEP ${tutorialStep + 1} / ${TUTORIAL_STEPS.length}`;
+
+  const pipsEl = document.getElementById('tut-pips');
+  pipsEl.innerHTML = TUTORIAL_STEPS.map((_, i) => {
+    const cls = i < tutorialStep ? 'done' : i === tutorialStep ? 'active' : '';
+    return `<div class="tut-pip ${cls}"></div>`;
+  }).join('');
+
+  // ── Update title (instantly) ──
+  document.getElementById('tut-title').textContent = step.title;
+
+  // ── Typewriter body ──
+  _tutTypewriter(step.body);
+
+  // ── Key badges ──
+  const keysRow = document.getElementById('tut-keys-row');
+  if (step.keys && step.keys.length) {
+    keysRow.innerHTML = step.keys.map(k => `<span class="tut-key-badge">${k}</span>`).join('');
+    keysRow.style.display = 'flex';
+  } else {
+    keysRow.style.display = 'none';
+  }
+
+  // ── CTA button ──
+  document.getElementById('tut-cta').textContent = step.cta || 'Got it →';
+
+  // ── Spotlight & highlight ──
   if (step.highlight) {
-    const el = document.querySelector(step.highlight);
-    if (el) el.classList.add('tut-highlight');
+    const targetEl = document.querySelector(step.highlight);
+    if (targetEl) {
+      targetEl.classList.add('tut-highlight');
+      spotlight.style.display = 'block';
+      _tutPositionSpotlight(targetEl);
+    }
+  } else {
+    spotlight.style.display = 'none';
+    document.getElementById('tut-spotlight-hole').style.cssText = '';
+  }
+
+  // ── Arrow ──
+  _tutPositionArrow(step);
+
+  // ── Position popup ──
+  _tutPositionPopup(step);
+
+  // ── Show modal ──
+  modal.style.display = 'block';
+  modal.style.animation = 'tut-modal-in 0.45s cubic-bezier(0.34,1.3,0.64,1) both';
+}
+
+// ── Typewriter effect ─────────────────────────────────────────
+function _tutTypewriter(text) {
+  clearInterval(_tutTypewriterTimer);
+  const el = document.getElementById('tut-body');
+  const cursor = document.getElementById('tut-cursor');
+  el.textContent = '';
+  cursor.classList.remove('hidden');
+  let i = 0;
+  _tutTypewriterTimer = setInterval(() => {
+    if (i < text.length) {
+      el.textContent += text[i++];
+    } else {
+      clearInterval(_tutTypewriterTimer);
+      setTimeout(() => cursor.classList.add('hidden'), 600);
+    }
+  }, 22);
+}
+
+// ── Spotlight hole ────────────────────────────────────────────
+function _tutPositionSpotlight(el) {
+  const r = el.getBoundingClientRect();
+  const pad = 10;
+  const hole = document.getElementById('tut-spotlight-hole');
+  hole.style.cssText = `
+    left:   ${r.left - pad}px;
+    top:    ${r.top - pad}px;
+    width:  ${r.width + pad * 2}px;
+    height: ${r.height + pad * 2}px;
+  `;
+}
+
+// ── Arrow positioning ─────────────────────────────────────────
+function _tutPositionArrow(step) {
+  const arrowEl = document.getElementById('tut-arrow');
+  if (!step.arrow || !step.highlight) {
+    arrowEl.style.display = 'none';
+    return;
+  }
+  const targetEl = document.querySelector(step.highlight);
+  if (!targetEl) { arrowEl.style.display = 'none'; return; }
+
+  const r = targetEl.getBoundingClientRect();
+  arrowEl.style.display = 'block';
+
+  const side = step.arrow.side || 'top';
+  if (side === 'top') {
+    arrowEl.style.cssText = `display:block;left:${r.left + r.width / 2 - 20}px;top:${r.top - 70}px;transform:rotate(0deg)`;
+    arrowEl.style.setProperty('--arrow-rot', '0deg');
+  } else if (side === 'bottom') {
+    arrowEl.style.cssText = `display:block;left:${r.left + r.width / 2 - 20}px;top:${r.bottom + 14}px;transform:rotate(180deg)`;
+    arrowEl.style.setProperty('--arrow-rot', '180deg');
+  } else if (side === 'left') {
+    arrowEl.style.cssText = `display:block;left:${r.left - 58}px;top:${r.top + r.height / 2 - 28}px;transform:rotate(-90deg)`;
+    arrowEl.style.setProperty('--arrow-rot', '-90deg');
+  } else if (side === 'right') {
+    arrowEl.style.cssText = `display:block;left:${r.right + 14}px;top:${r.top + r.height / 2 - 28}px;transform:rotate(90deg)`;
+    arrowEl.style.setProperty('--arrow-rot', '90deg');
   }
 }
 
+// ── Popup position ────────────────────────────────────────────
+function _tutPositionPopup(step) {
+  const modal = document.getElementById('tutorial-modal');
+  const popup = step.popup || 'center';
+
+  // Reset positioning
+  modal.style.top = modal.style.bottom = modal.style.left = modal.style.right = '';
+  modal.style.transform = '';
+
+  const pad = 16;
+  const W = window.innerWidth, H = window.innerHeight;
+
+  if (popup === 'center') {
+    modal.style.left = '50%';
+    modal.style.top = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+  } else if (popup === 'left') {
+    modal.style.right = `${pad}px`;
+    modal.style.top = `${Math.round(H * 0.28)}px`;
+  } else if (popup === 'right') {
+    modal.style.left = `${pad}px`;
+    modal.style.top = `${Math.round(H * 0.28)}px`;
+  } else if (popup === 'top') {
+    modal.style.left = '50%';
+    modal.style.bottom = `${pad + 16}px`;
+    modal.style.transform = 'translateX(-50%)';
+  }
+}
+
+// ── Achievement banner ────────────────────────────────────────
+function _tutShowAchievement(ach) {
+  if (!ach) return;
+  const el = document.getElementById('tut-achievement');
+  document.getElementById('tut-ach-icon').textContent = ach.icon;
+  document.getElementById('tut-ach-name').textContent = ach.name;
+  document.getElementById('tut-ach-xp').textContent = ach.xp;
+  el.style.display = 'flex';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => el.classList.add('tut-ach-show'));
+  });
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => {
+    el.classList.remove('tut-ach-show');
+    setTimeout(() => { el.style.display = 'none'; }, 550);
+  }, 3800);
+}
+
+// ── Next step ─────────────────────────────────────────────────
 window.nextTutorialStep = function () {
+  const prevStep = TUTORIAL_STEPS[tutorialStep];
   tutorialStep++;
   if (tutorialStep >= TUTORIAL_STEPS.length) { endTutorial(); return; }
-  showTutorialStep();
+
+  // Trigger achievement from PREVIOUS step
+  if (prevStep && prevStep.achievement) {
+    setTimeout(() => _tutShowAchievement(prevStep.achievement), 300);
+  }
+
+  _tutShowStep();
 };
 
+// ── End tutorial ──────────────────────────────────────────────
 function endTutorial() {
+  clearInterval(_tutTypewriterTimer);
   document.getElementById('tutorial-modal').style.display = 'none';
+  document.getElementById('tut-spotlight').style.display = 'none';
+  document.getElementById('tut-arrow').style.display = 'none';
   document.querySelectorAll('.tut-highlight').forEach(e => e.classList.remove('tut-highlight'));
   localStorage.setItem('kr_tutorial_done', '1');
+
+  // Final achievement
+  _tutShowAchievement({ icon: '🏆', name: 'Ready for Battle!', xp: '+100 XP Bonus' });
   showToast('Tutorial complete! Good luck, Commander! ⚔️', 'tsuccess');
 }
 

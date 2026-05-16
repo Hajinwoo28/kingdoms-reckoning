@@ -2800,45 +2800,465 @@ body {
 }
 
 /* ── TUTORIAL MODAL ───────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   IMMERSIVE TUTORIAL SYSTEM
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Spotlight dim overlay ─────────────────────────── */
+#tut-spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(1px);
+  transition: opacity 0.4s ease;
+}
+
+#tut-spotlight-hole {
+  position: absolute;
+  background: transparent;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.72);
+  border-radius: 10px;
+  border: 2px solid rgba(0, 229, 255, 0.55);
+  outline: 4px solid rgba(0, 229, 255, 0.15);
+  transition: all 0.45s cubic-bezier(0.34, 1.3, 0.64, 1);
+  animation: hole-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes hole-pulse {
+
+  0%,
+  100% {
+    border-color: rgba(0, 229, 255, 0.55);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, .72), 0 0 20px rgba(0, 229, 255, .25);
+  }
+
+  50% {
+    border-color: rgba(0, 229, 255, 0.9);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, .72), 0 0 35px rgba(0, 229, 255, .5);
+  }
+}
+
+/* ── Animated arrow pointer ─────────────────────────── */
+#tut-arrow {
+  position: fixed;
+  z-index: 1900;
+  width: 40px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.8));
+  animation: tut-arrow-bounce 0.9s ease-in-out infinite;
+  transition: top 0.4s ease, left 0.4s ease, transform 0.4s ease;
+}
+
+@keyframes tut-arrow-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--arrow-rot, 0deg));
+  }
+
+  50% {
+    transform: translateY(8px) rotate(var(--arrow-rot, 0deg));
+  }
+}
+
+/* ── Main tutorial popup ────────────────────────────── */
+#tutorial-modal {
+  position: fixed;
+  z-index: 1900;
+  pointer-events: auto;
+  transition: top 0.45s cubic-bezier(0.34, 1.2, 0.64, 1),
+    left 0.45s cubic-bezier(0.34, 1.2, 0.64, 1),
+    right 0.45s ease,
+    bottom 0.45s ease,
+    opacity 0.3s ease;
+  animation: tut-modal-in 0.45s cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+
+@keyframes tut-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── NPC portrait ───────────────────────────────────── */
+.tut-npc-portrait {
+  position: absolute;
+  top: -30px;
+  left: 18px;
+  width: 56px;
+  height: 56px;
+  z-index: 2;
+}
+
+.tut-npc-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(135deg, rgba(101, 40, 180, 0.9), rgba(20, 10, 50, 0.95));
+  border: 2px solid rgba(240, 200, 66, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 0 20px rgba(240, 200, 66, 0.35), 0 4px 16px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 2;
+}
+
+.tut-npc-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(240, 200, 66, 0.8);
+  border-right-color: rgba(240, 200, 66, 0.4);
+  animation: tut-ring-spin 3s linear infinite;
+}
+
+@keyframes tut-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Box ────────────────────────────────────────────── */
 .tut-box {
-  border-color: rgba(201, 162, 39, .65);
-  max-width: 420px;
+  background: linear-gradient(145deg, rgba(10, 14, 32, 0.97) 0%, rgba(18, 14, 40, 0.97) 100%);
+  border: 1px solid rgba(240, 200, 66, 0.4);
+  border-radius: 16px;
+  padding: 14px 18px 18px;
+  width: 320px;
+  position: relative;
+  box-shadow:
+    0 0 40px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.tut-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(240, 200, 66, 0.5) 40%, rgba(0, 229, 255, 0.4) 70%, transparent 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+/* ── Top bar ─────────────────────────────────────────── */
+.tut-topbar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  padding-left: 70px;
+  /* clear the npc portrait */
+}
+
+.tut-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00e5ff;
+  box-shadow: 0 0 8px #00e5ff;
+  animation: tut-dot-pulse 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes tut-dot-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.4);
+  }
 }
 
 .tut-step-counter {
-  font-size: 11px;
-  color: var(--col-dim);
-  text-align: center;
-  letter-spacing: .08em;
+  font-size: 10px;
+  color: rgba(0, 229, 255, 0.8);
+  letter-spacing: 1.5px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.tut-pips {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.tut-pip {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+  width: 14px;
+}
+
+.tut-pip.done {
+  background: rgba(0, 229, 255, 0.45);
+}
+
+.tut-pip.active {
+  width: 24px;
+  background: #00e5ff;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.7);
+}
+
+/* ── NPC meta ─────────────────────────────────────── */
+.tut-npc-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
   margin-bottom: 6px;
+  padding-left: 70px;
+}
+
+.tut-npc-name {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: rgba(240, 200, 66, 0.9);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.tut-npc-role {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── Title ────────────────────────────────────────── */
+.tut-title {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 10px;
+  line-height: 1.3;
+  text-shadow: 0 0 20px rgba(240, 200, 66, 0.3);
+}
+
+/* ── Body ─────────────────────────────────────────── */
+.tut-body-wrap {
+  position: relative;
+  margin-bottom: 10px;
+  min-height: 56px;
+}
+
+.tut-body {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.65;
+  font-family: 'Crimson Text', Georgia, serif;
+  display: inline;
+}
+
+.tut-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  background: rgba(240, 200, 66, 0.9);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: tut-blink 0.75s step-end infinite;
+}
+
+.tut-cursor.hidden {
+  display: none;
+}
+
+@keyframes tut-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── Key badges ───────────────────────────────────── */
+.tut-keys-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.tut-key-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 5px;
+  padding: 3px 9px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-family: 'Exo 2', sans-serif;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* ── Buttons ──────────────────────────────────────── */
+.tut-btn-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.tut-btn-next {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.18), rgba(0, 229, 255, 0.06));
+  border: 1px solid rgba(0, 229, 255, 0.6);
+  border-radius: 9px;
+  padding: 9px 18px;
+  color: #00e5ff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Exo 2', sans-serif;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 0 0 rgba(0, 229, 255, 0);
+}
+
+.tut-btn-next:hover {
+  background: rgba(0, 229, 255, 0.24);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.tut-btn-skip {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9px;
+  padding: 9px 12px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'Exo 2', sans-serif;
+  transition: all 0.2s;
+}
+
+.tut-btn-skip:hover {
+  color: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Achievement popup ────────────────────────────── */
+#tut-achievement {
+  position: fixed;
+  top: 70px;
+  right: -320px;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(10, 14, 32, 0.97), rgba(30, 22, 5, 0.97));
+  border: 1px solid rgba(240, 200, 66, 0.55);
+  border-radius: 13px;
+  padding: 12px 16px;
+  width: 270px;
+  box-shadow: 0 0 30px rgba(240, 200, 66, 0.2), 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: right 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+  pointer-events: none;
+}
+
+#tut-achievement.tut-ach-show {
+  right: 14px;
+}
+
+.tut-ach-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: radial-gradient(135deg, rgba(240, 200, 66, 0.25), rgba(60, 40, 0, 0.4));
+  border: 1px solid rgba(240, 200, 66, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(240, 200, 66, 0.3);
+  animation: ach-icon-glow 2s ease-in-out infinite;
+}
+
+@keyframes ach-icon-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(240, 200, 66, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 0 24px rgba(240, 200, 66, 0.6);
+  }
+}
+
+.tut-ach-label {
+  font-size: 9px;
+  color: rgba(240, 200, 66, 0.7);
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
   font-family: 'Cinzel', serif;
 }
 
-.tut-btn-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  justify-content: center;
+.tut-ach-name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: rgba(240, 200, 66, 1);
+  font-weight: 600;
+  margin: 2px 0;
 }
 
+.tut-ach-xp {
+  font-size: 11px;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+/* ── tut-highlight (keep for legacy compat) ───────── */
 .tut-highlight {
-  outline: 2px solid var(--gold-l) !important;
-  outline-offset: 3px;
+  outline: 2px solid rgba(0, 229, 255, 0.7) !important;
+  outline-offset: 4px;
   border-radius: 6px;
-  animation: tutPulse 1.2s ease-in-out infinite;
+  animation: tutPulse 1.3s ease-in-out infinite;
+  position: relative;
+  z-index: 1850;
 }
 
 @keyframes tutPulse {
 
   0%,
   100% {
-    outline-color: var(--gold-l);
-    box-shadow: 0 0 0 0 rgba(240, 200, 66, .35);
+    outline-color: rgba(0, 229, 255, 0.55);
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.2);
   }
 
   50% {
-    outline-color: var(--gold);
-    box-shadow: 0 0 0 6px rgba(240, 200, 66, 0);
+    outline-color: rgba(0, 229, 255, 1);
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.5);
   }
 }
 
