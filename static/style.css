@@ -3178,12 +3178,22 @@ body {
   border-color: rgba(139, 92, 246, .55);
 }
 
-.ms-hud-gold-curr {
-  border-color: rgba(201, 162, 39, .45);
+/* Runestones — earthy amber/stone tone */
+.ms-hud-runestones-curr {
+  border-color: rgba(180, 120, 50, .55);
 }
 
-.ms-hud-score-curr {
-  border-color: rgba(100, 180, 100, .35);
+.ms-hud-runestones-curr .ms-hud-curr-val {
+  color: #d4a96a;
+}
+
+/* Moon Relics — cool silver-blue mystical tone */
+.ms-hud-moonrelics-curr {
+  border-color: rgba(160, 190, 230, .50);
+}
+
+.ms-hud-moonrelics-curr .ms-hud-curr-val {
+  color: #b8d4f0;
 }
 
 .ms-hud-curr-icon {

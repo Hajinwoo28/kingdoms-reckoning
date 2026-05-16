@@ -87,7 +87,7 @@ def init_db():
             stage_stars TEXT DEFAULT '{}'
         )''')
         # Migrate existing tables — add columns if they don't exist yet
-        for col, defval in [('streak', '0'), ('last_login', 'NULL'), ('best_wave', '0'), ('towers_json', "''''[]''''"), ('game_mode', "''''story''''"), ('stages_cleared', "''''[]''''"), ('stage_stars', "''''{}''''"), ('extreme_progress', '1'), ('story_progress', '1')]:
+        for col, defval in [('streak', '0'), ('last_login', 'NULL'), ('best_wave', '0'), ('towers_json', "''''[]''''"), ('game_mode', "''''story''''"), ('stages_cleared', "''''[]''''"), ('stage_stars', "''''{}''''"), ('extreme_progress', '1'), ('story_progress', '1'), ('runestones', '0'), ('moon_relics', '0')]:
             try:
                 if col == 'last_login':
                     c.execute(f"ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS last_login DATE DEFAULT NULL")
@@ -206,18 +206,21 @@ def save_state():
         stage_stars = _json.dumps(data.get('stage_stars', {}))
         extreme_progress = int(data.get('extreme_progress', 1))
         story_progress = int(data.get('story_progress', 1))
+        runestones = int(data.get('runestones', 0))
+        moon_relics = int(data.get('moon_relics', 0))
         try:
             c.execute('''UPDATE player_saves SET
                 gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
                 streak=%s, last_login=%s, best_wave=%s, towers_json=%s, game_mode=%s,
-                stages_cleared=%s, stage_stars=%s, extreme_progress=%s, story_progress=%s
+                stages_cleared=%s, stage_stars=%s, extreme_progress=%s, story_progress=%s,
+                runestones=%s, moon_relics=%s
                 WHERE username=%s''',
                 (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
                  data.get('score', 0), data.get('castle_skin', 'Wooden'),
                  data.get('tower_skin', 'Basic'), data.get('streak', 0),
                  data.get('last_login'), data.get('best_wave', 0),
                  towers_json, game_mode, stages_cleared, stage_stars,
-                 extreme_progress, story_progress, session['username']))
+                 extreme_progress, story_progress, runestones, moon_relics, session['username']))
         except Exception:
             # towers_json column may not exist yet — add it and retry
             conn.rollback()
@@ -228,17 +231,20 @@ def save_state():
                 c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS stage_stars TEXT DEFAULT '{}'")
                 c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS extreme_progress INTEGER DEFAULT 1")
                 c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS story_progress INTEGER DEFAULT 1")
+                c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS runestones INTEGER DEFAULT 0")
+                c.execute("ALTER TABLE player_saves ADD COLUMN IF NOT EXISTS moon_relics INTEGER DEFAULT 0")
                 c.execute('''UPDATE player_saves SET
                     gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
                     streak=%s, last_login=%s, best_wave=%s, towers_json=%s, game_mode=%s,
-                    stages_cleared=%s, stage_stars=%s, extreme_progress=%s, story_progress=%s
+                    stages_cleared=%s, stage_stars=%s, extreme_progress=%s, story_progress=%s,
+                    runestones=%s, moon_relics=%s
                     WHERE username=%s''',
                     (data.get('gold', 40), data.get('diamonds', 0), data.get('wave', 1),
                      data.get('score', 0), data.get('castle_skin', 'Wooden'),
                      data.get('tower_skin', 'Basic'), data.get('streak', 0),
                      data.get('last_login'), data.get('best_wave', 0),
                      towers_json, game_mode, stages_cleared, stage_stars,
-                     extreme_progress, story_progress, session['username']))
+                     extreme_progress, story_progress, runestones, moon_relics, session['username']))
             except Exception:
                 # Final fallback — save everything except towers
                 conn.rollback()
@@ -271,7 +277,7 @@ def load_state():
         c = conn.cursor()
         import json as _json
         try:
-            c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave, towers_json, game_mode, stages_cleared, stage_stars, extreme_progress, story_progress FROM player_saves WHERE username=%s',
+            c.execute('SELECT gold, diamonds, wave, score, castle_skin, tower_skin, streak, last_login, best_wave, towers_json, game_mode, stages_cleared, stage_stars, extreme_progress, story_progress, runestones, moon_relics FROM player_saves WHERE username=%s',
                       (session['username'],))
             row = c.fetchone()
             towers_col = row[9] if row else None
@@ -310,7 +316,9 @@ def load_state():
                             "best_wave": row[8] or 0, "towers": towers, "game_mode": mode_col or 'story',
                             "stages_cleared": stages_cleared, "stage_stars": stage_stars,
                             "extreme_progress": int(extreme_progress_col or 1),
-                            "story_progress": int(row[14] if row and len(row) > 14 else 1)})
+                            "story_progress": int(row[14] if row and len(row) > 14 else 1),
+                            "runestones": int(row[15] if row and len(row) > 15 else 0),
+                            "moon_relics": int(row[16] if row and len(row) > 16 else 0)})
         return jsonify({"error": "No save found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500

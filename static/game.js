@@ -435,7 +435,7 @@ function getWaveEnemies(wave) {
 
 // ── GAME STATE ───────────────────────────────────────────────
 let G = {
-  hp: 15, maxHp: 15, gold: 80, diamonds: 0, wave: 1, score: 0,
+  hp: 15, maxHp: 15, gold: 80, diamonds: 0, runestones: 0, moonRelics: 0, wave: 1, score: 0,
   castleSkin: 'Wooden', towerSkin: 'Basic',
   towers: [], enemies: [], enemiesToSpawn: [], spawnIndex: 0,
   gameOver: false, isAnimating: false, frozenTurn: false,
@@ -660,7 +660,7 @@ async function saveGame(silent = false) {
     const res = await fetch('/api/save_state', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
+        gold: G.gold, diamonds: G.diamonds, runestones: G.runestones || 0, moon_relics: G.moonRelics || 0, wave: G.wave, score: G.score,
         castle_skin: G.castleSkin, tower_skin: G.towerSkin,
         streak: G.streak, last_login: today, best_wave: G.bestWave,
         towers: towersPayload, game_mode: G.gameMode,
@@ -697,6 +697,7 @@ async function loadSavedState() {
     const d = await res.json();
     if (!d.error) {
       G.gold = d.gold || 80; G.diamonds = d.diamonds || 0;
+      G.runestones = d.runestones || 0; G.moonRelics = d.moon_relics || 0;
       G.wave = d.wave || 1; G.score = d.score || 0;
       G.castleSkin = d.castle_skin || 'Wooden';
       G.towerSkin = d.tower_skin || 'Basic';
@@ -766,19 +767,21 @@ function showModeSelect() {
   const uEl = document.getElementById('ms-hud-username');
   if (uEl) uEl.textContent = username;
 
-  // Score (total lifetime score)
+  // Score (total lifetime score) — left-side profile only
   const sEl = document.getElementById('ms-hud-score');
   if (sEl) sEl.textContent = (G.score || 0).toLocaleString();
-  const svEl = document.getElementById('ms-hud-score-val');
-  if (svEl) svEl.textContent = (G.score || 0).toLocaleString();
 
   // Diamonds
   const dEl = document.getElementById('ms-hud-diamonds');
   if (dEl) dEl.textContent = (G.diamonds || 0).toLocaleString();
 
-  // Gold
-  const gEl = document.getElementById('ms-hud-gold');
-  if (gEl) gEl.textContent = (G.gold || 0).toLocaleString();
+  // Runestones
+  const rsEl = document.getElementById('ms-hud-runestones');
+  if (rsEl) rsEl.textContent = (G.runestones || 0).toLocaleString();
+
+  // Moon Relics
+  const mrEl = document.getElementById('ms-hud-moonrelics');
+  if (mrEl) mrEl.textContent = (G.moonRelics || 0).toLocaleString();
 
   // Level badge — derive from score (every 500 score = 1 level)
   const level = Math.max(1, Math.floor((G.score || 0) / 500) + 1);
@@ -796,7 +799,7 @@ window.selectMode = function (mode) {
   G.wave = 1;
   G.score = 0;
   G.gold = mode === 'extreme' ? 40 : 80;
-  G.diamonds = 0;
+  // NOTE: diamonds, runestones, and moonRelics are persistent wallet currencies — do NOT reset on new game
   if (mode === 'extreme') {
     document.getElementById('mode-select-section').style.display = 'none';
     showIslandSelect();
@@ -971,7 +974,7 @@ window.selectStage = function (stageId) {
   G.waveInStage = 1;
   G.wave = 1; // reset wave counter for display
   G.gold = 80;
-  G.diamonds = 0;
+  // NOTE: diamonds, runestones, and moonRelics are persistent — do NOT reset
   G.score = 0;
   G._savedTowers = [];
 
