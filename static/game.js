@@ -848,6 +848,15 @@ let _msTutStep = 0;
 
 function startModeSelectTutorial() {
   _msTutStep = 0;
+  // Add a dim backdrop so the tutorial pops above the mode-select screen
+  let backdrop = document.getElementById('ms-tut-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.id = 'ms-tut-backdrop';
+    backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;pointer-events:none;';
+    document.body.appendChild(backdrop);
+  }
+  backdrop.style.display = 'block';
   _showMsTutStep();
 }
 
@@ -858,8 +867,16 @@ function _showMsTutStep() {
   const modal = document.getElementById('tutorial-modal');
   if (!modal) return;
 
-  modal.style.display = 'flex';
-  modal.style.zIndex = '10000';
+  // ── Show & center the modal above the mode-select screen (z-index 9000) ──
+  modal.style.display = 'block';
+  modal.style.zIndex = '9999';
+  modal.style.position = 'fixed';
+  modal.style.top = '50%';
+  modal.style.left = '50%';
+  modal.style.right = 'auto';
+  modal.style.bottom = 'auto';
+  modal.style.transform = 'translate(-50%, -50%)';
+  modal.style.animation = 'tut-modal-in 0.45s cubic-bezier(0.34,1.3,0.64,1) both';
 
   // Reuse existing tutorial modal elements
   const title = document.getElementById('tut-title');
@@ -936,7 +953,18 @@ function _nextMsTutStep() {
 
 function _endMsTutorial() {
   const modal = document.getElementById('tutorial-modal');
-  if (modal) modal.style.display = 'none';
+  if (modal) {
+    modal.style.display = 'none';
+    modal.style.top = '';
+    modal.style.left = '';
+    modal.style.right = '';
+    modal.style.bottom = '';
+    modal.style.transform = '';
+    modal.style.zIndex = '';
+  }
+  // Remove dim backdrop
+  const backdrop = document.getElementById('ms-tut-backdrop');
+  if (backdrop) backdrop.style.display = 'none';
   const spotlight = document.getElementById('tut-spotlight');
   const arrow = document.getElementById('tut-arrow');
   if (spotlight) spotlight.style.display = 'none';
@@ -4928,9 +4956,15 @@ let _lbActiveTab = 'story'; // persists across modal opens
 
 function openLeaderboard() {
   fetchLeaderboard();
-  document.getElementById('leaderboard-modal').style.display = 'flex';
+  const lbModal = document.getElementById('leaderboard-modal');
+  lbModal.style.display = 'flex';
+  lbModal.style.zIndex = '9500';
 }
-function closeLeaderboard() { document.getElementById('leaderboard-modal').style.display = 'none'; }
+function closeLeaderboard() {
+  document.getElementById('leaderboard-modal').style.display = 'none';
+}
+window.openLeaderboard = openLeaderboard;
+window.closeLeaderboard = closeLeaderboard;
 
 window._lbSetTab = function (mode) {
   _lbActiveTab = mode;
