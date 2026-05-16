@@ -3123,17 +3123,18 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 0;
+  /* Allow full username to show — no shrinking or clipping */
+  flex-shrink: 0;
 }
 
 .ms-hud-score {
   font-family: 'Cinzel', serif;
-  font-size: clamp(13px, 2vw, 18px);
-  font-weight: 700;
-  color: #e8c84a;
-  text-shadow: 0 0 10px rgba(201, 162, 39, .5);
-  letter-spacing: .5px;
+  font-size: clamp(11px, 1.5vw, 14px);
+  font-weight: 600;
+  color: rgba(180, 160, 230, .65);
+  letter-spacing: 1.5px;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .ms-hud-username {
@@ -3142,9 +3143,7 @@ body {
   color: rgba(210, 195, 240, .80);
   letter-spacing: .5px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
+  /* No truncation — always show full username */
 }
 
 /* ── CENTER: Logo icon ── */
@@ -3175,25 +3174,39 @@ body {
 }
 
 .ms-hud-diamonds {
-  border-color: rgba(139, 92, 246, .55);
+  border-color: rgba(139, 92, 246, .60);
 }
 
-/* Runestones — earthy amber/stone tone */
-.ms-hud-runestones-curr {
-  border-color: rgba(180, 120, 50, .55);
+.ms-hud-runestones {
+  border-color: rgba(168, 120, 60, .60);
 }
 
-.ms-hud-runestones-curr .ms-hud-curr-val {
-  color: #d4a96a;
+/* amber-brown for ancient stone */
+.ms-hud-moonrelics {
+  border-color: rgba(160, 200, 240, .45);
 }
 
-/* Moon Relics — cool silver-blue mystical tone */
-.ms-hud-moonrelics-curr {
-  border-color: rgba(160, 190, 230, .50);
+/* cool silver-blue for moon */
+
+/* Runestone icon — earthy amber glow */
+.ms-rune-icon {
+  filter: drop-shadow(0 0 4px rgba(200, 150, 60, .65));
 }
 
-.ms-hud-moonrelics-curr .ms-hud-curr-val {
-  color: #b8d4f0;
+/* Moon relic icon — silver-blue shimmer */
+.ms-moon-icon {
+  filter: drop-shadow(0 0 5px rgba(180, 220, 255, .70));
+  animation: moonGlow 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes moonGlow {
+  from {
+    filter: drop-shadow(0 0 3px rgba(180, 220, 255, .50));
+  }
+
+  to {
+    filter: drop-shadow(0 0 8px rgba(200, 235, 255, .90));
+  }
 }
 
 .ms-hud-curr-icon {
@@ -3250,12 +3263,13 @@ body {
     padding: 4px 6px;
   }
 
-  .ms-hud-username {
-    max-width: 80px;
-  }
-
   .ms-hud-logo {
     display: none;
+  }
+
+  /* Username: still no truncation on mobile, just smaller font */
+  .ms-hud-username {
+    font-size: 10px;
   }
 }
 

@@ -5,6 +5,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 import psycopg2
+import random
 import os
 import secrets
 
@@ -60,8 +61,25 @@ def init_db():
         c.execute('''CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
-            password_hash VARCHAR(255) NOT NULL
+            password_hash VARCHAR(255) NOT NULL,
+            account_id BIGINT UNIQUE
         )''')
+        # Migrate: add account_id column to existing tables
+        try:
+            c.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS account_id BIGINT UNIQUE")
+            # Back-fill any existing users who don't have an account_id yet
+            c.execute("SELECT id FROM users WHERE account_id IS NULL")
+            rows = c.fetchall()
+            for row in rows:
+                while True:
+                    rand_id = random.randint(1000000, 9999999)
+                    c.execute("SELECT 1 FROM users WHERE account_id = %s", (rand_id,))
+                    if not c.fetchone():
+                        break
+                c.execute("UPDATE users SET account_id = %s WHERE id = %s", (rand_id, row[0]))
+        except Exception as e:
+            conn.rollback()
+            print(f"[migrate account_id] {e}")
         c.execute('''CREATE TABLE IF NOT EXISTS scores (
             id SERIAL PRIMARY KEY,
             player VARCHAR(50) NOT NULL,
@@ -143,14 +161,23 @@ def register():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('INSERT INTO users (username, password_hash) VALUES (%s, %s)', (username, hashed_pw))
+        # Generate unique 7-digit account ID
+        while True:
+            rand_account_id = random.randint(1000000, 9999999)
+            c.execute("SELECT 1 FROM users WHERE account_id = %s", (rand_account_id,))
+            if not c.fetchone():
+                break
+        c.execute('INSERT INTO users (username, password_hash, account_id) VALUES (%s, %s, %s) RETURNING id', (username, hashed_pw, rand_account_id))
+        new_id = c.fetchone()[0]
         c.execute('INSERT INTO player_saves (username) VALUES (%s)', (username,))
         conn.commit()
         c.close()
         conn.close()
         # Auto-login: set session so the player goes straight to the game
         session['username'] = username
-        return jsonify({"message": "Registration successful!", "username": username})
+        session['user_id']    = int(new_id)
+        session['account_id'] = int(rand_account_id)
+        return jsonify({"message": "Registration successful!", "username": username, "account_id": int(rand_account_id)})
     except psycopg2.errors.UniqueViolation:
         return jsonify({"error": "Username already exists"}), 400
     except Exception as e:
@@ -165,13 +192,15 @@ def login():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('SELECT password_hash FROM users WHERE username = %s', (username,))
+        c.execute('SELECT password_hash, id, account_id FROM users WHERE username = %s', (username,))
         user = c.fetchone()
         c.close()
         conn.close()
         if user and check_password_hash(user[0], password):
-            session['username'] = username
-            return jsonify({"message": "Login successful", "username": username})
+            session['username']  = username
+            session['user_id']   = int(row[1])
+            session['account_id'] = int(row[2]) if row[2] else 0
+            return jsonify({"message": "Login successful", "username": username, "account_id": int(row[2]) if row[2] else 0})
         return jsonify({"error": "Invalid credentials"}), 401
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -188,8 +217,8 @@ def logout():
 @app.route('/api/current_user', methods=['GET'])
 def current_user():
     if 'username' in session:
-        return jsonify({"username": session['username']})
-    return jsonify({"username": None})
+        return jsonify({"username": session['username'], "account_id": session.get('account_id', 0)})
+    return jsonify({"username": None, "account_id": None})
 
 @app.route('/api/save_state', methods=['POST'])
 def save_state():
@@ -206,8 +235,8 @@ def save_state():
         stage_stars = _json.dumps(data.get('stage_stars', {}))
         extreme_progress = int(data.get('extreme_progress', 1))
         story_progress = int(data.get('story_progress', 1))
-        runestones = int(data.get('runestones', 0))
-        moon_relics = int(data.get('moon_relics', 0))
+        runestones    = int(data.get('runestones', 0))
+        moon_relics   = int(data.get('moon_relics', 0))
         try:
             c.execute('''UPDATE player_saves SET
                 gold=%s, diamonds=%s, wave=%s, score=%s, castle_skin=%s, tower_skin=%s,
@@ -317,8 +346,8 @@ def load_state():
                             "stages_cleared": stages_cleared, "stage_stars": stage_stars,
                             "extreme_progress": int(extreme_progress_col or 1),
                             "story_progress": int(row[14] if row and len(row) > 14 else 1),
-                            "runestones": int(row[15] if row and len(row) > 15 else 0),
-                            "moon_relics": int(row[16] if row and len(row) > 16 else 0)})
+                            "runestones":     int(row[15] if row and len(row) > 15 else 0),
+                            "moon_relics":    int(row[16] if row and len(row) > 16 else 0)})
         return jsonify({"error": "No save found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500

@@ -435,7 +435,7 @@ function getWaveEnemies(wave) {
 
 // ── GAME STATE ───────────────────────────────────────────────
 let G = {
-  hp: 15, maxHp: 15, gold: 80, diamonds: 0, runestones: 0, moonRelics: 0, wave: 1, score: 0,
+  hp: 15, maxHp: 15, gold: 80, diamonds: 0, wave: 1, score: 0,
   castleSkin: 'Wooden', towerSkin: 'Basic',
   towers: [], enemies: [], enemiesToSpawn: [], spawnIndex: 0,
   gameOver: false, isAnimating: false, frozenTurn: false,
@@ -461,6 +461,12 @@ let G = {
   cleanTurns: 0,
   momentum: 0,
   tacticalRating: 0,
+  // ── New lifetime currencies ──
+  runestones: 0,   // ancient magical stones — awarded for stage clears & milestones
+  moonRelics: 0,   // mystic silver tokens — awarded for wave streaks & extreme mode
+  // ── Account identity ──
+  accountId: 0,    // server-assigned numeric ID shown in profile HUD
+  username: '',    // stored here so HUD always has it
 };
 let gameSettings = { music: true, sfx: true, vfx: true, fastMode: false };
 let currentShopTab = 'castles';
@@ -474,7 +480,11 @@ function sleep(ms) { return new Promise(r => setTimeout(r, gameSettings.fastMode
 async function checkAuth() {
   const res = await fetch('/api/current_user');
   const data = await res.json();
-  if (data.username) showGame(data.username);
+  if (data.username) {
+    G.accountId = data.account_id || 0;
+    G.username = data.username;
+    showGame(data.username);
+  }
 }
 
 // ── Tab switcher ────────────────────────────────────────────────
@@ -585,6 +595,8 @@ async function registerTabbed(btn) {
   const data = await res.json();
   if (data.error) return setAuthMsg(data.error, true);
   if (data.username) {
+    G.accountId = data.account_id || 0;
+    G.username = data.username;
     setAuthMsg('Welcome, Commander! Preparing your realm...', false);
     setTimeout(() => showGame(data.username), 900);
   }
@@ -606,8 +618,11 @@ async function loginTabbed(btn) {
   if (!u || !p) return setAuthMsg('Enter your Commander ID and War Seal.', true);
   const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
   const data = await res.json();
-  if (data.username) showGame(data.username);
-  else setAuthMsg(data.error, true);
+  if (data.username) {
+    G.accountId = data.account_id || 0;
+    G.username = data.username;
+    showGame(data.username);
+  } else setAuthMsg(data.error, true);
 }
 
 // ── Global aliases — covers any HTML version that uses older or alternate names ──
@@ -660,14 +675,16 @@ async function saveGame(silent = false) {
     const res = await fetch('/api/save_state', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        gold: G.gold, diamonds: G.diamonds, runestones: G.runestones || 0, moon_relics: G.moonRelics || 0, wave: G.wave, score: G.score,
+        gold: G.gold, diamonds: G.diamonds, wave: G.wave, score: G.score,
         castle_skin: G.castleSkin, tower_skin: G.towerSkin,
         streak: G.streak, last_login: today, best_wave: G.bestWave,
         towers: towersPayload, game_mode: G.gameMode,
         stages_cleared: G.stagesCleared || [],
         stage_stars: G.stageStars || {},
         extreme_progress: G.extremeProgress || 1,
-        story_progress: G.storyProgress || 1
+        story_progress: G.storyProgress || 1,
+        runestones: G.runestones || 0,
+        moon_relics: G.moonRelics || 0
       })
     });
     const data = await res.json();
@@ -697,7 +714,6 @@ async function loadSavedState() {
     const d = await res.json();
     if (!d.error) {
       G.gold = d.gold || 80; G.diamonds = d.diamonds || 0;
-      G.runestones = d.runestones || 0; G.moonRelics = d.moon_relics || 0;
       G.wave = d.wave || 1; G.score = d.score || 0;
       G.castleSkin = d.castle_skin || 'Wooden';
       G.towerSkin = d.tower_skin || 'Basic';
@@ -711,6 +727,9 @@ async function loadSavedState() {
       G.extremeProgress = d.extreme_progress || 1;
       // Per-player story progress — server is source of truth
       G.storyProgress = d.story_progress || 1;
+      // Lifetime currencies
+      G.runestones = d.runestones || 0;
+      G.moonRelics = d.moon_relics || 0;
     }
   }
   // Restore active biome from localStorage (DB doesn't store biome_id)
@@ -763,34 +782,34 @@ function showModeSelect() {
   // ── Populate HUD bar with player data ──────────────────────────
   const username = _pendingUsername || G.username || 'Commander';
 
-  // Username
+  // Full username — no truncation
   const uEl = document.getElementById('ms-hud-username');
   if (uEl) uEl.textContent = username;
 
-  // Score (total lifetime score) — left-side profile only
+  // Account ID — 7-digit number assigned by the game system
   const sEl = document.getElementById('ms-hud-score');
-  if (sEl) sEl.textContent = (G.score || 0).toLocaleString();
+  const displayId = G.accountId ? String(G.accountId) : '-------';
+  if (sEl) sEl.textContent = displayId;
 
-  // Diamonds
+  // ── Three currencies: Diamonds / Runestones / Moon Relics ──
   const dEl = document.getElementById('ms-hud-diamonds');
   if (dEl) dEl.textContent = (G.diamonds || 0).toLocaleString();
 
-  // Runestones
-  const rsEl = document.getElementById('ms-hud-runestones');
-  if (rsEl) rsEl.textContent = (G.runestones || 0).toLocaleString();
+  const rEl = document.getElementById('ms-hud-runestones');
+  if (rEl) rEl.textContent = (G.runestones || 0).toLocaleString();
 
-  // Moon Relics
-  const mrEl = document.getElementById('ms-hud-moonrelics');
-  if (mrEl) mrEl.textContent = (G.moonRelics || 0).toLocaleString();
+  const mEl = document.getElementById('ms-hud-moonrelics');
+  if (mEl) mEl.textContent = (G.moonRelics || 0).toLocaleString();
 
-  // Level badge — derive from score (every 500 score = 1 level)
-  const level = Math.max(1, Math.floor((G.score || 0) / 500) + 1);
+  // Level badge — derive from score (every 500 score = 1 level, max 99)
+  const level = Math.min(99, Math.max(1, Math.floor((G.score || 0) / 500) + 1));
   const lvEl = document.getElementById('ms-level-badge');
   if (lvEl) lvEl.textContent = level;
 
   // Show "Continue" button only if player has a saved game past wave 1
   const hasSave = G.wave > 1 || (G._savedTowers && G._savedTowers.length > 0);
-  document.getElementById('ms-continue-btn').style.display = hasSave ? 'block' : 'none';
+  const contBtn = document.getElementById('ms-continue-btn');
+  if (contBtn) contBtn.style.display = hasSave ? 'block' : 'none';
 }
 
 window.selectMode = function (mode) {
@@ -799,7 +818,7 @@ window.selectMode = function (mode) {
   G.wave = 1;
   G.score = 0;
   G.gold = mode === 'extreme' ? 40 : 80;
-  // NOTE: diamonds, runestones, and moonRelics are persistent wallet currencies — do NOT reset on new game
+  G.diamonds = 0;
   if (mode === 'extreme') {
     document.getElementById('mode-select-section').style.display = 'none';
     showIslandSelect();
@@ -974,7 +993,7 @@ window.selectStage = function (stageId) {
   G.waveInStage = 1;
   G.wave = 1; // reset wave counter for display
   G.gold = 80;
-  // NOTE: diamonds, runestones, and moonRelics are persistent — do NOT reset
+  G.diamonds = 0;
   G.score = 0;
   G._savedTowers = [];
 
@@ -3081,6 +3100,11 @@ function applyTurnStrategyOutcome(turnKills, breachesThisTurn) {
   if (G.gameMode === 'extreme' && turnKills >= 4) {
     const tacticalBonus = Math.min(70, 15 + turnKills * 6 + G.momentum * 3);
     G.score += tacticalBonus;
+    // Award moon relic every 5 consecutive clean turns
+    if (G.cleanTurns > 0 && G.cleanTurns % 5 === 0) {
+      G.moonRelics = (G.moonRelics || 0) + 1;
+      showToast('🌙 Moon Relic earned!', 'tsuccess');
+    }
     G.tacticalRating += 1;
     addLog(`🔥 Tactical burst (${turnKills} kills): +${tacticalBonus} score.`, 'log-wave');
   }
@@ -3145,6 +3169,9 @@ async function waveComplete() {
       // Advance numeric story progress gate
       if (G.storyStage >= (G.storyProgress || 1)) G.storyProgress = G.storyStage + 1;
       G.stageStars[G.storyStage] = Math.max(starsEarned, G.stageStars[G.storyStage] || 0);
+      // ── Award runestones for stage clear (1 per star, bonus on milestone stages)
+      const rsEarned = starsEarned + (G.storyStage % 5 === 0 ? 2 : 0);
+      if (rsEarned > 0) { G.runestones = (G.runestones || 0) + rsEarned; showToast(`+${rsEarned} 🪨 Runestone${rsEarned > 1 ? 's' : ''}!`, 'tsuccess'); }
       saveGame(true); // persists stages_cleared + stage_stars + story_progress to server for THIS player
 
       addLog(`🏆 Stage ${G.storyStage} "${stageData.name}" CLEARED! ${'★'.repeat(starsEarned)} +${goldRwd + biomeGold}🪙 +${diaRwd + biomeDia}💎`, 'log-wave');
