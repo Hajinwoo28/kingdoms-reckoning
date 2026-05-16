@@ -758,6 +758,33 @@ function showGame(username) {
 
 function showModeSelect() {
   document.getElementById('mode-select-section').style.display = 'flex';
+
+  // ── Populate HUD bar with player data ──────────────────────────
+  const username = _pendingUsername || G.username || 'Commander';
+
+  // Username
+  const uEl = document.getElementById('ms-hud-username');
+  if (uEl) uEl.textContent = username;
+
+  // Score (total lifetime score)
+  const sEl = document.getElementById('ms-hud-score');
+  if (sEl) sEl.textContent = (G.score || 0).toLocaleString();
+  const svEl = document.getElementById('ms-hud-score-val');
+  if (svEl) svEl.textContent = (G.score || 0).toLocaleString();
+
+  // Diamonds
+  const dEl = document.getElementById('ms-hud-diamonds');
+  if (dEl) dEl.textContent = (G.diamonds || 0).toLocaleString();
+
+  // Gold
+  const gEl = document.getElementById('ms-hud-gold');
+  if (gEl) gEl.textContent = (G.gold || 0).toLocaleString();
+
+  // Level badge — derive from score (every 500 score = 1 level)
+  const level = Math.max(1, Math.floor((G.score || 0) / 500) + 1);
+  const lvEl = document.getElementById('ms-level-badge');
+  if (lvEl) lvEl.textContent = level;
+
   // Show "Continue" button only if player has a saved game past wave 1
   const hasSave = G.wave > 1 || (G._savedTowers && G._savedTowers.length > 0);
   document.getElementById('ms-continue-btn').style.display = hasSave ? 'block' : 'none';
