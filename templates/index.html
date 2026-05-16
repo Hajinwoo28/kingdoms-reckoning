@@ -217,83 +217,94 @@
       padding: 20px 12px;
       box-sizing: border-box;
       background:
-        /* ── RIGHT: Tight arcane portal swirl, top-right corner ── */
-        radial-gradient(ellipse at 95% 8%, rgba(200, 140, 255, .50) 0%, rgba(160, 80, 255, .25) 10%, transparent 28%),
-        /* ── RIGHT: Focused purple tower beam — narrow bright shaft ── */
-        radial-gradient(ellipse at 82% 0%, rgba(210, 140, 255, .55) 0%, rgba(170, 80, 255, .25) 8%, transparent 24%),
-        /* ── RIGHT: Tower mid-glow — contained, not flooding ── */
-        radial-gradient(ellipse at 80% 40%, rgba(130, 60, 220, .35) 0%, rgba(100, 30, 200, .18) 12%, transparent 30%),
-        /* ── RIGHT: Cold blue castle atmosphere — subtle ── */
-        radial-gradient(ellipse at 90% 65%, rgba(40, 20, 120, .45) 0%, rgba(25, 10, 90, .22) 16%, transparent 38%),
-        /* ── RIGHT: Dark navy sky — right half ── */
-        radial-gradient(ellipse at 100% 30%, rgba(30, 15, 80, .60) 0%, rgba(15, 8, 50, .35) 25%, transparent 55%),
-        /* ── LEFT: Sun — small bright orb near horizon, bottom-left ── */
-        radial-gradient(ellipse at 20% 80%, rgba(255, 170, 30, .85) 0%, rgba(230, 110, 10, .50) 4%, rgba(180, 60, 5, .15) 12%, transparent 26%),
-        /* ── LEFT: Sunset bloom — warm but contained to lower-left ── */
-        radial-gradient(ellipse at 12% 90%, rgba(220, 100, 10, .55) 0%, rgba(180, 60, 5, .28) 10%, transparent 32%),
-        /* ── LEFT: Dark warm tones — upper-left, very subtle ── */
-        radial-gradient(ellipse at 5% 50%, rgba(140, 45, 8, .28) 0%, rgba(100, 28, 4, .12) 15%, transparent 38%),
-        /* ── CENTER/BOTTOM: Dark land horizon ── */
-        radial-gradient(ellipse at 50% 100%, rgba(20, 8, 5, .70) 0%, rgba(10, 4, 2, .40) 20%, transparent 50%),
-        /* ── FULL: Very dark cinematic base ── */
-        linear-gradient(160deg,
-          #050206 0%,
-          #070312 14%,
-          #09051a 28%,
-          #08041a 42%,
-          #070310 56%,
-          #060208 70%,
-          #040105 85%,
-          #030104 100%);
+        /* ════ CINEMATIC FANTASY BACKGROUND ════ */
+        /* TOP: Dark starless sky cap */
+        linear-gradient(180deg, rgba(4, 2, 12, .92) 0%, rgba(6, 3, 16, .70) 8%, transparent 22%),
+        /* BOTTOM: Dark rocky terrain */
+        linear-gradient(0deg, rgba(3, 1, 1, .96) 0%, rgba(5, 2, 1, .82) 6%, rgba(8, 3, 2, .55) 14%, transparent 28%),
+        /* RIGHT TOP: Arcane vortex portal */
+        radial-gradient(ellipse 28% 22% at 87% 3%, rgba(210, 145, 255, .70) 0%, rgba(175, 85, 255, .38) 10%, rgba(130, 45, 220, .16) 24%, transparent 100%),
+        /* RIGHT: Crystal tower beam */
+        radial-gradient(ellipse 8% 55% at 76% 2%, rgba(235, 165, 255, .80) 0%, rgba(205, 105, 255, .50) 6%, rgba(165, 62, 245, .22) 18%, transparent 100%),
+        /* RIGHT: Tower secondary bloom */
+        radial-gradient(ellipse 32% 42% at 76% 52%, rgba(118, 48, 208, .55) 0%, rgba(88, 24, 182, .28) 15%, transparent 100%),
+        /* RIGHT: Castle fog atmosphere */
+        radial-gradient(ellipse 40% 50% at 78% 72%, rgba(55, 22, 145, .48) 0%, rgba(32, 12, 112, .24) 18%, transparent 100%),
+        /* RIGHT: Deep cosmic navy */
+        radial-gradient(ellipse 55% 80% at 95% 30%, rgba(22, 10, 72, .75) 0%, rgba(14, 6, 50, .50) 28%, transparent 100%),
+        /* RIGHT-CENTER: Cold blue transition */
+        radial-gradient(ellipse 38% 45% at 62% 60%, rgba(20, 10, 68, .52) 0%, rgba(12, 6, 42, .26) 20%, transparent 100%),
+        /* LEFT: Massive warm golden sky */
+        radial-gradient(ellipse 55% 65% at 22% 42%, rgba(215, 135, 35, .58) 0%, rgba(175, 88, 12, .36) 20%, rgba(130, 55, 6, .16) 38%, transparent 100%),
+        /* LEFT: Sun corona */
+        radial-gradient(ellipse 16% 18% at 26% 64%, rgba(255, 185, 32, .98) 0%, rgba(245, 135, 10, .72) 4%, rgba(205, 82, 5, .35) 12%, rgba(155, 45, 3, .12) 22%, transparent 100%),
+        /* LEFT: Horizon blaze */
+        radial-gradient(ellipse 42% 28% at 14% 82%, rgba(235, 112, 8, .68) 0%, rgba(188, 66, 4, .38) 12%, transparent 100%),
+        /* LEFT: Upper banner/tree glow */
+        radial-gradient(ellipse 28% 45% at 5% 38%, rgba(155, 65, 10, .42) 0%, rgba(115, 40, 5, .22) 18%, transparent 100%),
+        /* LEFT-CENTER: Warm sky bleeds center */
+        radial-gradient(ellipse 35% 50% at 38% 52%, rgba(140, 65, 10, .30) 0%, rgba(90, 35, 4, .14) 22%, transparent 100%),
+        /* CENTER: Dark silhouette band */
+        radial-gradient(ellipse 50% 22% at 50% 76%, rgba(5, 2, 1, .72) 0%, rgba(3, 1, 1, .40) 12%, transparent 100%),
+        /* BASE: Panoramic split-tone sky */
+        linear-gradient(108deg,
+          #200c04 0%, #2c1406 6%, #381a07 12%, #301408 18%, #220e08 25%,
+          #180a12 32%, #110720 40%, #0c051e 48%, #08041a 56%,
+          #060315 64%, #040210 74%, #03010c 84%, #020108 92%, #010105 100%);
     }
 
-    /* ── Animated purple beam: vertical shaft on right ── */
+    /* ── Crystal tower beam ── */
     .auth-screen::before {
       content: '';
       position: fixed;
       top: 0;
-      right: 19%;
+      left: 75.5%;
       width: 2px;
-      height: 55%;
+      height: 68%;
       background: linear-gradient(180deg,
-          rgba(220, 160, 255, 0) 0%,
-          rgba(220, 160, 255, .70) 15%,
-          rgba(200, 100, 255, .90) 45%,
-          rgba(220, 160, 255, .70) 80%,
-          rgba(220, 160, 255, 0) 100%);
+          rgba(235, 165, 255, 0) 0%,
+          rgba(235, 165, 255, .78) 10%,
+          rgba(210, 110, 255, .95) 42%,
+          rgba(235, 165, 255, .78) 82%,
+          rgba(235, 165, 255, 0) 100%);
       filter: blur(5px);
-      animation: beamPulse 3.5s ease-in-out infinite alternate;
+      animation: beamPulse 3.8s ease-in-out infinite alternate;
       pointer-events: none;
       z-index: 0;
     }
 
     @keyframes beamPulse {
       from {
-        opacity: .50;
+        opacity: .48;
         width: 2px;
         filter: blur(4px);
+        left: 75.5%;
       }
 
       to {
-        opacity: .90;
-        width: 5px;
-        filter: blur(8px);
+        opacity: .95;
+        width: 8px;
+        filter: blur(12px);
+        left: 75.2%;
       }
     }
 
-    /* ── Floating embers: tiny, left side only ── */
+    /* ── Floating ember particles ── */
     .auth-screen::after {
       content: '';
       position: fixed;
       inset: 0;
       background-image:
-        radial-gradient(1px 1px at 7% 38%, rgba(255, 150, 30, .65) 0%, transparent 100%),
-        radial-gradient(2px 2px at 13% 60%, rgba(255, 120, 20, .50) 0%, transparent 100%),
-        radial-gradient(1px 1px at 5% 70%, rgba(255, 140, 25, .55) 0%, transparent 100%),
-        radial-gradient(2px 2px at 17% 45%, rgba(255, 160, 40, .40) 0%, transparent 100%),
-        radial-gradient(1px 1px at 9% 82%, rgba(255, 90, 10, .40) 0%, transparent 100%),
-        radial-gradient(1px 1px at 22% 72%, rgba(200, 70, 8, .35) 0%, transparent 100%);
-      animation: emberFloat 7s ease-in-out infinite alternate;
+        radial-gradient(2px 3px at 7% 42%, rgba(255, 162, 35, .72) 0%, transparent 100%),
+        radial-gradient(2px 2px at 12% 66%, rgba(255, 128, 22, .55) 0%, transparent 100%),
+        radial-gradient(3px 3px at 4% 74%, rgba(255, 148, 28, .60) 0%, transparent 100%),
+        radial-gradient(2px 2px at 18% 50%, rgba(255, 172, 45, .45) 0%, transparent 100%),
+        radial-gradient(2px 2px at 9% 86%, rgba(255, 95, 14, .44) 0%, transparent 100%),
+        radial-gradient(2px 2px at 22% 76%, rgba(210, 75, 10, .40) 0%, transparent 100%),
+        radial-gradient(2px 2px at 30% 60%, rgba(230, 135, 22, .30) 0%, transparent 100%),
+        radial-gradient(2px 2px at 16% 35%, rgba(255, 150, 30, .38) 0%, transparent 100%),
+        radial-gradient(2px 2px at 25% 88%, rgba(200, 68, 8, .35) 0%, transparent 100%);
+      animation: emberFloat 8s ease-in-out infinite alternate;
       pointer-events: none;
       z-index: 0;
     }
@@ -301,12 +312,12 @@
     @keyframes emberFloat {
       from {
         transform: translateY(0);
-        opacity: .55;
+        opacity: .52;
       }
 
       to {
-        transform: translateY(-8px);
-        opacity: .90;
+        transform: translateY(-11px);
+        opacity: .95;
       }
     }
 
