@@ -198,9 +198,9 @@ def login():
         conn.close()
         if user and check_password_hash(user[0], password):
             session['username']  = username
-            session['user_id']   = int(row[1])
-            session['account_id'] = int(row[2]) if row[2] else 0
-            return jsonify({"message": "Login successful", "username": username, "account_id": int(row[2]) if row[2] else 0})
+            session['user_id']   = int(user[1])
+            session['account_id'] = int(user[2]) if user[2] else 0
+            return jsonify({"message": "Login successful", "username": username, "account_id": int(user[2]) if user[2] else 0})
         return jsonify({"error": "Invalid credentials"}), 401
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -286,10 +286,6 @@ def save_state():
                      data.get('tower_skin', 'Basic'), data.get('streak', 0),
                      data.get('last_login'), data.get('best_wave', 0),
                      session['username']))
-        conn.commit()
-        c.close()
-        conn.close()
-        return jsonify({"status": "success"})
         conn.commit()
         c.close()
         conn.close()
