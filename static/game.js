@@ -813,8 +813,10 @@ function showModeSelect() {
   if (contBtn) contBtn.style.display = hasSave ? 'block' : 'none';
 
   // ── New-player tutorial on mode-select screen ──────────────────────────
+  // Show for: (a) just-registered players, OR (b) any fresh account that hasn't seen the tutorial
   const tutDone = localStorage.getItem('kr_tutorial_done');
-  if (G._isNewRegistration && !tutDone) {
+  const isFreshAccount = !hasSave && G.score === 0 && G.bestWave === 0;
+  if (!tutDone && (G._isNewRegistration || isFreshAccount)) {
     G._isNewRegistration = false;
     setTimeout(showNpt, 600);
   }

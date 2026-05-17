@@ -3613,112 +3613,31 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
-  /* ── Cinematic fantasy background ── */
+  /* ── Cinematic fantasy background — kingdom-bg.jpg as primary visual ── */
   background:
-    /* ════ CINEMATIC FANTASY BACKGROUND — precision-matched to Image 2 ════ */
+    /* ── Soft vignette edges for depth ── */
+    radial-gradient(ellipse 120% 120% at 50% 50%,
+      transparent 40%,
+      rgba(0, 0, 0, .55) 100%),
 
-    /* ── STRUCTURE: Dark diagonal base — warm-brown left, cold-navy right ── */
-    linear-gradient(105deg,
-      #1a0a04 0%,
-      /* warm brown-black — far left */
-      #240d05 8%,
-      #1e0b06 16%,
-      #160810 24%,
-      /* transitioning to cool */
-      #0f061c 33%,
-      #0a041e 42%,
-      /* cold navy starts */
-      #08041c 52%,
-      #060318 62%,
-      #050215 72%,
-      #040112 82%,
-      #03010e 92%,
-      #020108 100%),
-
-    /* ── RIGHT: Wide cold BLUE sky — dominates entire right half ── */
-    radial-gradient(ellipse 70% 90% at 100% 40%,
-      rgba(12, 8, 55, .85) 0%,
-      rgba(8, 4, 42, .65) 22%,
-      rgba(5, 2, 28, .35) 48%,
-      transparent 100%),
-
-    /* ── RIGHT: Castle/fortress cold atmosphere ── */
-    radial-gradient(ellipse 55% 60% at 85% 70%,
-      rgba(22, 10, 80, .60) 0%,
-      rgba(14, 6, 55, .38) 18%,
-      rgba(8, 3, 32, .18) 38%,
-      transparent 100%),
-
-    /* ── RIGHT: Purple arcane tower beam — tall, bright, narrow (~88% x) ── */
-    radial-gradient(ellipse 4% 70% at 88% 0%,
-      rgba(230, 160, 255, .95) 0%,
-      rgba(200, 100, 255, .70) 5%,
-      rgba(165, 55, 240, .38) 15%,
-      rgba(120, 30, 200, .14) 30%,
-      transparent 100%),
-
-    /* ── RIGHT: Tower secondary glow bloom ── */
-    radial-gradient(ellipse 18% 55% at 88% 35%,
-      rgba(160, 70, 240, .55) 0%,
-      rgba(110, 35, 200, .28) 15%,
-      rgba(70, 15, 160, .10) 35%,
-      transparent 100%),
-
-    /* ── RIGHT TOP: Arcane portal/vortex swirl ── */
-    radial-gradient(ellipse 22% 18% at 90% 2%,
-      rgba(190, 120, 255, .65) 0%,
-      rgba(155, 70, 230, .35) 10%,
-      rgba(110, 35, 190, .14) 24%,
-      transparent 100%),
-
-    /* ── LEFT EDGE: Very faint warm glow on left edge (tree/banner warmth) ── */
-    radial-gradient(ellipse 18% 55% at 0% 45%,
-      rgba(120, 45, 8, .38) 0%,
-      rgba(85, 28, 4, .18) 20%,
-      transparent 100%),
-
-    /* ── LEFT BOTTOM: Sun horizon glow — ONLY at very bottom-left ── */
-    radial-gradient(ellipse 30% 20% at 8% 100%,
-      rgba(255, 140, 20, .72) 0%,
-      rgba(220, 90, 8, .45) 12%,
-      rgba(160, 50, 4, .18) 28%,
-      transparent 100%),
-
-    /* ── LEFT: Sun corona orb — small, low, at horizon ── */
-    radial-gradient(ellipse 10% 10% at 22% 80%,
-      rgba(255, 190, 35, .90) 0%,
-      rgba(240, 130, 10, .65) 4%,
-      rgba(200, 75, 5, .28) 12%,
-      rgba(140, 38, 2, .08) 24%,
-      transparent 100%),
-
-    /* ── LEFT: Warm amber sky band — only lower 40% of left side ── */
-    radial-gradient(ellipse 40% 35% at 15% 85%,
-      rgba(200, 85, 10, .55) 0%,
-      rgba(155, 55, 6, .30) 15%,
-      rgba(100, 30, 3, .12) 30%,
-      transparent 100%),
-
-    /* ── BOTTOM: Dark land/terrain ── */
-    linear-gradient(0deg,
-      rgba(2, 1, 1, .98) 0%,
-      rgba(4, 2, 1, .88) 5%,
-      rgba(6, 3, 1, .65) 12%,
-      rgba(8, 4, 2, .30) 22%,
-      transparent 38%),
-
-    /* ── TOP: Dark sky cap ── */
+    /* ── Subtle top darkening for title readability ── */
     linear-gradient(180deg,
-      rgba(3, 1, 8, .95) 0%,
-      rgba(5, 2, 12, .70) 6%,
-      rgba(6, 3, 15, .35) 14%,
-      transparent 26%),
+      rgba(7, 6, 26, .60) 0%,
+      rgba(7, 6, 26, .25) 12%,
+      transparent 30%),
+
+    /* ── Subtle bottom darkening for button readability ── */
+    linear-gradient(0deg,
+      rgba(7, 6, 26, .70) 0%,
+      rgba(7, 6, 26, .35) 8%,
+      transparent 25%),
 
     /* ── BASE: Kingdom background image ── */
     url('/static/kingdom-bg.jpg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+  background-color: var(--bg);
 }
 
 .mode-select-screen::-webkit-scrollbar {
