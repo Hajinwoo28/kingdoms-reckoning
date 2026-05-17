@@ -28,12 +28,23 @@ if not _secret:
 app.secret_key = _secret
 
 # ── Vercel-safe session cookie settings ───────────────────────
-# SameSite=None + Secure is required when the API and frontend are
-# on the same Vercel domain served over HTTPS.
+# SameSite=None + Secure is required for cross-origin fetch on Vercel/HTTPS.
+# For local development over HTTP, allow non-secure cookies so session state
+# works immediately after registration and tutorial flow continues.
+production_env = os.getenv('FLASK_ENV', '').lower() == 'production'
+is_vercel = bool(os.getenv('VERCEL') or os.getenv('DYNO'))
+secure_cookie_env = os.getenv('SESSION_COOKIE_SECURE', '').lower()
+if secure_cookie_env in ('1', 'true', 'yes', 'on'):
+    session_cookie_secure = True
+elif secure_cookie_env in ('0', 'false', 'no', 'off'):
+    session_cookie_secure = False
+else:
+    session_cookie_secure = production_env or is_vercel
+session_cookie_samesite = 'None' if session_cookie_secure else 'Lax'
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SECURE=True,       # HTTPS only (Vercel always HTTPS)
-    SESSION_COOKIE_SAMESITE='None',   # Required for cross-origin fetch on Vercel
+    SESSION_COOKIE_SECURE=session_cookie_secure,
+    SESSION_COOKIE_SAMESITE=session_cookie_samesite,
     SESSION_COOKIE_NAME='kr_session',
     PERMANENT_SESSION_LIFETIME=60 * 60 * 24 * 30,  # 30 days
 )

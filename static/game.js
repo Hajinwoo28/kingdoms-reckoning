@@ -710,6 +710,25 @@ function scheduleAutoSave() {
   _autoSaveTimer = setTimeout(() => saveGame(true), 1500);
 }
 async function loadSavedState() {
+  // Ensure minimum default state so the modal and tutorial logic work
+  // even when load_state returns unauthorized or no save exists.
+  G.gold = 80;
+  G.diamonds = 0;
+  G.wave = 1;
+  G.score = 0;
+  G.castleSkin = 'Wooden';
+  G.towerSkin = 'Basic';
+  G.streak = 0;
+  G.bestWave = 0;
+  G.gameMode = 'story';
+  G._savedTowers = [];
+  G.stagesCleared = [];
+  G.stageStars = {};
+  G.extremeProgress = 1;
+  G.storyProgress = 1;
+  G.runestones = 0;
+  G.moonRelics = 0;
+
   const res = await fetch('/api/load_state');
   if (res.ok) {
     const d = await res.json();
