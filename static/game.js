@@ -816,167 +816,503 @@ function showModeSelect() {
   const tutDone = localStorage.getItem('kr_tutorial_done');
   if (G._isNewRegistration && !tutDone) {
     G._isNewRegistration = false;
-    setTimeout(startModeSelectTutorial, 700);
+    setTimeout(showNpt, 600);
   }
 }
 
 // ── MODE-SELECT TUTORIAL (shown to new players on first visit) ────────────
-const MODE_SELECT_TUTORIAL_STEPS = [
+// ══════════════════════════════════════════════════════════════════════════════
+// NEW PLAYER TUTORIAL  —  12-step full-screen overlay (shown after registration)
+// ══════════════════════════════════════════════════════════════════════════════
+const NPT_STEPS = [
   {
-    title: 'Welcome to Kingdom\'s Reckoning!',
-    body: 'Greetings, Commander! You\'ve entered a realm under siege. This is your Command Center — where you choose your destiny and prepare for battle. Let me guide you through your options.',
-    keys: []
+    icon: '🏰', title: 'Overview & Goal',
+    heading: 'Welcome, Commander!',
+    subtitle: "Let's master Kingdom's Reckoning. Follow this guided tutorial to learn every feature.",
+    nextLabel: 'Choose Your Destiny',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">🏰 Overview &amp; Goal</div>
+          <p class="npt-section-sub">Kingdom's Reckoning is a tactical turn-based tower defense game.</p>
+          <div class="npt-cards-row">
+            <div class="npt-card"><div class="npt-card-icon">🗼</div><div class="npt-card-name">Build &amp; Upgrade Towers</div><div class="npt-card-desc">Place towers on the battlefield to stop enemy waves.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">⚔️</div><div class="npt-card-name">Defeat Enemies</div><div class="npt-card-desc">Survive increasingly harder waves.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">🏆</div><div class="npt-card-name">Complete Quests</div><div class="npt-card-desc">Earn rewards &amp; unlock new challenges.</div></div>
+          </div>
+          <div class="npt-goal-box">💡 <strong>Your Goal:</strong> Protect your kingdom by defeating all waves and achieving the highest score!</div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">✨ What you can do</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🎮</span><div><strong>Choose between Story &amp; Extreme modes</strong><br><small>Learn at your pace or test your limits</small></div><span class="npt-li-arrow">›</span></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🪙</span><div><strong>Manage Gold &amp; Castle HP</strong><br><small>Spend gold, protect your castle</small></div><span class="npt-li-arrow">›</span></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🏗️</span><div><strong>Build, upgrade &amp; combine towers</strong><br><small>Create powerful defenses</small></div><span class="npt-li-arrow">›</span></div>
+            <div class="npt-list-item"><span class="npt-li-icon">💀</span><div><strong>Face unique enemies &amp; waves</strong><br><small>Adapt your strategy to each threat</small></div><span class="npt-li-arrow">›</span></div>
+            <div class="npt-list-item"><span class="npt-li-icon">📜</span><div><strong>Complete quests &amp; climb the Hall of Glory</strong><br><small>Track your progress &amp; compete</small></div><span class="npt-li-arrow">›</span></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">👑</div>
+            <div class="npt-cta-title">Ready to Begin?</div>
+            <button class="npt-next-btn" onclick="nptGoTo(1)">Next: Choose Your Destiny &rsaquo;</button>
+            <div class="npt-cta-art">🏰⚔️🐉</div>
+          </div>
+        </div>
+      </div>`
   },
   {
-    title: '🏰 Story Mode — Learn the Art of War',
-    body: 'Story Mode is perfect for new commanders. You\'ll fight through 10 unique stages, each with 3 waves of enemies. You start with 80 Gold and 15 Castle HP. Complete quests, earn rewards, and discover the full game at a comfortable pace.',
-    keys: ['📖 Full quest system', '🗺️ Stage-by-stage campaign', '⚔️ Normal enemy strength']
+    icon: '⚔️', title: 'Choose Your Destiny',
+    heading: 'Choose Your Destiny',
+    subtitle: 'Two modes, two paths to glory. Pick the one that fits your style.',
+    nextLabel: 'Story Mode Basics',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">🏰 Story Mode</div>
+          <p class="npt-section-sub">Perfect for new commanders. A structured journey through 10 unique stages.</p>
+          <div class="npt-stat-grid">
+            <div class="npt-stat"><span class="npt-stat-icon">🪙</span><span>80 Starting Gold</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">❤️</span><span>15 Castle HP</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">⚔️</span><span>Standard enemies</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">📖</span><span>Full quest progression</span></div>
+          </div>
+          <div class="npt-vs-divider">VS</div>
+          <div class="npt-section-title">🐉 Extreme Mode</div>
+          <p class="npt-section-sub">For veteran commanders seeking the ultimate test with scarce resources.</p>
+          <div class="npt-stat-grid">
+            <div class="npt-stat danger"><span class="npt-stat-icon">🪙</span><span>40 Gold only</span></div>
+            <div class="npt-stat danger"><span class="npt-stat-icon">❤️</span><span>10 Castle HP</span></div>
+            <div class="npt-stat danger"><span class="npt-stat-icon">💀</span><span>1.75× stronger enemies</span></div>
+            <div class="npt-stat gold"><span class="npt-stat-icon">🏆</span><span>2× score multiplier</span></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">💡 Which should I pick?</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🌱</span><div><strong>New to tower defense?</strong><br><small>Start with Story Mode to learn mechanics</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🔥</span><div><strong>Veteran gamer?</strong><br><small>Jump into Extreme for maximum challenge</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🏆</span><div><strong>Want top leaderboard rankings?</strong><br><small>Extreme Mode gives 2× score</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🗺️</span><div><strong>Love story &amp; quests?</strong><br><small>Story Mode has a full quest system</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">⚔️</div>
+            <div class="npt-cta-title">Both modes are available anytime</div>
+            <button class="npt-next-btn" onclick="nptGoTo(2)">Next: Story Mode Basics &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
   },
   {
-    title: '🐉 Extreme Mode — For Veteran Commanders',
-    body: 'Think you\'re ready for a real challenge? Extreme Mode drops you on a hostile island with only 40 Gold, 10 Castle HP, and enemies that hit 1.75× harder. Your reward: 2× the score multiplier and eternal glory on the leaderboards.',
-    keys: ['💀 1.75× enemy strength', '🏝️ Choose your island biome', '🏆 2× score — fight for the Hall of Glory']
+    icon: '🗺️', title: 'Story Mode Basics',
+    heading: 'Story Mode Basics',
+    subtitle: 'A guided campaign through 10 stages — each harder than the last.',
+    nextLabel: 'Extreme Mode Basics',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">🗺️ Campaign Structure</div>
+          <div class="npt-cards-row">
+            <div class="npt-card"><div class="npt-card-icon">🏴</div><div class="npt-card-name">10 Stages</div><div class="npt-card-desc">Each stage has a unique name, theme, and enemy set.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">🌊</div><div class="npt-card-name">3 Waves Each</div><div class="npt-card-desc">Waves escalate in difficulty — the final wave is a boss rush!</div></div>
+            <div class="npt-card"><div class="npt-card-icon">⭐</div><div class="npt-card-name">Star Ratings</div><div class="npt-card-desc">Earn up to 3 stars based on your castle HP remaining.</div></div>
+          </div>
+          <div class="npt-goal-box">🎯 Clear Stage 10 to complete the campaign and unlock Hall of Glory recognition!</div>
+          <div class="npt-section-title" style="margin-top:12px">📜 Quest System</div>
+          <div class="npt-list-items compact">
+            <div class="npt-list-item"><span class="npt-li-icon">✅</span><div><strong>Main Quests</strong> — Defeat enemies, build towers, reach waves</div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">📅</span><div><strong>Daily Quests</strong> — Fresh challenges every day for bonus rewards</div></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">🏆 Stage Rewards</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🪙</span><div><strong>Gold bonus</strong><br><small>Earn extra gold on stage clear</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">💎</span><div><strong>Diamonds</strong><br><small>Premium currency from quest completions</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🪨</span><div><strong>Runestones</strong><br><small>Collected by defeating waves</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🌙</span><div><strong>Moon Relics</strong><br><small>Earned from daily streak rewards</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">🗺️</div>
+            <div class="npt-cta-title">Start with Stage 1 and work your way up!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(3)">Next: Extreme Mode Basics &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
   },
   {
-    title: '🏆 Hall of Glory — Rise to the Top',
-    body: 'At the top-left, you\'ll find your profile and the Hall of Glory button — that\'s the leaderboard. Every score you earn can land you among the realm\'s greatest commanders. Now choose your destiny and begin your reign!',
-    keys: ['💎 Earn Diamonds in-game', '🪨 Collect Runestones from stages', '🌙 Win Moon Relics from streaks']
+    icon: '🐉', title: 'Extreme Mode Basics',
+    heading: 'Extreme Mode Basics',
+    subtitle: 'Choose a hostile island biome and survive endless waves of powerful foes.',
+    nextLabel: 'How to Play',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">🏝️ Island Biomes</div>
+          <div class="npt-cards-row">
+            <div class="npt-card"><div class="npt-card-icon">🌋</div><div class="npt-card-name">Volcanic</div><div class="npt-card-desc">Fire enemies, lava hazards, fierce heat.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">🧊</div><div class="npt-card-name">Frozen</div><div class="npt-card-desc">Ice enemies resist frost, move fast in cold.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">🌿</div><div class="npt-card-name">Jungle</div><div class="npt-card-desc">Dense terrain, rapid regenerating enemies.</div></div>
+          </div>
+          <div class="npt-goal-box danger">⚠️ <strong>Warning:</strong> Extreme Mode has no checkpoints. If your castle falls, it's game over — but your score is saved!</div>
+          <div class="npt-stat-grid" style="margin-top:12px">
+            <div class="npt-stat danger"><span class="npt-stat-icon">💀</span><span>1.75× enemy HP &amp; damage</span></div>
+            <div class="npt-stat danger"><span class="npt-stat-icon">🪙</span><span>Only 40 starting gold</span></div>
+            <div class="npt-stat gold"><span class="npt-stat-icon">🏆</span><span>2× score multiplier</span></div>
+            <div class="npt-stat gold"><span class="npt-stat-icon">♾️</span><span>Endless waves</span></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">🎯 Tips for Extreme</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">1️⃣</span><div><strong>Prioritize the Archer Tower first</strong><br><small>Cheapest and most versatile starting tower</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">2️⃣</span><div><strong>Save gold for wave 2 upgrades</strong><br><small>Don't over-spend on wave 1</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">3️⃣</span><div><strong>Use Freeze spells on boss waves</strong><br><small>Slows enemies and buys time</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">4️⃣</span><div><strong>Enable Fast Mode wisely</strong><br><small>Only when your defense is solid</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">🐉</div>
+            <div class="npt-cta-title">Master Extreme to dominate the Hall of Glory!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(4)">Next: How to Play &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '🎮', title: 'How to Play',
+    heading: 'How to Play',
+    subtitle: 'Every turn has two phases: plan your defense, then execute it.',
+    nextLabel: 'Resources',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">🔄 The Turn Loop</div>
+          <div class="npt-phase-flow">
+            <div class="npt-phase blue"><div class="npt-phase-num">1</div><div class="npt-phase-icon">🏗️</div><div class="npt-phase-name">Planning Phase</div><div class="npt-phase-desc">Place &amp; upgrade towers. Cast preparation spells. No enemies move.</div></div>
+            <div class="npt-phase-arrow">→</div>
+            <div class="npt-phase gold"><div class="npt-phase-num">2</div><div class="npt-phase-icon">▶️</div><div class="npt-phase-name">Execute Turn</div><div class="npt-phase-desc">Enemies spawn &amp; march. Towers fire automatically. Watch the battle!</div></div>
+            <div class="npt-phase-arrow">→</div>
+            <div class="npt-phase green"><div class="npt-phase-num">3</div><div class="npt-phase-icon">🔁</div><div class="npt-phase-name">Next Wave</div><div class="npt-phase-desc">Earn gold from kills. Repeat until the wave is cleared.</div></div>
+          </div>
+          <div class="npt-goal-box">⚡ Enable <strong>Fast Mode</strong> in the top-right to speed up Execute phase when you're confident in your defense!</div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">🗺️ The Battlefield</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🟩</span><div><strong>Green grid tiles</strong><br><small>Open spaces — place towers here</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🏰</span><div><strong>Castle (right side)</strong><br><small>Protect this at all costs — enemies target it</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">⬅️</span><div><strong>Enemies spawn left</strong><br><small>They march right toward your castle</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🔴</span><div><strong>Red dots = enemy scouts</strong><br><small>Indicate future enemy spawn positions</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">🎮</div>
+            <div class="npt-cta-title">Simple turns, deep strategy!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(5)">Next: Resources &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '💰', title: 'Resources',
+    heading: 'Resources & Economy',
+    subtitle: 'Manage four currencies wisely — each has a unique role in your kingdom.',
+    nextLabel: 'Towers & Defenses',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">💰 The Four Currencies</div>
+          <div class="npt-resource-list">
+            <div class="npt-resource"><span class="npt-res-icon">🪙</span><div class="npt-res-info"><strong>Gold</strong><span class="npt-res-badge primary">Primary</span><p>Used to build &amp; upgrade towers. Earned by defeating enemies and clearing waves.</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">💎</span><div class="npt-res-info"><strong>Diamonds</strong><span class="npt-res-badge premium">Premium</span><p>Earned from quests &amp; achievements. Used in the Shop for rare items.</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">🪨</span><div class="npt-res-info"><strong>Runestones</strong><span class="npt-res-badge rune">Collectible</span><p>Dropped by enemies on wave clear. Used for special upgrades.</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">🌙</span><div class="npt-res-info"><strong>Moon Relics</strong><span class="npt-res-badge relic">Rare</span><p>Earned from daily login streaks. Powerful but scarce — spend wisely!</p></div></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">💡 Economy Tips</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🎯</span><div><strong>Don't over-build early</strong><br><small>Save gold for wave 2 &amp; 3 upgrades</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">⬆️</span><div><strong>Upgrading &gt; building</strong><br><small>A level-2 tower often beats two level-1s</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">📅</span><div><strong>Log in daily</strong><br><small>Daily streaks give Moon Relics &amp; Diamonds</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🛍️</span><div><strong>Check the Shop</strong><br><small>Special items available for Diamonds</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">💰</div>
+            <div class="npt-cta-title">Gold is everything early game!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(6)">Next: Towers &amp; Defenses &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '🗼', title: 'Towers & Defenses',
+    heading: 'Towers & Defenses',
+    subtitle: 'Five tower types — each excels against different enemies and situations.',
+    nextLabel: 'Upgrades',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">🗼 Tower Roster</div>
+          <div class="npt-tower-list">
+            <div class="npt-tower"><span class="npt-twr-icon">🏹</span><div class="npt-twr-info"><strong>Archer Tower</strong> <span class="npt-cost">🪙30</span><p>Balanced damage &amp; range. Best starter tower — buy this first!</p></div></div>
+            <div class="npt-tower"><span class="npt-twr-icon">🔮</span><div class="npt-twr-info"><strong>Mage Tower</strong> <span class="npt-cost">🪙60</span><p>High magic damage, area splash. Great vs grouped enemies.</p></div></div>
+            <div class="npt-tower"><span class="npt-twr-icon">💣</span><div class="npt-twr-info"><strong>Cannon Tower</strong> <span class="npt-cost">🪙90</span><p>Massive burst damage. Slow fire rate — use it on tanks &amp; bosses.</p></div></div>
+            <div class="npt-tower"><span class="npt-twr-icon">❄️</span><div class="npt-twr-info"><strong>Frost Tower</strong> <span class="npt-cost">🪙55</span><p>Freezes enemies in place. No kill power alone — combo with others!</p></div></div>
+            <div class="npt-tower"><span class="npt-twr-icon">⚡</span><div class="npt-twr-info"><strong>Tesla Tower</strong> <span class="npt-cost">🪙120</span><p>Chain lightning hits up to 3 enemies. Powerful but expensive.</p></div></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">🎯 Placement Tips</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">📍</span><div><strong>Range matters</strong><br><small>Place towers where paths cross for maximum coverage</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🧊</span><div><strong>Frost + Cannon combo</strong><br><small>Freeze enemies then blast them with Cannon</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">⚡</span><div><strong>Tesla near clusters</strong><br><small>Chain lightning shines when enemies bunch up</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🏹</span><div><strong>Archers on flanks</strong><br><small>Cover the most ground with 3-tile range</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">🗼</div>
+            <div class="npt-cta-title">Mix tower types for the best defense!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(7)">Next: Upgrades &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '⬆️', title: 'Upgrades',
+    heading: 'Upgrades & Abilities',
+    subtitle: 'Power up your towers and unleash devastating spells to turn the tide of battle.',
+    nextLabel: 'Enemies & Waves',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">⬆️ Tower Upgrades</div>
+          <p class="npt-section-sub">Click any placed tower during planning phase to upgrade it. Each upgrade boosts damage, range, and special effects.</p>
+          <div class="npt-cards-row">
+            <div class="npt-card"><div class="npt-card-icon">⭐</div><div class="npt-card-name">Level 1 → 2</div><div class="npt-card-desc">+30% damage, +1 range tile.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">⭐⭐</div><div class="npt-card-name">Level 2 → 3</div><div class="npt-card-desc">+50% damage, unlock special effect.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">⭐⭐⭐</div><div class="npt-card-name">Max Level</div><div class="npt-card-desc">Full power — near-unstoppable!</div></div>
+          </div>
+          <div class="npt-section-title" style="margin-top:14px">🌟 Spell Abilities</div>
+          <div class="npt-stat-grid">
+            <div class="npt-stat"><span class="npt-stat-icon">☄️</span><span>Meteor — area damage</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">❄️</span><span>Freeze — stop all enemies</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">⚡</span><span>Strike — single target nuke</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">🔧</span><span>Repair — restore castle HP</span></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">💡 Upgrade Strategy</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🎯</span><div><strong>Upgrade before buying new</strong><br><small>A lvl-3 tower out-performs 3 lvl-1s</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">❄️</span><div><strong>Freeze before boss waves</strong><br><small>Gives your towers more shots on tough enemies</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🔧</span><div><strong>Save Repair for emergencies</strong><br><small>Use it when your castle HP drops below 5</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">☄️</span><div><strong>Meteor on wave 3</strong><br><small>Save your meteor for the most intense wave</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">⬆️</div>
+            <div class="npt-cta-title">Spells are earned — use them wisely!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(8)">Next: Enemies &amp; Waves &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '💀', title: 'Enemies & Waves',
+    heading: 'Enemies & Waves',
+    subtitle: 'Know your enemies — each type requires a different counter-strategy.',
+    nextLabel: 'Quests',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">👾 Enemy Types</div>
+          <div class="npt-tower-list">
+            <div class="npt-tower"><span class="npt-twr-icon">🧟</span><div class="npt-twr-info"><strong>Infantry</strong><br><p>Basic melee units. Low HP, travel in groups — use Mage splash.</p></div></div>
+            <div class="npt-tower"><span class="npt-twr-icon">🏃</span><div class="npt-twr-info"><strong>Scout</strong><br><p>Very fast but fragile. Use Frost to slow them down.</p></div></div>
+            <div class="npt-tower"><span class="npt-twr-icon">🛡️</span><div class="npt-twr-info"><strong>Tank</strong><br><p>High HP, slow. Focus Cannon + Tesla to burst them down.</p></div></div>
+            <div class="npt-tower"><span class="npt-twr-icon">🐉</span><div class="npt-twr-info"><strong>Dragon (Boss)</strong><br><p>Massive HP, flies over obstacles. All towers + spells required!</p></div></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">🌊 Wave Structure</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">1️⃣</span><div><strong>Wave 1 — Scout wave</strong><br><small>Lighter enemies, time to build foundations</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">2️⃣</span><div><strong>Wave 2 — Main assault</strong><br><small>Mixed enemy types, upgrade towers now</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">3️⃣</span><div><strong>Wave 3 — Boss rush</strong><br><small>Toughest enemies, use all your spells!</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🔴</span><div><strong>Red dots = spawn previews</strong><br><small>Plan your towers before the wave hits</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">💀</div>
+            <div class="npt-cta-title">Know your enemy — plan accordingly!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(9)">Next: Quests &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '📜', title: 'Quests',
+    heading: 'Quests & Rewards',
+    subtitle: 'Complete quests to earn resources and track your progress as a Commander.',
+    nextLabel: 'Hall of Glory',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">📜 Quest Types</div>
+          <div class="npt-resource-list">
+            <div class="npt-resource"><span class="npt-res-icon">⚔️</span><div class="npt-res-info"><strong>First Blood</strong><br><p>Defeat 5 enemies — great beginner quest with gold reward.</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">🏗️</span><div class="npt-res-info"><strong>Architect</strong><br><p>Build 3 towers — rewards Diamonds for construction mastery.</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">🌊</span><div class="npt-res-info"><strong>Survivor</strong><br><p>Reach Wave 5 — tests your endurance and strategy.</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">🐉</span><div class="npt-res-info"><strong>Dragon Slayer</strong><br><p>Slay a Dragon boss — the ultimate combat quest!</p></div></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">📅 Daily Quests</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🔄</span><div><strong>Reset every 24 hours</strong><br><small>New challenges appear each day</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">💎</span><div><strong>Diamond rewards</strong><br><small>Daily quests give premium currency</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🌙</span><div><strong>Login streaks</strong><br><small>Consecutive days give Moon Relics</small></div></div>
+          </div>
+          <div class="npt-section-title" style="margin-top:12px">💡 Quest Tips</div>
+          <div class="npt-list-items compact">
+            <div class="npt-list-item"><span class="npt-li-icon">📌</span><div><strong>Check the Quest panel</strong> — left sidebar during gameplay</div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🎯</span><div><strong>Chase quests actively</strong> — they guide you to play well</div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">📜</div>
+            <div class="npt-cta-title">Quests = free rewards. Always check them!</div>
+            <button class="npt-next-btn" onclick="nptGoTo(10)">Next: Hall of Glory &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '🏆', title: 'Hall of Glory',
+    heading: 'Hall of Glory',
+    subtitle: 'The realm\'s leaderboard — compete with commanders worldwide for the top spot.',
+    nextLabel: 'Settings & More',
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">🏆 Leaderboard Rankings</div>
+          <div class="npt-cards-row">
+            <div class="npt-card gold-card"><div class="npt-card-icon">🥇</div><div class="npt-card-name">Top Commander</div><div class="npt-card-desc">Highest score earns eternal glory in the Hall of Fame.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">🥈</div><div class="npt-card-name">Top 10</div><div class="npt-card-desc">Appear on the main leaderboard page.</div></div>
+            <div class="npt-card"><div class="npt-card-icon">📊</div><div class="npt-card-name">Your Rank</div><div class="npt-card-desc">See where you stand among all commanders.</div></div>
+          </div>
+          <div class="npt-section-title" style="margin-top:14px">📈 How Scoring Works</div>
+          <div class="npt-stat-grid">
+            <div class="npt-stat"><span class="npt-stat-icon">💀</span><span>+Points per enemy defeated</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">🌊</span><span>+Bonus per wave cleared</span></div>
+            <div class="npt-stat"><span class="npt-stat-icon">❤️</span><span>+HP remaining bonus</span></div>
+            <div class="npt-stat gold"><span class="npt-stat-icon">🐉</span><span>2× multiplier in Extreme!</span></div>
+          </div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">🎯 Climb the Rankings</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🐉</span><div><strong>Play Extreme Mode</strong><br><small>2× score multiplier for all points</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">❤️</span><div><strong>Protect your castle HP</strong><br><small>Surviving with more HP = higher score</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">⚡</span><div><strong>Clear waves fast</strong><br><small>Speed bonuses reward efficient play</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🏆</span><div><strong>Click Hall of Glory anytime</strong><br><small>Button is always on your profile in the main menu</small></div></div>
+          </div>
+          <div class="npt-cta-card">
+            <div class="npt-cta-crown">🏆</div>
+            <div class="npt-cta-title">Will YOUR name be at the top?</div>
+            <button class="npt-next-btn" onclick="nptGoTo(11)">Next: Settings &amp; More &rsaquo;</button>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    icon: '⚙️', title: 'Settings & More',
+    heading: 'Settings & More',
+    subtitle: "You're all set, Commander. A few final tips before you march into battle!",
+    nextLabel: null,
+    html: () => `
+      <div class="npt-two-col">
+        <div class="npt-col-main">
+          <div class="npt-section-title">⚙️ Useful Settings</div>
+          <div class="npt-resource-list">
+            <div class="npt-resource"><span class="npt-res-icon">⚡</span><div class="npt-res-info"><strong>Fast Mode</strong><br><p>Toggle in the top bar during battle to speed up execute phase. Great once your defense is solid!</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">🔊</span><div class="npt-res-info"><strong>Sound &amp; Music</strong><br><p>Toggle audio via the settings gear icon in the top navigation bar.</p></div></div>
+            <div class="npt-resource"><span class="npt-res-icon">🛍️</span><div class="npt-res-info"><strong>Shop</strong><br><p>Access the Shop from the top bar to spend Diamonds on powerful items.</p></div></div>
+          </div>
+          <div class="npt-goal-box" style="margin-top:14px">🎉 <strong>You're ready!</strong> Choose Story Mode to begin your journey, or Extreme Mode for the ultimate challenge. Good luck, Commander!</div>
+        </div>
+        <div class="npt-col-side">
+          <div class="npt-section-title">🧠 Quick Recap</div>
+          <div class="npt-list-items">
+            <div class="npt-list-item"><span class="npt-li-icon">🏗️</span><div><strong>Plan &gt; Execute each turn</strong><br><small>Placement and upgrades happen in planning</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🪙</span><div><strong>Gold is your lifeblood</strong><br><small>Don't overspend early in the game</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🏆</span><div><strong>Extreme = glory</strong><br><small>2× score for leaderboard dominance</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">📜</span><div><strong>Do your daily quests</strong><br><small>Free Diamonds and Moon Relics every day</small></div></div>
+          </div>
+          <div class="npt-cta-card final">
+            <div class="npt-cta-crown" style="font-size:36px">👑</div>
+            <div class="npt-cta-title">The Kingdom awaits your command!</div>
+            <button class="npt-next-btn final-btn" onclick="skipNpt()">🚀 Begin Your Reign!</button>
+          </div>
+        </div>
+      </div>`
   }
 ];
 
-let _msTutStep = 0;
+let _nptStep = 0;
 
-function startModeSelectTutorial() {
-  _msTutStep = 0;
-  // Add a dim backdrop so the tutorial pops above the mode-select screen
-  let backdrop = document.getElementById('ms-tut-backdrop');
-  if (!backdrop) {
-    backdrop = document.createElement('div');
-    backdrop.id = 'ms-tut-backdrop';
-    backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;pointer-events:none;';
-    document.body.appendChild(backdrop);
-  }
-  backdrop.style.display = 'block';
-  _showMsTutStep();
+function showNpt() {
+  _nptStep = 0;
+  const overlay = document.getElementById('npt-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  _nptRenderSidebar();
+  _nptRenderStep();
 }
 
-function _showMsTutStep() {
-  const step = MODE_SELECT_TUTORIAL_STEPS[_msTutStep];
-  if (!step) { _endMsTutorial(); return; }
+function _nptRenderSidebar() {
+  const list = document.getElementById('npt-step-list');
+  const pct = document.getElementById('npt-pct');
+  if (!list) return;
+  const done = Math.round((_nptStep / NPT_STEPS.length) * 100);
+  if (pct) pct.textContent = done + '%';
+  list.innerHTML = NPT_STEPS.map((s, i) => {
+    const cls = i === _nptStep ? 'active' : i < _nptStep ? 'done' : '';
+    return `<li class="npt-step-item ${cls}" onclick="nptGoTo(${i})">
+      <span class="npt-step-num">${i + 1}.</span>
+      <span class="npt-step-icon">${s.icon}</span>
+      <span>${s.title}</span>
+    </li>`;
+  }).join('');
+}
 
-  const modal = document.getElementById('tutorial-modal');
-  if (!modal) return;
-
-  // ── Show & center the modal above the mode-select screen (z-index 9000) ──
-  modal.style.display = 'block';
-  modal.style.zIndex = '9999';
-  modal.style.position = 'fixed';
-  modal.style.top = '50%';
-  modal.style.left = '50%';
-  modal.style.right = 'auto';
-  modal.style.bottom = 'auto';
-  modal.style.transform = 'translate(-50%, -50%)';
-  modal.style.animation = 'tut-modal-in 0.45s cubic-bezier(0.34,1.3,0.64,1) both';
-
-  // Reuse existing tutorial modal elements
-  const title = document.getElementById('tut-title');
-  const body = document.getElementById('tut-body');
-  const counter = document.getElementById('tut-counter');
-  const pips = document.getElementById('tut-pips');
-  const keysRow = document.getElementById('tut-keys-row');
-  const cursor = document.getElementById('tut-cursor');
-  const portrait = document.getElementById('tut-npc-portrait');
-
-  if (title) title.textContent = step.title;
-  if (counter) counter.textContent = `STEP ${_msTutStep + 1} / ${MODE_SELECT_TUTORIAL_STEPS.length}`;
-  if (cursor) cursor.style.display = 'inline';
-
-  // Pips
-  if (pips) {
-    pips.innerHTML = MODE_SELECT_TUTORIAL_STEPS.map((_, i) => {
-      const cls = i < _msTutStep ? 'done' : i === _msTutStep ? 'active' : '';
-      return `<div class="tut-pip ${cls}"></div>`;
+function _nptRenderStep() {
+  const step = NPT_STEPS[_nptStep];
+  const counter = document.getElementById('npt-step-counter');
+  const heading = document.getElementById('npt-heading');
+  const subtitle = document.getElementById('npt-subtitle');
+  const content = document.getElementById('npt-content');
+  const dots = document.getElementById('npt-dots-row');
+  if (counter) counter.textContent = `Step ${_nptStep + 1} of ${NPT_STEPS.length}`;
+  if (heading) heading.textContent = step.heading;
+  if (subtitle) subtitle.textContent = step.subtitle;
+  if (content) { content.innerHTML = step.html(); content.scrollTop = 0; }
+  if (dots) {
+    dots.innerHTML = NPT_STEPS.map((_, i) => {
+      const cls = i === _nptStep ? 'active' : i < _nptStep ? 'done' : '';
+      return `<div class="npt-dot ${cls}" onclick="nptGoTo(${i})"></div>`;
     }).join('');
   }
-
-  // Key hints
-  if (keysRow) {
-    if (step.keys && step.keys.length > 0) {
-      keysRow.style.display = 'flex';
-      keysRow.innerHTML = step.keys.map(k => `<span class="tut-key">${k}</span>`).join('');
-    } else {
-      keysRow.style.display = 'none';
-    }
-  }
-
-  // Override next button to use our step function
-  const cta = document.getElementById('tut-cta');
-  if (cta) {
-    cta.textContent = _msTutStep < MODE_SELECT_TUTORIAL_STEPS.length - 1 ? 'Got it →' : 'Start Playing!';
-    cta.onclick = _nextMsTutStep;
-  }
-
-  // Override skip button
-  const skipBtn = modal.querySelector('.tut-btn-skip');
-  if (skipBtn) skipBtn.onclick = _endMsTutorial;
-
-  // Remove spotlight/arrow overlays (not needed on mode select)
-  const spotlight = document.getElementById('tut-spotlight');
-  const arrow = document.getElementById('tut-arrow');
-  if (spotlight) spotlight.style.display = 'none';
-  if (arrow) arrow.style.display = 'none';
-
-  // Typewriter effect for body
-  if (body) {
-    body.textContent = '';
-    let i = 0;
-    const text = step.body;
-    const interval = setInterval(() => {
-      body.textContent = text.slice(0, i);
-      i++;
-      if (i > text.length) {
-        clearInterval(interval);
-        if (cursor) cursor.style.display = 'none';
-      }
-    }, 18);
-  }
 }
 
-function _nextMsTutStep() {
-  _msTutStep++;
-  if (_msTutStep >= MODE_SELECT_TUTORIAL_STEPS.length) {
-    _endMsTutorial();
-  } else {
-    _showMsTutStep();
-  }
-}
+window.nptGoTo = function(idx) {
+  _nptStep = Math.max(0, Math.min(idx, NPT_STEPS.length - 1));
+  _nptRenderSidebar();
+  _nptRenderStep();
+};
 
-function _endMsTutorial() {
-  const modal = document.getElementById('tutorial-modal');
-  if (modal) {
-    modal.style.display = 'none';
-    modal.style.top = '';
-    modal.style.left = '';
-    modal.style.right = '';
-    modal.style.bottom = '';
-    modal.style.transform = '';
-    modal.style.zIndex = '';
-  }
-  // Remove dim backdrop
-  const backdrop = document.getElementById('ms-tut-backdrop');
-  if (backdrop) backdrop.style.display = 'none';
-  const spotlight = document.getElementById('tut-spotlight');
-  const arrow = document.getElementById('tut-arrow');
-  if (spotlight) spotlight.style.display = 'none';
-  if (arrow) arrow.style.display = 'none';
-  // Restore original tutorial button handlers
-  const cta = document.getElementById('tut-cta');
-  if (cta) cta.onclick = nextTutorialStep;
-  const modal2 = document.getElementById('tutorial-modal');
-  const skipBtn = modal2 && modal2.querySelector('.tut-btn-skip');
-  if (skipBtn) skipBtn.onclick = skipTutorial;
-}
-// ────────────────────────────────────────────────────────────────────────────
+window.skipNpt = function() {
+  const overlay = document.getElementById('npt-overlay');
+  if (overlay) overlay.style.display = 'none';
+  localStorage.setItem('kr_tutorial_done', '1');
+};
+// ──────────────────────────────────────────────────────────────────────────
 
 window.selectMode = function (mode) {
   G.gameMode = mode;

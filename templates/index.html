@@ -23,6 +23,660 @@
   <style>
     /* ── Portrait rotation overlay styling already defined ── */
 
+    /* ══════════════════════════════════════════════════════════════════
+       NEW PLAYER TUTORIAL OVERLAY — 12-step full-screen panel
+       ══════════════════════════════════════════════════════════════════ */
+    #npt-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10500;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .75);
+      padding: 16px;
+      box-sizing: border-box;
+      font-family: 'EB Garamond', serif;
+    }
+
+    .npt-panel {
+      display: flex;
+      width: min(1160px, 96vw);
+      height: min(590px, 88vh);
+      background: linear-gradient(145deg, #08061a 0%, #0e0b28 100%);
+      border: 1.5px solid rgba(201, 162, 39, .5);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(0, 0, 0, .9), 0 0 160px rgba(100, 60, 200, .12);
+      animation: nptPanelIn .35s cubic-bezier(.34, 1.2, .64, 1) both;
+    }
+
+    @keyframes nptPanelIn {
+      from {
+        opacity: 0;
+        transform: scale(.93) translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .npt-sidebar {
+      width: 228px;
+      flex-shrink: 0;
+      background: rgba(4, 3, 12, .65);
+      border-right: 1px solid rgba(201, 162, 39, .18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .npt-progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 13px 9px;
+      border-bottom: 1px solid rgba(201, 162, 39, .14);
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: #e8c84a;
+      letter-spacing: .1em;
+    }
+
+    .npt-pct {
+      background: rgba(201, 162, 39, .15);
+      border: 1px solid rgba(201, 162, 39, .35);
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .npt-step-list {
+      list-style: none;
+      margin: 0;
+      padding: 5px 0;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .npt-step-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5.5px 13px;
+      cursor: pointer;
+      font-size: 12px;
+      color: rgba(200, 185, 220, .42);
+      transition: all .18s;
+      border-left: 3px solid transparent;
+      line-height: 1.3;
+    }
+
+    .npt-step-item:hover {
+      color: rgba(220, 200, 240, .8);
+      background: rgba(201, 162, 39, .06);
+    }
+
+    .npt-step-item.active {
+      background: rgba(201, 162, 39, .13);
+      border-left-color: #e8c84a;
+      color: #f5e090;
+      font-weight: 600;
+    }
+
+    .npt-step-item.done {
+      color: rgba(200, 185, 220, .28);
+    }
+
+    .npt-step-num {
+      font-family: 'Cinzel', serif;
+      font-size: 9.5px;
+      color: rgba(200, 170, 80, .4);
+      min-width: 14px;
+      flex-shrink: 0;
+    }
+
+    .npt-step-icon {
+      font-size: 13px;
+      flex-shrink: 0;
+      width: 17px;
+      text-align: center;
+    }
+
+    .npt-skip-btn {
+      margin: 8px 12px 13px;
+      padding: 7px 0;
+      background: rgba(255, 255, 255, .033);
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: 8px;
+      color: rgba(200, 185, 220, .42);
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .npt-skip-btn:hover {
+      background: rgba(255, 60, 60, .1);
+      border-color: rgba(255, 80, 80, .3);
+      color: rgba(255, 140, 140, .8);
+    }
+
+    .npt-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .npt-header-bar {
+      padding: 14px 18px 8px;
+      border-bottom: 1px solid rgba(201, 162, 39, .1);
+      flex-shrink: 0;
+    }
+
+    .npt-step-counter {
+      position: absolute;
+      top: 15px;
+      right: 17px;
+      font-family: 'Cinzel', serif;
+      font-size: 10.5px;
+      color: rgba(200, 185, 220, .35);
+      letter-spacing: .08em;
+    }
+
+    .npt-heading {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(17px, 2.2vw, 24px);
+      font-weight: 700;
+      color: #e8c84a;
+      margin: 0 0 4px;
+      text-align: center;
+      letter-spacing: .04em;
+    }
+
+    .npt-subtitle {
+      font-family: 'EB Garamond', serif;
+      font-size: 13.5px;
+      color: rgba(210, 195, 230, .58);
+      text-align: center;
+      margin: 0;
+      font-style: italic;
+    }
+
+    .npt-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 13px 16px 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(201, 162, 39, .3) transparent;
+    }
+
+    .npt-dots-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 0 10px;
+      border-top: 1px solid rgba(201, 162, 39, .1);
+      flex-shrink: 0;
+    }
+
+    .npt-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(200, 185, 220, .16);
+      transition: all .3s;
+      cursor: pointer;
+    }
+
+    .npt-dot.active {
+      background: #e8c84a;
+      box-shadow: 0 0 7px rgba(232, 200, 74, .6);
+      width: 17px;
+      border-radius: 4px;
+    }
+
+    .npt-dot.done {
+      background: rgba(201, 162, 39, .36);
+    }
+
+    /* Content layouts */
+    .npt-two-col {
+      display: flex;
+      gap: 14px;
+      min-height: 100%;
+    }
+
+    .npt-col-main {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .npt-col-side {
+      flex: .9;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .npt-section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #c9a227;
+      letter-spacing: .06em;
+      margin: 0;
+    }
+
+    .npt-section-sub {
+      font-size: 12.5px;
+      color: rgba(210, 195, 230, .62);
+      margin: 0;
+      font-style: italic;
+    }
+
+    .npt-cards-row {
+      display: flex;
+      gap: 7px;
+    }
+
+    .npt-card {
+      flex: 1;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(201, 162, 39, .18);
+      border-radius: 9px;
+      padding: 9px 7px;
+      text-align: center;
+    }
+
+    .npt-card.gold-card {
+      border-color: rgba(201, 162, 39, .5);
+      background: rgba(201, 162, 39, .08);
+    }
+
+    .npt-card-icon {
+      font-size: 20px;
+      margin-bottom: 3px;
+    }
+
+    .npt-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 9.5px;
+      color: #e8c84a;
+      letter-spacing: .05em;
+      margin-bottom: 3px;
+      font-weight: 700;
+    }
+
+    .npt-card-desc {
+      font-size: 11px;
+      color: rgba(210, 195, 230, .58);
+      line-height: 1.35;
+    }
+
+    .npt-goal-box {
+      background: rgba(201, 162, 39, .09);
+      border: 1px solid rgba(201, 162, 39, .28);
+      border-radius: 8px;
+      padding: 8px 11px;
+      font-size: 12.5px;
+      color: rgba(240, 225, 180, .82);
+      line-height: 1.5;
+    }
+
+    .npt-goal-box.danger {
+      background: rgba(220, 60, 60, .07);
+      border-color: rgba(220, 80, 80, .28);
+      color: rgba(255, 175, 165, .82);
+    }
+
+    .npt-list-items {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .npt-list-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 9px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .055);
+      border-radius: 7px;
+      font-size: 12.5px;
+      color: rgba(210, 195, 230, .72);
+      line-height: 1.3;
+    }
+
+    .npt-li-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .npt-li-arrow {
+      margin-left: auto;
+      color: rgba(201, 162, 39, .48);
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .npt-list-item strong {
+      color: rgba(230, 215, 245, .88);
+      display: block;
+    }
+
+    .npt-list-item small {
+      color: rgba(175, 160, 195, .58);
+      font-size: 11px;
+    }
+
+    .npt-cta-card {
+      background: linear-gradient(135deg, rgba(28, 18, 68, .85) 0%, rgba(18, 10, 48, .92) 100%);
+      border: 1px solid rgba(201, 162, 39, .32);
+      border-radius: 11px;
+      padding: 13px 12px 11px;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .npt-cta-card.final {
+      border-color: rgba(201, 162, 39, .6);
+      background: linear-gradient(135deg, rgba(50, 28, 8, .75), rgba(80, 48, 8, .55));
+    }
+
+    .npt-cta-crown {
+      font-size: 24px;
+      margin-bottom: 3px;
+    }
+
+    .npt-cta-title {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: #c9a227;
+      margin-bottom: 9px;
+      letter-spacing: .04em;
+    }
+
+    .npt-cta-art {
+      font-size: 26px;
+      margin-top: 7px;
+      letter-spacing: 5px;
+      opacity: .68;
+    }
+
+    .npt-next-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: linear-gradient(90deg, #1a6ef5, #2d8fff);
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .05em;
+      transition: all .2s;
+      width: 100%;
+    }
+
+    .npt-next-btn:hover {
+      background: linear-gradient(90deg, #1558cc, #1a7aee);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(30, 110, 245, .38);
+    }
+
+    .npt-next-btn.final-btn {
+      background: linear-gradient(90deg, #b8860b, #e8c84a);
+      color: #1a0a04;
+      font-weight: 900;
+    }
+
+    .npt-next-btn.final-btn:hover {
+      background: linear-gradient(90deg, #c9a227, #f5d860);
+      box-shadow: 0 4px 16px rgba(201, 162, 39, .48);
+    }
+
+    .npt-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .npt-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 7px;
+      font-size: 12px;
+      color: rgba(210, 195, 230, .72);
+    }
+
+    .npt-stat.danger {
+      border-color: rgba(220, 80, 80, .22);
+      background: rgba(220, 60, 60, .07);
+      color: rgba(255, 175, 170, .78);
+    }
+
+    .npt-stat.gold {
+      border-color: rgba(201, 162, 39, .32);
+      background: rgba(201, 162, 39, .09);
+      color: rgba(240, 218, 145, .88);
+    }
+
+    .npt-stat-icon {
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .npt-vs-divider {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(201, 162, 39, .55);
+      letter-spacing: .2em;
+      margin: 2px 0;
+    }
+
+    .npt-tower-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .npt-tower {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 7px 9px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(201, 162, 39, .13);
+      border-radius: 7px;
+    }
+
+    .npt-twr-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .npt-twr-info {
+      flex: 1;
+    }
+
+    .npt-twr-info strong {
+      font-family: 'Cinzel', serif;
+      font-size: 10.5px;
+      color: #e8c84a;
+      letter-spacing: .04em;
+    }
+
+    .npt-twr-info p {
+      margin: 2px 0 0;
+      font-size: 11.5px;
+      color: rgba(200, 185, 220, .62);
+      line-height: 1.35;
+    }
+
+    .npt-cost {
+      font-size: 10.5px;
+      color: rgba(201, 162, 39, .72);
+      margin-left: 5px;
+    }
+
+    .npt-resource-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .npt-resource {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 7px 9px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(255, 255, 255, .065);
+      border-radius: 7px;
+    }
+
+    .npt-res-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .npt-res-info {
+      flex: 1;
+    }
+
+    .npt-res-info strong {
+      font-family: 'Cinzel', serif;
+      font-size: 10.5px;
+      color: #e8c84a;
+    }
+
+    .npt-res-info p {
+      margin: 2px 0 0;
+      font-size: 11.5px;
+      color: rgba(200, 185, 220, .62);
+      line-height: 1.35;
+    }
+
+    .npt-res-badge {
+      display: inline-block;
+      margin-left: 7px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-family: 'Cinzel', serif;
+      letter-spacing: .06em;
+      vertical-align: middle;
+    }
+
+    .npt-res-badge.primary {
+      background: rgba(201, 162, 39, .2);
+      color: #e8c84a;
+      border: 1px solid rgba(201, 162, 39, .38);
+    }
+
+    .npt-res-badge.premium {
+      background: rgba(100, 180, 255, .14);
+      color: #a0d0ff;
+      border: 1px solid rgba(100, 180, 255, .28);
+    }
+
+    .npt-res-badge.rune {
+      background: rgba(180, 120, 255, .11);
+      color: #d0a0ff;
+      border: 1px solid rgba(180, 120, 255, .24);
+    }
+
+    .npt-res-badge.relic {
+      background: rgba(80, 200, 180, .09);
+      color: #80d0c0;
+      border: 1px solid rgba(80, 200, 180, .22);
+    }
+
+    .npt-phase-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .npt-phase {
+      flex: 1;
+      padding: 9px 7px;
+      border-radius: 9px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .npt-phase.blue {
+      background: rgba(30, 90, 220, .14);
+      border: 1px solid rgba(60, 120, 255, .28);
+    }
+
+    .npt-phase.gold {
+      background: rgba(201, 162, 39, .11);
+      border: 1px solid rgba(201, 162, 39, .32);
+    }
+
+    .npt-phase.green {
+      background: rgba(40, 160, 80, .11);
+      border: 1px solid rgba(60, 180, 100, .28);
+    }
+
+    .npt-phase-num {
+      font-family: 'Cinzel', serif;
+      font-size: 9.5px;
+      color: rgba(210, 195, 230, .4);
+    }
+
+    .npt-phase-icon {
+      font-size: 20px;
+    }
+
+    .npt-phase-name {
+      font-family: 'Cinzel', serif;
+      font-size: 10.5px;
+      color: #e8c84a;
+      letter-spacing: .04em;
+      font-weight: 700;
+    }
+
+    .npt-phase-desc {
+      font-size: 11px;
+      color: rgba(200, 185, 220, .62);
+      line-height: 1.35;
+    }
+
+    .npt-phase-arrow {
+      display: flex;
+      align-items: center;
+      padding: 0 3px;
+      color: rgba(201, 162, 39, .48);
+      font-size: 18px;
+    }
+
     /* ── Hall of Glory button (below profile avatar) ── */
     .ms-hud-profile-wrap {
       display: flex;
@@ -1452,6 +2106,37 @@
       document.fonts && document.fonts.ready && document.fonts.ready.then(measureHud);
     })();
   </script>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       NEW PLAYER TUTORIAL OVERLAY — shown after registration
+       ══════════════════════════════════════════════════════════════ -->
+  <div id="npt-overlay" style="display:none">
+    <div class="npt-panel">
+
+      <!-- Sidebar -->
+      <div class="npt-sidebar">
+        <div class="npt-progress-header">
+          <span>⭐ Tutorial Progress</span>
+          <span class="npt-pct" id="npt-pct">0%</span>
+        </div>
+        <ul class="npt-step-list" id="npt-step-list"></ul>
+        <button class="npt-skip-btn" onclick="skipNpt()">⏭ Skip Tutorial</button>
+      </div>
+
+      <!-- Main content -->
+      <div class="npt-main">
+        <div class="npt-step-counter" id="npt-step-counter">Step 1 of 12</div>
+        <div class="npt-header-bar">
+          <div class="npt-heading" id="npt-heading">Welcome, Commander!</div>
+          <div class="npt-subtitle" id="npt-subtitle">Follow this guided tutorial to learn every feature.</div>
+        </div>
+        <div class="npt-content" id="npt-content"></div>
+        <div class="npt-dots-row" id="npt-dots-row"></div>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 
 </html>
