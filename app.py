@@ -17,8 +17,8 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 @app.route('/static/<path:filename>')
 def static_files(filename):
     response = send_from_directory(app.static_folder, filename)
-    # Cache static assets for 7 days on Vercel's CDN edge
-    response.headers['Cache-Control'] = 'public, max-age=604800, immutable'
+    # Cache static assets for 1 hour (allows updates to propagate faster)
+    response.headers['Cache-Control'] = 'public, max-age=3600'
     return response
 
 _secret = os.getenv("SECRET_KEY")

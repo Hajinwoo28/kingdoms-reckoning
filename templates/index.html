@@ -19,7 +19,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Exo+2:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260517b">
   <style>
     /* ── Portrait rotation overlay styling already defined ── */
 
@@ -1708,7 +1708,7 @@
             <div class="ms-card-badge story-badge">STORY MODE</div>
             <div class="ms-card-art">🏰</div>
             <h2 class="ms-card-title">Story Mode</h2>
-            <p class="ms-card-mode-desc">Embark on a structured campaign across 10 unique stages. Build towers, master
+            <p class="ms-card-mode-desc" style="display:none">Embark on a structured campaign across 10 unique stages. Build towers, master
               tactics, and unlock new challenges at your own pace — ideal for commanders learning the art of tower
               defense.</p>
             <ul class="ms-card-desc">
@@ -1725,7 +1725,7 @@
             <div class="ms-card-badge extreme-badge">EXTREME MODE</div>
             <div class="ms-card-art">🐉</div>
             <h2 class="ms-card-title">Extreme Mode</h2>
-            <p class="ms-card-mode-desc">Choose an island biome and survive endless waves of brutal enemies. Resources
+            <p class="ms-card-mode-desc" style="display:none">Choose an island biome and survive endless waves of brutal enemies. Resources
               are scarce, foes hit harder, and only the sharpest commanders prevail — built for veterans seeking the
               ultimate test.</p>
             <ul class="ms-card-desc">
@@ -2005,7 +2005,7 @@
     </div><!-- /game-section -->
   </div><!-- /app-wrapper -->
 
-  <script src="{{ url_for('static', filename='game.js') }}"></script>
+  <script src="{{ url_for('static', filename='game.js') }}?v=20260517b"></script>
 
   <!-- ══ MOBILE PANEL CONTROLLER ══
        Tiny, self-contained script that handles
