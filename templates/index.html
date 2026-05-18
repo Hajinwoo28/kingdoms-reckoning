@@ -1754,18 +1754,18 @@
       </div>
 
       <div class="ms-content">
-        <!-- Logo hidden — background image already contains the branding -->
-        <div class="ms-logo" style="display:none">
+        <!-- Logo visible — title shown above mode cards -->
+        <div class="ms-logo">
           <div class="ms-logo-icon">⚔️</div>
           <h1 class="ms-title">Kingdom's<br><span class="ms-title-accent">Reckoning</span></h1>
           <p class="ms-tagline">TACTICAL TURN-BASED TOWER DEFENSE</p>
         </div>
-        <div class="ms-destiny-label" style="display:none">CHOOSE YOUR DESTINY</div>
+        <div class="ms-destiny-label">CHOOSE YOUR DESTINY</div>
         <div class="ms-cards">
 
-          <!-- STORY MODE -->
+          <!-- ADVENTURE MODE -->
           <div class="ms-card ms-card-story" onclick="selectMode('story')">
-            <div class="ms-card-badge story-badge">STORY MODE</div>
+            <div class="ms-card-badge story-badge">ADVENTURE MODE</div>
             <div class="ms-card-art">🏰</div>
             <h2 class="ms-card-title">Adventure Mode</h2>
             <p class="ms-card-mode-desc" style="display:none">Embark on a structured campaign across 10 unique stages.
@@ -1781,9 +1781,9 @@
             <button class="ms-start-btn story-start-btn">▶ Start a New Game</button>
           </div>
 
-          <!-- EXTREME MODE -->
+          <!-- HARDCORE MODE -->
           <div class="ms-card ms-card-extreme" onclick="selectMode('extreme')">
-            <div class="ms-card-badge extreme-badge">EXTREME MODE</div>
+            <div class="ms-card-badge extreme-badge">HARDCORE MODE</div>
             <div class="ms-card-art">🐉</div>
             <h2 class="ms-card-title">Hardcore Mode</h2>
             <p class="ms-card-mode-desc" style="display:none">Choose an island biome and survive endless waves of brutal
@@ -1889,7 +1889,7 @@
         <div class="ss-header">
           <button class="ss-back-btn" onclick="backFromStageSelect()">← Back</button>
           <div class="ss-title-wrap">
-            <div class="ss-pre">⚔️ STORY MODE</div>
+            <div class="ss-pre">⚔️ ADVENTURE MODE</div>
             <h1 class="ss-title">Choose Your Stage</h1>
             <p class="ss-sub">Complete all 3 waves to clear a stage and unlock the next</p>
           </div>
@@ -1919,7 +1919,7 @@
         <div class="is-header">
           <button class="is-back-btn" onclick="backFromIslandSelect()">← Back</button>
           <div class="is-title-wrap">
-            <div class="is-pre">🔥 EXTREME MODE</div>
+            <div class="is-pre">🔥 HARDCORE MODE</div>
             <h1 class="is-title">Choose Your Island</h1>
             <p class="is-sub">Each island holds unique creatures, challenges &amp; exclusive rewards</p>
           </div>
