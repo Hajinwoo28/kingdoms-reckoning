@@ -87,7 +87,7 @@ const ENEMY_DEFS = {
   }
 };
 
-// ── BIOME DEFINITIONS (Hardcore Mode Island Select) ───────────
+// ── BIOME DEFINITIONS (Extreme Mode Island Select) ───────────
 const BIOME_DEFS = {
   tundra: {
     id: 'tundra',
@@ -450,7 +450,7 @@ let G = {
   quests: [], questProgress: {},
   selectedTowerType: null, selectedTower: null,
   tempShield: 0,
-  // Adventure Mode stage tracking
+  // Story Mode stage tracking
   storyStage: 1,    // which stage (1–10)
   waveInStage: 1,   // wave within stage (1, 2, 3)
   stagesCleared: [], // array of cleared stage IDs
@@ -501,6 +501,18 @@ function initAuthTabs() {
   // Mark register tab button as active
   const regBtn = document.getElementById('tab-register') || document.querySelector('.auth-tab-btn');
   if (regBtn) regBtn.classList.add('active');
+
+  // Enter key on the login password field triggers login (prevents repeated button clicks)
+  const pwLogin = document.getElementById('password-login');
+  if (pwLogin) {
+    pwLogin.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const loginBtn = document.querySelector('#pane-login .btn-auth-primary');
+        loginTabbed(loginBtn);
+      }
+    });
+  }
 }
 
 window.authSwitchTab = function (tab) {
@@ -605,6 +617,11 @@ async function registerTabbed(btn) {
 
 // ── Tabbed login — accepts optional btn element ──
 async function loginTabbed(btn) {
+  // Prevent multiple simultaneous login requests
+  const loginBtn = btn || document.querySelector('#pane-login .btn-auth-primary');
+  if (loginBtn && loginBtn.disabled) return;
+  if (loginBtn) { loginBtn.disabled = true; loginBtn.textContent = 'ENTERING…'; }
+
   const pane = (btn && btn.closest && btn.closest('#pane-login, [id*="login"], .auth-tab-pane, .auth-card, form'))
     || document.getElementById('pane-login')
     || document.querySelector('.auth-tab-pane.active, .auth-tab-pane:last-of-type')
@@ -616,14 +633,26 @@ async function loginTabbed(btn) {
 
   const u = uEl ? uEl.value.trim() : '';
   const p = pEl ? pEl.value : '';
-  if (!u || !p) return setAuthMsg('Enter your Commander ID and War Seal.', true);
-  const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
-  const data = await res.json();
-  if (data.username) {
-    G.accountId = data.account_id || 0;
-    G.username = data.username;
-    showGame(data.username);
-  } else setAuthMsg(data.error, true);
+  if (!u || !p) {
+    setAuthMsg('Enter your Commander ID and War Seal.', true);
+    if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'ENTER REALM'; }
+    return;
+  }
+  try {
+    const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+    const data = await res.json();
+    if (data.username) {
+      G.accountId = data.account_id || 0;
+      G.username = data.username;
+      showGame(data.username);
+    } else {
+      setAuthMsg(data.error, true);
+      if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'ENTER REALM'; }
+    }
+  } catch (err) {
+    setAuthMsg('Connection error. Please try again.', true);
+    if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'ENTER REALM'; }
+  }
 }
 
 // ── Global aliases — covers any HTML version that uses older or alternate names ──
@@ -884,11 +913,11 @@ const NPT_STEPS = [
     icon: '⚔️', title: 'Choose Your Destiny',
     heading: 'Choose Your Destiny',
     subtitle: 'Two modes, two paths to glory. Pick the one that fits your style.',
-    nextLabel: 'Adventure Mode Basics',
+    nextLabel: 'Story Mode Basics',
     html: () => `
       <div class="npt-two-col">
         <div class="npt-col-main">
-          <div class="npt-section-title">🏰 Adventure Mode</div>
+          <div class="npt-section-title">🏰 Story Mode</div>
           <p class="npt-section-sub">Perfect for new commanders. A structured journey through 10 unique stages.</p>
           <div class="npt-stat-grid">
             <div class="npt-stat"><span class="npt-stat-icon">🪙</span><span>80 Starting Gold</span></div>
@@ -897,7 +926,7 @@ const NPT_STEPS = [
             <div class="npt-stat"><span class="npt-stat-icon">📖</span><span>Full quest progression</span></div>
           </div>
           <div class="npt-vs-divider">VS</div>
-          <div class="npt-section-title">🐉 Hardcore Mode</div>
+          <div class="npt-section-title">🐉 Extreme Mode</div>
           <p class="npt-section-sub">For veteran commanders seeking the ultimate test with scarce resources.</p>
           <div class="npt-stat-grid">
             <div class="npt-stat danger"><span class="npt-stat-icon">🪙</span><span>40 Gold only</span></div>
@@ -909,24 +938,24 @@ const NPT_STEPS = [
         <div class="npt-col-side">
           <div class="npt-section-title">💡 Which should I pick?</div>
           <div class="npt-list-items">
-            <div class="npt-list-item"><span class="npt-li-icon">🌱</span><div><strong>New to tower defense?</strong><br><small>Start with Adventure Mode to learn mechanics</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🌱</span><div><strong>New to tower defense?</strong><br><small>Start with Story Mode to learn mechanics</small></div></div>
             <div class="npt-list-item"><span class="npt-li-icon">🔥</span><div><strong>Veteran gamer?</strong><br><small>Jump into Extreme for maximum challenge</small></div></div>
-            <div class="npt-list-item"><span class="npt-li-icon">🏆</span><div><strong>Want top leaderboard rankings?</strong><br><small>Hardcore Mode gives 2× score</small></div></div>
-            <div class="npt-list-item"><span class="npt-li-icon">🗺️</span><div><strong>Love story &amp; quests?</strong><br><small>Adventure Mode has a full quest system</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🏆</span><div><strong>Want top leaderboard rankings?</strong><br><small>Extreme Mode gives 2× score</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🗺️</span><div><strong>Love story &amp; quests?</strong><br><small>Story Mode has a full quest system</small></div></div>
           </div>
           <div class="npt-cta-card">
             <div class="npt-cta-crown">⚔️</div>
             <div class="npt-cta-title">Both modes are available anytime</div>
-            <button class="npt-next-btn" onclick="nptGoTo(2)">Next: Adventure Mode Basics &rsaquo;</button>
+            <button class="npt-next-btn" onclick="nptGoTo(2)">Next: Story Mode Basics &rsaquo;</button>
           </div>
         </div>
       </div>`
   },
   {
-    icon: '🗺️', title: 'Adventure Mode Basics',
-    heading: 'Adventure Mode Basics',
+    icon: '🗺️', title: 'Story Mode Basics',
+    heading: 'Story Mode Basics',
     subtitle: 'A guided campaign through 10 stages — each harder than the last.',
-    nextLabel: 'Hardcore Mode Basics',
+    nextLabel: 'Extreme Mode Basics',
     html: () => `
       <div class="npt-two-col">
         <div class="npt-col-main">
@@ -954,14 +983,14 @@ const NPT_STEPS = [
           <div class="npt-cta-card">
             <div class="npt-cta-crown">🗺️</div>
             <div class="npt-cta-title">Start with Stage 1 and work your way up!</div>
-            <button class="npt-next-btn" onclick="nptGoTo(3)">Next: Hardcore Mode Basics &rsaquo;</button>
+            <button class="npt-next-btn" onclick="nptGoTo(3)">Next: Extreme Mode Basics &rsaquo;</button>
           </div>
         </div>
       </div>`
   },
   {
-    icon: '🐉', title: 'Hardcore Mode Basics',
-    heading: 'Hardcore Mode Basics',
+    icon: '🐉', title: 'Extreme Mode Basics',
+    heading: 'Extreme Mode Basics',
     subtitle: 'Choose a hostile island biome and survive endless waves of powerful foes.',
     nextLabel: 'How to Play',
     html: () => `
@@ -973,7 +1002,7 @@ const NPT_STEPS = [
             <div class="npt-card"><div class="npt-card-icon">🧊</div><div class="npt-card-name">Frozen</div><div class="npt-card-desc">Ice enemies resist frost, move fast in cold.</div></div>
             <div class="npt-card"><div class="npt-card-icon">🌿</div><div class="npt-card-name">Jungle</div><div class="npt-card-desc">Dense terrain, rapid regenerating enemies.</div></div>
           </div>
-          <div class="npt-goal-box danger">⚠️ <strong>Warning:</strong> Hardcore Mode has no checkpoints. If your castle falls, it's game over — but your score is saved!</div>
+          <div class="npt-goal-box danger">⚠️ <strong>Warning:</strong> Extreme Mode has no checkpoints. If your castle falls, it's game over — but your score is saved!</div>
           <div class="npt-stat-grid" style="margin-top:12px">
             <div class="npt-stat danger"><span class="npt-stat-icon">💀</span><span>1.75× enemy HP &amp; damage</span></div>
             <div class="npt-stat danger"><span class="npt-stat-icon">🪙</span><span>Only 40 starting gold</span></div>
@@ -1228,7 +1257,7 @@ const NPT_STEPS = [
         <div class="npt-col-side">
           <div class="npt-section-title">🎯 Climb the Rankings</div>
           <div class="npt-list-items">
-            <div class="npt-list-item"><span class="npt-li-icon">🐉</span><div><strong>Play Hardcore Mode</strong><br><small>2× score multiplier for all points</small></div></div>
+            <div class="npt-list-item"><span class="npt-li-icon">🐉</span><div><strong>Play Extreme Mode</strong><br><small>2× score multiplier for all points</small></div></div>
             <div class="npt-list-item"><span class="npt-li-icon">❤️</span><div><strong>Protect your castle HP</strong><br><small>Surviving with more HP = higher score</small></div></div>
             <div class="npt-list-item"><span class="npt-li-icon">⚡</span><div><strong>Clear waves fast</strong><br><small>Speed bonuses reward efficient play</small></div></div>
             <div class="npt-list-item"><span class="npt-li-icon">🏆</span><div><strong>Click Hall of Glory anytime</strong><br><small>Button is always on your profile in the main menu</small></div></div>
@@ -1255,7 +1284,7 @@ const NPT_STEPS = [
             <div class="npt-resource"><span class="npt-res-icon">🔊</span><div class="npt-res-info"><strong>Sound &amp; Music</strong><br><p>Toggle audio via the settings gear icon in the top navigation bar.</p></div></div>
             <div class="npt-resource"><span class="npt-res-icon">🛍️</span><div class="npt-res-info"><strong>Shop</strong><br><p>Access the Shop from the top bar to spend Diamonds on powerful items.</p></div></div>
           </div>
-          <div class="npt-goal-box" style="margin-top:14px">🎉 <strong>You're ready!</strong> Choose Adventure Mode to begin your journey, or Hardcore Mode for the ultimate challenge. Good luck, Commander!</div>
+          <div class="npt-goal-box" style="margin-top:14px">🎉 <strong>You're ready!</strong> Choose Story Mode to begin your journey, or Extreme Mode for the ultimate challenge. Good luck, Commander!</div>
         </div>
         <div class="npt-col-side">
           <div class="npt-section-title">🧠 Quick Recap</div>
@@ -1345,7 +1374,7 @@ window.selectMode = function (mode) {
     document.getElementById('mode-select-section').style.display = 'none';
     showIslandSelect();
   } else {
-    // Adventure Mode → clear any extreme biome, go to Stage Select
+    // Story Mode → clear any extreme biome, go to Stage Select
     G.activeBiome = null;
     try { localStorage.removeItem('kr_active_biome'); } catch (_) { }
     loadStageProgress();
@@ -3788,7 +3817,7 @@ async function waveComplete() {
     ${biomeExtraLine}`;
   document.getElementById('wcm-hint').textContent = biome
     ? `${biome.icon} ${biome.name} — ${biome.reward.desc}`
-    : (G.gameMode === 'extreme' ? `🔥 Hardcore Mode — 2× score! Push further!`
+    : (G.gameMode === 'extreme' ? `🔥 Extreme Mode — 2× score! Push further!`
       : (isMilestone ? `Milestone bonus! Every 5 waves = extra 💎!` : ''));
   wcm.style.display = 'flex';
 
