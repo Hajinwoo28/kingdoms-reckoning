@@ -831,11 +831,10 @@ function showModeSelect() {
   const contBtn = document.getElementById('ms-continue-btn');
   if (contBtn) contBtn.style.display = hasSave ? 'block' : 'none';
 
-  // ── New-player tutorial on mode-select screen ──────────────────────────
-  // Show for: (a) just-registered players, OR (b) any fresh account that hasn't seen the tutorial
-  const tutDone = localStorage.getItem('kr_tutorial_done');
-  const isFreshAccount = !hasSave && G.score === 0 && G.bestWave === 0;
-  if (!tutDone && (G._isNewRegistration || isFreshAccount)) {
+  // ── New-player tutorial: show to ANY user who hasn't completed it yet ──────
+  // Uses its own key (kr_npt_done) so it never conflicts with the in-game tutorial.
+  const nptDone = localStorage.getItem('kr_npt_done');
+  if (!nptDone) {
     G._isNewRegistration = false;
     setTimeout(showNpt, 600);
   }
@@ -1322,16 +1321,16 @@ function _nptRenderStep() {
   }
 }
 
-window.nptGoTo = function(idx) {
+window.nptGoTo = function (idx) {
   _nptStep = Math.max(0, Math.min(idx, NPT_STEPS.length - 1));
   _nptRenderSidebar();
   _nptRenderStep();
 };
 
-window.skipNpt = function() {
+window.skipNpt = function () {
   const overlay = document.getElementById('npt-overlay');
   if (overlay) overlay.style.display = 'none';
-  localStorage.setItem('kr_tutorial_done', '1');
+  localStorage.setItem('kr_npt_done', '1'); // dedicated key — never blocks in-game tutorial
 };
 // ──────────────────────────────────────────────────────────────────────────
 
