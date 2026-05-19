@@ -598,6 +598,9 @@ async function registerTabbed(btn) {
     G.accountId = data.account_id || 0;
     G.username = data.username;
     G._isNewRegistration = true; // flag to show mode-select tutorial
+    // Clear any leftover tutorial flags from previous accounts on this browser
+    localStorage.removeItem('kr_npt_done');
+    localStorage.removeItem('kr_tutorial_done');
     setAuthMsg('Welcome, Commander! Preparing your realm...', false);
     setTimeout(() => showGame(data.username), 900);
   }
@@ -831,11 +834,12 @@ function showModeSelect() {
   const contBtn = document.getElementById('ms-continue-btn');
   if (contBtn) contBtn.style.display = hasSave ? 'block' : 'none';
 
-  // ── New-player tutorial: show to ANY user who hasn't completed it yet ──────
+  // ── New-player tutorial: show on fresh registration OR if never completed ──
   // Uses its own key (kr_npt_done) so it never conflicts with the in-game tutorial.
   const nptDone = localStorage.getItem('kr_npt_done');
-  if (!nptDone) {
+  if (!nptDone || G._isNewRegistration) {
     G._isNewRegistration = false;
+    localStorage.removeItem('kr_npt_done'); // ensure clean slate
     setTimeout(showNpt, 600);
   }
 }
@@ -1527,7 +1531,11 @@ window.selectStage = function (stageId) {
   updateModeBadge();
 
   const seen = localStorage.getItem('kr_tutorial_done');
-  if (!seen) setTimeout(startTutorial, 800);
+  if (!seen || G._isNewRegistration) {
+    G._isNewRegistration = false;
+    localStorage.removeItem('kr_tutorial_done'); // clear stale flag for new accounts
+    setTimeout(startTutorial, 800);
+  }
 };
 
 window.backFromStageSelect = function () {
@@ -1538,16 +1546,12 @@ window.backFromStageSelect = function () {
 // Island scene position config — 5 islands evenly spaced with clear air between each
 // Width reduced so each island fits within its ~18vw column; top stagger for depth.
 const ISLAND_POSITIONS = {
-  // Difficulty 2 — leftmost, lowest (easiest)
-  jungle: { left: '2%', top: '34%', w: 165, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-  // Difficulty 3
-  tundra: { left: '19%', top: '26%', w: 168, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  desert: { left: '36%', top: '22%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-  // Difficulty 4
-  volcano: { left: '53%', top: '15%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-  abyss: { left: '70%', top: '11%', w: 155, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
-  // Difficulty 5 — rightmost, highest (hardest)
-  forest: { left: '85%', top: '6%', w: 158, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  tundra: { left: '3%', top: '20%', w: 168, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  jungle: { left: '21%', top: '16%', w: 182, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  volcano: { left: '39%', top: '21%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  forest: { left: '57%', top: '17%', w: 155, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  desert: { left: '75%', top: '20%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+  abyss: { left: '88%', top: '18%', w: 148, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
 };
 
 /* Responsive island sizes — called at render time so resize events work */
@@ -1556,40 +1560,37 @@ function getIslandPositions() {
   const isLandscape = window.innerWidth > window.innerHeight;
 
   if (vw <= 480 && !isLandscape) {
-    /* Phone portrait: 3 × 2 grid — easier top-row lower, harder bottom-row higher */
+    /* Phone portrait: 3 × 2 grid */
     return {
-      // Row 1 — difficulty 2,3,3 (step up left→right)
-      jungle: { left: '2%', top: '5%', w: 90, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      tundra: { left: '36%', top: '2%', w: 100, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      desert: { left: '68%', top: '0%', w: 86, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      // Row 2 — difficulty 4,4,5 (step up left→right)
-      volcano: { left: '2%', top: '52%', w: 85, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      abyss: { left: '36%', top: '50%', w: 80, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
-      forest: { left: '68%', top: '48%', w: 82, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      tundra: { left: '2%', top: '3%', w: 90, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '36%', top: '1%', w: 100, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '68%', top: '4%', w: 85, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '2%', top: '50%', w: 82, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '36%', top: '52%', w: 86, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '68%', top: '50%', w: 80, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   if (isLandscape && vw <= 960) {
-    /* Landscape phone / small tablet: 6-in-a-row, staircase by difficulty */
+    /* Landscape phone / small tablet: 5-in-a-row, compact
+       top pushed down ~18-22% so islands clear the header on short screens */
     return {
-      jungle: { left: '1%', top: '32%', w: 105, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      tundra: { left: '18%', top: '24%', w: 116, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      desert: { left: '35%', top: '20%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      volcano: { left: '52%', top: '14%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      abyss: { left: '69%', top: '10%', w: 90, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
-      forest: { left: '84%', top: '5%', w: 96, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      tundra: { left: '2%', top: '20%', w: 105, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '21%', top: '16%', w: 116, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '40%', top: '21%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '59%', top: '17%', w: 96, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '78%', top: '20%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '92%', top: '18%', w: 90, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   if (vw <= 960) {
-    /* Tablet portrait: 3 × 2 — easier top-row lower, harder bottom-row higher */
+    /* Tablet portrait: 3 × 2 */
     return {
-      // Row 1 — difficulty 2,3,3
-      jungle: { left: '2%', top: '10%', w: 130, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      tundra: { left: '36%', top: '6%', w: 142, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      desert: { left: '68%', top: '3%', w: 124, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      // Row 2 — difficulty 4,4,5
-      volcano: { left: '2%', top: '55%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      abyss: { left: '36%', top: '52%', w: 114, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
-      forest: { left: '68%', top: '49%', w: 118, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      tundra: { left: '2%', top: '8%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+      jungle: { left: '36%', top: '5%', w: 142, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+      volcano: { left: '68%', top: '9%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+      forest: { left: '2%', top: '53%', w: 118, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+      desert: { left: '36%', top: '55%', w: 124, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+      abyss: { left: '68%', top: '53%', w: 114, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
     };
   }
   return ISLAND_POSITIONS;
@@ -2901,6 +2902,14 @@ window.selectBiome = function (biomeId) {
   restartGame(false);
   showToast(`${biome.icon} Entering ${biome.name}!`, 'tsuccess');
   updateModeBadge();
+
+  // Show in-game tutorial for new registrations or first-timers
+  const seenTut = localStorage.getItem('kr_tutorial_done');
+  if (!seenTut || G._isNewRegistration) {
+    G._isNewRegistration = false;
+    localStorage.removeItem('kr_tutorial_done');
+    setTimeout(startTutorial, 800);
+  }
 };
 
 window.backFromIslandSelect = function () {
