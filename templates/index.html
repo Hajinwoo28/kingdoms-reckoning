@@ -1527,6 +1527,29 @@
     </div>
   </div>
 
+  <!-- TUTORIAL COMPLETE MODAL — shown in-game after finishing tutorial steps -->
+  <div id="tutorial-complete-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box success-box sc-box">
+      <div class="sc-banner">
+        <span class="sc-stage-icon">🎓</span>
+        <div class="sc-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a)">TUTORIAL COMPLETE!</div>
+      </div>
+      <h2 class="modal-title success-title">Well done, Commander!</h2>
+      <p class="sc-stage-name">You have learned the basics of Kingdom's Reckoning.</p>
+      <div class="modal-rewards" style="display:flex;gap:12px;justify-content:center;margin:16px 0">
+        <div class="reward-chip">🪙 <strong>+50</strong><br><small>Gold</small></div>
+        <div class="reward-chip">💎 <strong>+1</strong><br><small>Diamond</small></div>
+        <div class="reward-chip" style="border-color:rgba(240,200,66,.5);background:rgba(240,200,66,.08)">🏅
+          <strong>Tutorial</strong><br><small>Badge</small></div>
+      </div>
+      <button class="btn-modal primary-btn"
+        style="width:100%;background:linear-gradient(135deg,#22c55e,#16a34a);margin-top:8px"
+        onclick="document.getElementById('tutorial-complete-modal').style.display='none';showModeSelect()">
+        ▶ Choose Your Destiny
+      </button>
+    </div>
+  </div>
+
   <!-- STAGE COMPLETE MODAL -->
   <div id="stage-complete-modal" class="modal-overlay" style="display:none">
     <div class="modal-box success-box sc-box">
