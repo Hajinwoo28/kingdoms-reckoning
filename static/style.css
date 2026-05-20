@@ -5365,7 +5365,8 @@ body {
 .island-scroll-row {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: safe center;
   gap: 40px;
   padding: 48px 80px 32px;
   overflow-x: auto;

@@ -1453,6 +1453,17 @@ window.skipNpt = function () {
   const overlay = document.getElementById('npt-overlay');
   if (overlay) overlay.style.display = 'none';
   localStorage.setItem('kr_npt_done', '1'); // dedicated key — never blocks in-game tutorial
+
+  // Hide the mode select section since we are going straight to gameplay
+  const modeSelect = document.getElementById('mode-select-section');
+  if (modeSelect) modeSelect.style.display = 'none';
+
+  // Clear in-game tutorial flag to guarantee the tutorial wave starts
+  localStorage.removeItem('kr_tutorial_done');
+
+  // Set default mode and load Stage 1
+  G.gameMode = 'story';
+  selectStage(1);
 };
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -5603,9 +5614,22 @@ function endTutorial() {
   // Final achievement
   _tutShowAchievement({ icon: '🏆', name: 'Ready for Battle!', xp: '+100 XP Bonus' });
   showToast('Tutorial complete! Good luck, Commander! ⚔️', 'tsuccess');
+
+  // Show the tutorial complete modal overlay
+  const tcModal = document.getElementById('tutorial-complete-modal');
+  if (tcModal) tcModal.style.display = 'flex';
 }
 
 window.skipTutorial = function () { endTutorial(); };
+
+window.exitTutorialToModeSelect = function () {
+  const tcModal = document.getElementById('tutorial-complete-modal');
+  if (tcModal) tcModal.style.display = 'none';
+  document.getElementById('game-section').style.display = 'none';
+  G.gameOver = true;
+  G.isAnimating = false;
+  showModeSelect();
+};
 
 // ── SCORE CARD SHARE ──────────────────────────────────────────
 window.shareScoreCard = function () {
