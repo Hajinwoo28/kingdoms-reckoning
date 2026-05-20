@@ -190,6 +190,91 @@ const BIOME_DEFS = {
     reward: { type: 'void_crystal', icon: '💠', label: 'Void Crystal ×3', desc: 'All towers gain splash damage for this run', gold: 90, dia: 7 },
     enemyMods: { hpMult: 1.25, spdBonus: 0, dmgMult: 1.4 },
     loreText: 'Ancient sea monsters and shadow beasts dwell in these lightless subterranean caves.'
+  },
+  ice_cream: {
+    id: 'ice_cream',
+    name: 'Ice Cream Isles',
+    tagline: 'Sweet treats hide bitter frosts',
+    icon: '🍦',
+    art: '🍨',
+    color: '#FF92D0',
+    colorDark: '#BE185D',
+    colorBg: 'rgba(255,146,208,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(190,24,93,.30) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(255,146,208,0.50)',
+    difficulty: 2,
+    enemies: ['sugar_rusher', 'candy_golem', 'frosting_ghoul', 'sundae_dragon'],
+    reward: { type: 'candy_shard', icon: '🍬', label: 'Candy Shard ×3', desc: 'All towers slow enemies by 40% for this run', gold: 55, dia: 4 },
+    enemyMods: { hpMult: 0.85, spdBonus: 1, dmgMult: 0.95 },
+    loreText: 'Confectionery constructs and sugar-spun demons guard the frozen peaks of this saccharine isle.'
+  },
+  candy_cane: {
+    id: 'candy_cane',
+    name: 'Candy Cane Crags',
+    tagline: 'Peppermint winds carry peril',
+    icon: '🍭',
+    art: '🍭',
+    color: '#FF4466',
+    colorDark: '#9F1239',
+    colorBg: 'rgba(255,68,102,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(159,18,57,.35) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(255,68,102,0.50)',
+    difficulty: 3,
+    enemies: ['peppermint_sprite', 'candy_knight', 'licorice_troll', 'gingerbread_titan'],
+    reward: { type: 'peppermint_core', icon: '🌀', label: 'Peppermint Core ×3', desc: '+35% tower attack range for this run', gold: 65, dia: 5 },
+    enemyMods: { hpMult: 1.05, spdBonus: 0, dmgMult: 1.15 },
+    loreText: 'Razor-sharp candy cane spires and armored confection knights defend these treacherous crags.'
+  },
+  chocolate: {
+    id: 'chocolate',
+    name: 'Chocolate Citadel',
+    tagline: 'Rich depths conceal bitter conquest',
+    icon: '🍫',
+    art: '🍫',
+    color: '#C47B3A',
+    colorDark: '#78350F',
+    colorBg: 'rgba(196,123,58,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(120,53,15,.38) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(196,123,58,0.50)',
+    difficulty: 4,
+    enemies: ['cocoa_sprite', 'brownie_brute', 'fudge_knight', 'truffle_dragon'],
+    reward: { type: 'cocoa_shard', icon: '✨', label: 'Cocoa Shard ×3', desc: '+50% gold from all enemy kills for this run', gold: 85, dia: 6 },
+    enemyMods: { hpMult: 1.2, spdBonus: 0, dmgMult: 1.4 },
+    loreText: 'Dark chocolate fortresses conceal molten fudge dungeons guarded by confection titans of legendary power.'
+  },
+  sky_peak: {
+    id: 'sky_peak',
+    name: 'Sky Peak Dominion',
+    tagline: 'Above the clouds, war eternal',
+    icon: '⛅',
+    art: '☁️',
+    color: '#64B5F6',
+    colorDark: '#1565C0',
+    colorBg: 'rgba(100,181,246,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(21,101,192,.32) 0%, rgba(7,6,26,.95) 100%)',
+    border: 'rgba(100,181,246,0.50)',
+    difficulty: 4,
+    enemies: ['cloud_wisp', 'sky_golem', 'storm_troll', 'thunder_dragon'],
+    reward: { type: 'storm_crystal', icon: '⚡', label: 'Storm Crystal ×3', desc: 'All towers chain-lightning up to 3 enemies for this run', gold: 88, dia: 7 },
+    enemyMods: { hpMult: 1.3, spdBonus: 1, dmgMult: 1.45 },
+    loreText: 'Cloud colossuses and storm sovereigns reign supreme above the eternal tempest of the sky peaks.'
+  },
+  planetary: {
+    id: 'planetary',
+    name: 'Planetary Invasion',
+    tagline: 'Alien forces from beyond the stars',
+    icon: '🪐',
+    art: '👾',
+    color: '#A855F7',
+    colorDark: '#581C87',
+    colorBg: 'rgba(168,85,247,0.12)',
+    gradient: 'linear-gradient(135deg, rgba(88,28,135,.38) 0%, rgba(3,2,18,.98) 100%)',
+    border: 'rgba(168,85,247,0.50)',
+    difficulty: 5,
+    enemies: ['plasma_drone', 'void_reaper', 'neutron_troll', 'cosmic_leviathan'],
+    reward: { type: 'void_star', icon: '⭐', label: 'Void Star ×3', desc: 'All enemies drop triple gold for this run', gold: 100, dia: 8 },
+    enemyMods: { hpMult: 1.6, spdBonus: 1, dmgMult: 1.9 },
+    loreText: 'Extraterrestrial war machines and cosmic overlords descend upon the realm from the outer void.'
   }
 };
 
@@ -224,7 +309,32 @@ const BIOME_ENEMY_DEFS = {
   cave_bat: { id: 'cave_bat', name: 'Cave Bat', icon: '🦇', cssClass: 'en-goblin', baseHp: 16, speed: 3, reward: 9, damage: 1, desc: 'Blindingly fast swarm', ability: 'dash', abilityChance: 0.40 },
   deep_lurker: { id: 'deep_lurker', name: 'Deep Lurker', icon: '👁️', cssClass: 'en-orc', baseHp: 55, speed: 1, reward: 18, damage: 3, desc: 'Terrifying ambusher' },
   stone_colossus: { id: 'stone_colossus', name: 'Stone Colossus', icon: '🗿', cssClass: 'en-troll', baseHp: 150, speed: 1, reward: 40, damage: 4, desc: 'Absorbs hits', ability: 'deflect', deflectChance: 0.25 },
-  void_leviathan: { id: 'void_leviathan', name: 'Void Leviathan', icon: '🐙', cssClass: 'en-dragon', baseHp: 500, speed: 1, reward: 145, damage: 10, desc: 'BOSS — ink burst', boss: true, ability: 'breath' }
+  void_leviathan: { id: 'void_leviathan', name: 'Void Leviathan', icon: '🐙', cssClass: 'en-dragon', baseHp: 500, speed: 1, reward: 145, damage: 10, desc: 'BOSS — ink burst', boss: true, ability: 'breath' },
+  // Ice Cream Isles
+  sugar_rusher: { id: 'sugar_rusher', name: 'Sugar Rusher', icon: '🍬', cssClass: 'en-goblin', baseHp: 14, speed: 3, reward: 8, damage: 1, desc: 'Sugar-high speed freak', ability: 'dash', abilityChance: 0.45 },
+  candy_golem: { id: 'candy_golem', name: 'Candy Golem', icon: '🍦', cssClass: 'en-orc', baseHp: 45, speed: 1, reward: 15, damage: 2, desc: 'Hardened sugar shell' },
+  frosting_ghoul: { id: 'frosting_ghoul', name: 'Frosting Ghoul', icon: '👻', cssClass: 'en-troll', baseHp: 85, speed: 1, reward: 26, damage: 2, desc: 'Regenerates from cream', ability: 'regen', regenAmt: 7 },
+  sundae_dragon: { id: 'sundae_dragon', name: 'Sundae Dragon', icon: '🐲', cssClass: 'en-dragon', baseHp: 380, speed: 1, reward: 115, damage: 7, desc: 'BOSS — ice cream breath', boss: true, ability: 'breath' },
+  // Candy Cane Crags
+  peppermint_sprite: { id: 'peppermint_sprite', name: 'Peppermint Sprite', icon: '🌀', cssClass: 'en-goblin', baseHp: 18, speed: 3, reward: 9, damage: 1, desc: 'Spinning candy rush', ability: 'dash', abilityChance: 0.38 },
+  candy_knight: { id: 'candy_knight', name: 'Candy Knight', icon: '⚔️', cssClass: 'en-knight', baseHp: 160, speed: 1, reward: 45, damage: 4, desc: 'Crystalline armor', ability: 'deflect', deflectChance: 0.30 },
+  licorice_troll: { id: 'licorice_troll', name: 'Licorice Troll', icon: '🧌', cssClass: 'en-troll', baseHp: 105, speed: 1, reward: 30, damage: 3, desc: 'Stretches and reforms', ability: 'regen', regenAmt: 9 },
+  gingerbread_titan: { id: 'gingerbread_titan', name: 'Gingerbread Titan', icon: '🫚', cssClass: 'en-dragon', baseHp: 430, speed: 1, reward: 125, damage: 8, desc: 'BOSS — cookie crumble', boss: true, ability: 'breath' },
+  // Chocolate Citadel
+  cocoa_sprite: { id: 'cocoa_sprite', name: 'Cocoa Sprite', icon: '🍫', cssClass: 'en-goblin', baseHp: 20, speed: 2, reward: 11, damage: 1, desc: 'Bitter and swift', ability: 'dash', abilityChance: 0.30 },
+  brownie_brute: { id: 'brownie_brute', name: 'Brownie Brute', icon: '👹', cssClass: 'en-orc', baseHp: 65, speed: 1, reward: 22, damage: 3, desc: 'Dense fudge armour' },
+  fudge_knight: { id: 'fudge_knight', name: 'Fudge Knight', icon: '🏇', cssClass: 'en-knight', baseHp: 190, speed: 1, reward: 52, damage: 5, desc: 'Melts hits away', ability: 'deflect', deflectChance: 0.33 },
+  truffle_dragon: { id: 'truffle_dragon', name: 'Truffle Dragon', icon: '🐉', cssClass: 'en-dragon', baseHp: 470, speed: 1, reward: 138, damage: 9, desc: 'BOSS — molten choc blast', boss: true, ability: 'breath' },
+  // Sky Peak Dominion
+  cloud_wisp: { id: 'cloud_wisp', name: 'Cloud Wisp', icon: '☁️', cssClass: 'en-goblin', baseHp: 15, speed: 3, reward: 9, damage: 1, desc: 'Ephemeral storm scout', ability: 'dash', abilityChance: 0.42 },
+  sky_golem: { id: 'sky_golem', name: 'Sky Golem', icon: '🗿', cssClass: 'en-orc', baseHp: 58, speed: 1, reward: 19, damage: 3, desc: 'Compressed storm energy' },
+  storm_troll: { id: 'storm_troll', name: 'Storm Troll', icon: '⛈️', cssClass: 'en-troll', baseHp: 125, speed: 1, reward: 36, damage: 4, desc: 'Recharged by lightning', ability: 'regen', regenAmt: 11 },
+  thunder_dragon: { id: 'thunder_dragon', name: 'Thunder Dragon', icon: '⚡', cssClass: 'en-dragon', baseHp: 490, speed: 1, reward: 142, damage: 10, desc: 'BOSS — thunderclap', boss: true, ability: 'breath' },
+  // Planetary Invasion
+  plasma_drone: { id: 'plasma_drone', name: 'Plasma Drone', icon: '🛸', cssClass: 'en-goblin', baseHp: 22, speed: 3, reward: 12, damage: 1, desc: 'Hyperspeed alien scout', ability: 'dash', abilityChance: 0.40 },
+  void_reaper: { id: 'void_reaper', name: 'Void Reaper', icon: '👾', cssClass: 'en-orc', baseHp: 70, speed: 1, reward: 24, damage: 4, desc: 'Interdimensional slayer' },
+  neutron_troll: { id: 'neutron_troll', name: 'Neutron Troll', icon: '🌀', cssClass: 'en-troll', baseHp: 170, speed: 1, reward: 48, damage: 5, desc: 'Atomic regeneration', ability: 'regen', regenAmt: 14 },
+  cosmic_leviathan: { id: 'cosmic_leviathan', name: 'Cosmic Leviathan', icon: '🪐', cssClass: 'en-dragon', baseHp: 560, speed: 1, reward: 160, damage: 12, desc: 'BOSS — singularity beam', boss: true, ability: 'breath' }
 };
 // Merge biome enemies into main ENEMY_DEFS
 Object.assign(ENEMY_DEFS, BIOME_ENEMY_DEFS);
@@ -598,6 +708,8 @@ async function registerTabbed(btn) {
     G.accountId = data.account_id || 0;
     G.username = data.username;
     G._isNewRegistration = true; // flag to show mode-select tutorial
+    // Persist across async chain using sessionStorage so it survives promise chains
+    sessionStorage.setItem('kr_new_reg', '1');
     // Clear any leftover tutorial flags from previous accounts on this browser
     localStorage.removeItem('kr_npt_done');
     localStorage.removeItem('kr_tutorial_done');
@@ -796,6 +908,9 @@ function showGame(username) {
     checkDailyStreak();
     initDailyChallenges();
     showModeSelect();
+  }).catch(() => {
+    // Network or server error — still proceed to mode select so tutorial can show
+    showModeSelect();
   });
 }
 
@@ -835,10 +950,13 @@ function showModeSelect() {
   if (contBtn) contBtn.style.display = hasSave ? 'block' : 'none';
 
   // ── New-player tutorial: show on fresh registration OR if never completed ──
-  // Uses its own key (kr_npt_done) so it never conflicts with the in-game tutorial.
+  // Uses sessionStorage (kr_new_reg) as primary source-of-truth so the flag
+  // survives the async loadSavedState → .then() chain reliably.
   const nptDone = localStorage.getItem('kr_npt_done');
-  if (!nptDone || G._isNewRegistration) {
+  const isNewReg = G._isNewRegistration || !!sessionStorage.getItem('kr_new_reg');
+  if (!nptDone || isNewReg) {
     G._isNewRegistration = false;
+    sessionStorage.removeItem('kr_new_reg');
     localStorage.removeItem('kr_npt_done'); // ensure clean slate
     setTimeout(showNpt, 600);
   }
@@ -1531,8 +1649,10 @@ window.selectStage = function (stageId) {
   updateModeBadge();
 
   const seen = localStorage.getItem('kr_tutorial_done');
-  if (!seen || G._isNewRegistration) {
+  const isNew = !seen || G._isNewRegistration || !!sessionStorage.getItem('kr_new_reg');
+  if (isNew) {
     G._isNewRegistration = false;
+    sessionStorage.removeItem('kr_new_reg');
     localStorage.removeItem('kr_tutorial_done'); // clear stale flag for new accounts
     setTimeout(startTutorial, 800);
   }
@@ -1545,56 +1665,44 @@ window.backFromStageSelect = function () {
 
 // Island scene position config — 5 islands evenly spaced with clear air between each
 // Width reduced so each island fits within its ~18vw column; top stagger for depth.
+// Island float-animation configs for horizontal scroll layout
+// left/top are unused (flex handles positioning); w drives the SVG size.
 const ISLAND_POSITIONS = {
-  tundra: { left: '3%', top: '20%', w: 168, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-  jungle: { left: '21%', top: '16%', w: 182, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-  volcano: { left: '39%', top: '21%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-  forest: { left: '57%', top: '17%', w: 155, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-  desert: { left: '75%', top: '20%', w: 162, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-  abyss: { left: '88%', top: '18%', w: 148, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+  tundra: { left: '0%', top: '0%', w: 160, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
+  volcano: { left: '0%', top: '0%', w: 160, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
+  jungle: { left: '0%', top: '0%', w: 168, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
+  desert: { left: '0%', top: '0%', w: 160, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
+  abyss: { left: '0%', top: '0%', w: 155, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
+  forest: { left: '0%', top: '0%', w: 152, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
+  ice_cream: { left: '0%', top: '0%', w: 155, floatDur: '5.0s', floatDelay: '-1.1s', zIndex: 6 },
+  candy_cane: { left: '0%', top: '0%', w: 155, floatDur: '5.7s', floatDelay: '-2.8s', zIndex: 5 },
+  chocolate: { left: '0%', top: '0%', w: 158, floatDur: '6.0s', floatDelay: '-0.5s', zIndex: 6 },
+  sky_peak: { left: '0%', top: '0%', w: 162, floatDur: '5.3s', floatDelay: '-1.7s', zIndex: 7 },
+  planetary: { left: '0%', top: '0%', w: 158, floatDur: '4.6s', floatDelay: '-3.2s', zIndex: 5 },
 };
 
-/* Responsive island sizes — called at render time so resize events work */
+/* Responsive island widths for horizontal-scroll layout */
 function getIslandPositions() {
   const vw = window.innerWidth;
-  const isLandscape = window.innerWidth > window.innerHeight;
-
-  if (vw <= 480 && !isLandscape) {
-    /* Phone portrait: 3 × 2 grid */
-    return {
-      tundra: { left: '2%', top: '3%', w: 90, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '36%', top: '1%', w: 100, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '68%', top: '4%', w: 85, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '2%', top: '50%', w: 82, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '36%', top: '52%', w: 86, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '68%', top: '50%', w: 80, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
-    };
-  }
-  if (isLandscape && vw <= 960) {
-    /* Landscape phone / small tablet: 5-in-a-row, compact
-       top pushed down ~18-22% so islands clear the header on short screens */
-    return {
-      tundra: { left: '2%', top: '20%', w: 105, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '21%', top: '16%', w: 116, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '40%', top: '21%', w: 100, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '59%', top: '17%', w: 96, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '78%', top: '20%', w: 100, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '92%', top: '18%', w: 90, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
-    };
-  }
-  if (vw <= 960) {
-    /* Tablet portrait: 3 × 2 */
-    return {
-      tundra: { left: '2%', top: '8%', w: 130, floatDur: '5.5s', floatDelay: '0s', zIndex: 6 },
-      jungle: { left: '36%', top: '5%', w: 142, floatDur: '6.2s', floatDelay: '-2.1s', zIndex: 7 },
-      volcano: { left: '68%', top: '9%', w: 122, floatDur: '4.8s', floatDelay: '-1.4s', zIndex: 5 },
-      forest: { left: '2%', top: '53%', w: 118, floatDur: '5.8s', floatDelay: '-3.0s', zIndex: 4 },
-      desert: { left: '36%', top: '55%', w: 124, floatDur: '6.5s', floatDelay: '-0.8s', zIndex: 6 },
-      abyss: { left: '68%', top: '53%', w: 114, floatDur: '5.2s', floatDelay: '-2.5s', zIndex: 5 },
-    };
-  }
-  return ISLAND_POSITIONS;
+  const wS = vw <= 480 ? 82 : vw <= 960 ? 118 : 155; // small
+  const wM = vw <= 480 ? 90 : vw <= 960 ? 128 : 165; // medium
+  const wL = vw <= 480 ? 86 : vw <= 960 ? 122 : 160; // large
+  const mkPos = (w, dur, delay) => ({ left: '0%', top: '0%', w, floatDur: dur, floatDelay: delay, zIndex: 5 });
+  return {
+    tundra: mkPos(wL, '5.5s', '0s'),
+    volcano: mkPos(wL, '4.8s', '-1.4s'),
+    jungle: mkPos(wM, '6.2s', '-2.1s'),
+    desert: mkPos(wL, '6.5s', '-0.8s'),
+    abyss: mkPos(wS, '5.2s', '-2.5s'),
+    forest: mkPos(wS, '5.8s', '-3.0s'),
+    ice_cream: mkPos(wS, '5.0s', '-1.1s'),
+    candy_cane: mkPos(wS, '5.7s', '-2.8s'),
+    chocolate: mkPos(wM, '6.0s', '-0.5s'),
+    sky_peak: mkPos(wM, '5.3s', '-1.7s'),
+    planetary: mkPos(wM, '4.6s', '-3.2s'),
+  };
 }
+
 
 // Terrain cap color, cliff rock colors, decorative emoji sets, cliff stripe colors
 const ISLAND_TERRAIN = {
@@ -1680,6 +1788,76 @@ const ISLAND_TERRAIN = {
       { e: '💎', x: 55, y: 24, s: 22 },
       { e: '🌀', x: 78, y: 18, s: 24 },
       { e: '⚓', x: 22, y: 30, s: 20 },
+    ]
+  },
+  ice_cream: {
+    capColors: ['#FFE8F5', '#FFCCE8', '#FFB0D8'],
+    cliffColors: ['#D4A0C0', '#B87898', '#9A5878', '#7A3A58'],
+    cliffStripe: 'rgba(255,200,230,.10)',
+    rimColor: '#FFCCE8',
+    deco: [
+      { e: '🍦', x: 14, y: 8, s: 40 },
+      { e: '🍨', x: 50, y: 10, s: 30 },
+      { e: '🍡', x: 72, y: 6, s: 26 },
+      { e: '🌸', x: 30, y: 26, s: 22 },
+      { e: '🍬', x: 80, y: 22, s: 20 },
+      { e: '⭐', x: 20, y: 18, s: 18 },
+    ]
+  },
+  candy_cane: {
+    capColors: ['#FFE0E6', '#FF8899', '#FF4466'],
+    cliffColors: ['#CC2244', '#AA1133', '#880022', '#660011'],
+    cliffStripe: 'rgba(255,255,255,.12)',
+    rimColor: '#FF6688',
+    deco: [
+      { e: '🍭', x: 10, y: 6, s: 42 },
+      { e: '🍬', x: 48, y: 12, s: 28 },
+      { e: '❄️', x: 70, y: 4, s: 24 },
+      { e: '🎄', x: 28, y: 28, s: 30 },
+      { e: '🍭', x: 78, y: 20, s: 22 },
+      { e: '✨', x: 58, y: 26, s: 18 },
+    ]
+  },
+  chocolate: {
+    capColors: ['#8B4513', '#A0522D', '#C47B3A'],
+    cliffColors: ['#5C2E0A', '#482208', '#341806', '#221004'],
+    cliffStripe: 'rgba(200,120,40,.08)',
+    rimColor: '#8B5A2B',
+    deco: [
+      { e: '🍫', x: 12, y: 8, s: 40 },
+      { e: '🍮', x: 50, y: 10, s: 30 },
+      { e: '🍰', x: 70, y: 6, s: 26 },
+      { e: '☕', x: 30, y: 28, s: 24 },
+      { e: '🍫', x: 78, y: 22, s: 22 },
+      { e: '🌑', x: 20, y: 20, s: 20 },
+    ]
+  },
+  sky_peak: {
+    capColors: ['#E8F4FF', '#B8DFFF', '#87C4F8'],
+    cliffColors: ['#5599CC', '#3B77AA', '#235888', '#103B66'],
+    cliffStripe: 'rgba(180,220,255,.10)',
+    rimColor: '#A0D0F8',
+    deco: [
+      { e: '☁️', x: 8, y: 6, s: 44 },
+      { e: '⚡', x: 48, y: 12, s: 30 },
+      { e: '🌤️', x: 68, y: 4, s: 28 },
+      { e: '🌬️', x: 28, y: 28, s: 24 },
+      { e: '🦅', x: 78, y: 18, s: 26 },
+      { e: '❄️', x: 20, y: 22, s: 20 },
+    ]
+  },
+  planetary: {
+    capColors: ['#1A0A2E', '#2E1058', '#4A2080'],
+    cliffColors: ['#280A50', '#1C0638', '#110422', '#080210'],
+    cliffStripe: 'rgba(168,85,247,.08)',
+    rimColor: '#6030A8',
+    deco: [
+      { e: '🪐', x: 12, y: 6, s: 44 },
+      { e: '👾', x: 50, y: 10, s: 32 },
+      { e: '🌌', x: 68, y: 4, s: 28 },
+      { e: '🛸', x: 28, y: 26, s: 26 },
+      { e: '⭐', x: 78, y: 18, s: 24 },
+      { e: '🌀', x: 22, y: 20, s: 22 },
     ]
   },
 };
@@ -2127,10 +2305,290 @@ const BIOME_PARTICLES = {
         ctx.strokeStyle = `hsla(${p.hue},90%,70%,0.8)`;
         ctx.lineWidth = p.size * 0.5;
         ctx.lineCap = 'round';
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── ICE CREAM ISLES — pastel sparkles + floating ice cream scoops ──
+  ice_cream: {
+    count: 38,
+    create(cw, ch) {
+      const type = Math.random() < 0.6 ? 'sparkle' : 'scoop';
+      return {
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        size: type === 'sparkle' ? Math.random() * 3 + 1 : Math.random() * 4 + 2,
+        speedX: (Math.random() - 0.5) * 0.5,
+        speedY: type === 'scoop' ? -(Math.random() * 0.4 + 0.15) : (Math.random() - 0.5) * 0.3,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.04 + 0.01,
+        opacity: Math.random() * 0.5 + 0.3,
+        hue: 320 + Math.random() * 40,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX + Math.sin(p.phase) * 0.4;
+      p.y += p.speedY;
+      p.opacity = 0.3 + Math.abs(Math.sin(p.phase * 1.5)) * 0.6;
+      if (p.y < -10) { p.y = ch + 10; p.x = Math.random() * cw; }
+      if (p.y > ch + 10) { p.y = -10; p.x = Math.random() * cw; }
+      if (p.x < -10) p.x = cw + 10;
+      if (p.x > cw + 10) p.x = -10;
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      if (p.type === 'sparkle') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+        g.addColorStop(0, `hsla(${p.hue},100%,85%,1)`);
+        g.addColorStop(0.5, `hsla(${p.hue},90%,70%,0.5)`);
+        g.addColorStop(1, `hsla(${p.hue},80%,60%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = `hsla(${p.hue},80%,80%,0.7)`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── CANDY CANE CRAGS — red/white swirling motes ──
+  candy_cane: {
+    count: 36,
+    create(cw, ch) {
+      const isRed = Math.random() < 0.5;
+      return {
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        size: Math.random() * 3.5 + 1.2,
+        speedX: (Math.random() - 0.5) * 0.7,
+        speedY: (Math.random() - 0.5) * 0.7,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.035 + 0.01,
+        opacity: Math.random() * 0.5 + 0.2,
+        isRed
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX + Math.cos(p.phase) * 0.5;
+      p.y += p.speedY + Math.sin(p.phase * 0.8) * 0.4;
+      p.opacity = 0.25 + Math.abs(Math.sin(p.phase * 2)) * 0.65;
+      if (p.x < -10) p.x = cw + 10;
+      if (p.x > cw + 10) p.x = -10;
+      if (p.y < -10) p.y = ch + 10;
+      if (p.y > ch + 10) p.y = -10;
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      const col = p.isRed ? 'rgba(255,60,80,0.9)' : 'rgba(255,220,230,0.9)';
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  },
+
+  // ── CHOCOLATE CITADEL — rising cocoa particles + golden shimmer ──
+  chocolate: {
+    count: 40,
+    create(cw, ch) {
+      const type = Math.random() < 0.6 ? 'cocoa' : 'gold';
+      return {
+        x: Math.random() * cw,
+        y: ch * 0.4 + Math.random() * ch * 0.6,
+        size: type === 'cocoa' ? Math.random() * 4 + 1.5 : Math.random() * 2 + 0.8,
+        speedX: (Math.random() - 0.5) * 0.6,
+        speedY: -(Math.random() * 0.6 + 0.2),
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.03 + 0.008,
+        life: Math.random(),
+        decay: 0.005 + Math.random() * 0.004,
+        hue: type === 'cocoa' ? 25 + Math.random() * 15 : 40 + Math.random() * 10,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX + Math.sin(p.phase) * 0.35;
+      p.y += p.speedY;
+      p.life -= p.decay;
+      if (p.life <= 0 || p.y < -20) {
+        p.y = ch * 0.5 + Math.random() * ch * 0.4;
+        p.x = Math.random() * cw;
+        p.life = 0.6 + Math.random() * 0.4;
+        p.speedY = -(Math.random() * 0.6 + 0.2);
+      }
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life * 0.8);
+      if (p.type === 'gold') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+        g.addColorStop(0, `hsla(${p.hue},90%,75%,1)`);
+        g.addColorStop(1, `hsla(${p.hue},80%,55%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = `hsla(${p.hue},60%,35%,0.7)`;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, p.size, p.size * 0.6, p.speedX * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── SKY PEAK DOMINION — cloud puffs + lightning flickers ──
+  sky_peak: {
+    count: 44,
+    create(cw, ch) {
+      const type = Math.random() < 0.55 ? 'cloud' : Math.random() < 0.6 ? 'lightning' : 'wind';
+      return {
+        x: Math.random() * cw,
+        y: Math.random() * ch * 0.7,
+        size: type === 'cloud' ? Math.random() * 6 + 3 : Math.random() * 2 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.8 + (type === 'wind' ? 0.6 : 0),
+        speedY: (Math.random() - 0.5) * 0.25,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.025 + 0.006,
+        opacity: 0,
+        life: Math.random(),
+        decay: type === 'lightning' ? 0.04 + Math.random() * 0.06 : 0.003 + Math.random() * 0.002,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX;
+      p.y += p.speedY + Math.sin(p.phase) * 0.2;
+      p.life -= p.decay;
+      if (p.life <= 0 || p.x > cw + 30 || p.x < -30) {
+        p.x = p.speedX > 0 ? -20 : cw + 20;
+        p.y = Math.random() * ch * 0.65;
+        p.life = 0.5 + Math.random() * 0.5;
+        if (p.type === 'lightning') {
+          p.x = Math.random() * cw;
+          p.life = 0.6 + Math.random() * 0.4;
+        }
+      }
+      p.opacity = p.type === 'lightning'
+        ? Math.max(0, p.life * 0.9)
+        : Math.max(0, 0.15 + Math.sin(p.phase) * 0.25);
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      if (p.type === 'cloud') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.5);
+        g.addColorStop(0, 'rgba(200,225,255,0.8)');
+        g.addColorStop(0.6, 'rgba(160,200,255,0.3)');
+        g.addColorStop(1, 'rgba(100,180,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'lightning') {
+        ctx.strokeStyle = 'rgba(200,230,255,0.95)';
+        ctx.lineWidth = p.size * 0.6;
+        ctx.shadowColor = 'rgba(100,200,255,0.8)';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - p.size * 4);
+        ctx.lineTo(p.x + p.size * 1.5, p.y);
+        ctx.lineTo(p.x - p.size, p.y + p.size * 2);
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = 'rgba(180,220,255,0.6)';
+        ctx.lineWidth = p.size * 0.4;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(p.x - p.size * 3, p.y);
+        ctx.lineTo(p.x + p.size * 3, p.y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  },
+
+  // ── PLANETARY INVASION — void orbs + plasma streaks + star motes ──
+  planetary: {
+    count: 48,
+    create(cw, ch) {
+      const type = Math.random() < 0.45 ? 'orb' : Math.random() < 0.55 ? 'plasma' : 'star';
+      return {
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        size: type === 'orb' ? Math.random() * 4 + 1.5 : type === 'plasma' ? Math.random() * 2 + 0.5 : Math.random() * 1.5 + 0.5,
+        speedX: type === 'plasma' ? (Math.random() - 0.5) * 2.5 : (Math.random() - 0.5) * 0.4,
+        speedY: type === 'plasma' ? (Math.random() - 0.5) * 2.5 : (Math.random() - 0.5) * 0.35,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: Math.random() * 0.03 + 0.008,
+        opacity: Math.random() * 0.5 + 0.2,
+        life: Math.random(),
+        decay: type === 'plasma' ? 0.025 + Math.random() * 0.03 : 0,
+        hue: 270 + Math.random() * 60,
+        type
+      };
+    },
+    update(p, cw, ch) {
+      p.phase += p.phaseSpeed;
+      p.x += p.speedX + Math.sin(p.phase) * 0.3;
+      p.y += p.speedY + Math.cos(p.phase * 0.7) * 0.25;
+      if (p.type === 'plasma') {
+        p.life -= p.decay;
+        p.opacity = Math.max(0, p.life * 0.8);
+        if (p.life <= 0) {
+          p.x = Math.random() * cw; p.y = Math.random() * ch;
+          p.life = 0.6 + Math.random() * 0.4;
+          p.speedX = (Math.random() - 0.5) * 2.5;
+          p.speedY = (Math.random() - 0.5) * 2.5;
+        }
+      } else {
+        p.opacity = 0.2 + Math.abs(Math.sin(p.phase * 1.8)) * 0.65;
+        if (p.x < -10) p.x = cw + 10;
+        if (p.x > cw + 10) p.x = -10;
+        if (p.y < -10) p.y = ch + 10;
+        if (p.y > ch + 10) p.y = -10;
+      }
+    },
+    draw(ctx, p) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      if (p.type === 'orb') {
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3.5);
+        g.addColorStop(0, `hsla(${p.hue},100%,80%,1)`);
+        g.addColorStop(0.4, `hsla(${p.hue},95%,60%,0.6)`);
+        g.addColorStop(1, `hsla(${p.hue},85%,45%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.type === 'plasma') {
+        ctx.strokeStyle = `hsla(${p.hue},100%,75%,0.9)`;
+        ctx.lineWidth = p.size * 0.8;
+        ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p.x - p.speedX * 4, p.y - p.speedY * 4);
+        ctx.lineTo(p.x - p.speedX * 5, p.y - p.speedY * 5);
         ctx.stroke();
+      } else {
+        ctx.fillStyle = `hsla(${p.hue},80%,85%,0.9)`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
       }
       ctx.restore();
     }
@@ -2603,7 +3061,7 @@ function buildIslandHTML(b) {
   if (!ter) return '';
 
   // ── Per-player island lock (extreme mode) ──────────────────
-  const _FEATURED_ORDER = ['tundra', 'volcano', 'jungle', 'desert', 'forest'];
+  const _FEATURED_ORDER = ['tundra', 'volcano', 'jungle', 'desert', 'abyss', 'forest', 'ice_cream', 'candy_cane', 'chocolate', 'sky_peak', 'planetary'];
   const islandIndex = _FEATURED_ORDER.indexOf(b.id) + 1;
   const islandUnlocked = islandIndex <= (G.extremeProgress || 1);
   const prevIslandName = islandIndex > 1
@@ -2665,7 +3123,7 @@ function buildIslandHTML(b) {
 
   return `
   <div class="island-node inode-biome-${b.id}" data-biome="${b.id}" onclick="${clickHandler}"
-       style="left:${pos.left};top:${pos.top};--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};z-index:${pos.zIndex};--biome-glow:${b.color};width:${w}px;height:${islandH}px;position:absolute;cursor:${islandUnlocked ? 'pointer' : 'not-allowed'}">
+       style="--float-dur:${pos.floatDur};--float-delay:${pos.floatDelay};--biome-glow:${b.color};width:${w}px;height:${islandH}px;flex-shrink:0;scroll-snap-align:center;cursor:${islandUnlocked ? 'pointer' : 'not-allowed'}">
 
     <!-- Particle canvas -->
     <canvas class="inode-particles" id="ipc-${b.id}"
@@ -2698,32 +3156,10 @@ function buildIslandHTML(b) {
 
 function renderIslandCards() {
   const grid = document.getElementById('island-grid');
-  grid.className = 'island-scene';
+  grid.className = 'island-scroll-row';
 
-  // Background atmospheric wisps (dark, subtle)
-  const wispData = [
-    { t: 12, l: 8, w: 320, h: 80, op: 0.06, dur: 18, delay: 0 },
-    { t: 38, l: 45, w: 260, h: 60, op: 0.05, dur: 22, delay: -7 },
-    { t: 60, l: 20, w: 400, h: 90, op: 0.07, dur: 26, delay: -13 },
-    { t: 72, l: 68, w: 280, h: 70, op: 0.05, dur: 20, delay: -5 },
-  ];
-  const wisps = wispData.map(w =>
-    `<div class="isc-wisp" style="top:${w.t}%;left:${w.l}%;width:${w.w}px;height:${w.h}px;opacity:${w.op};animation-duration:${w.dur}s;animation-delay:${w.delay}s"></div>`
-  ).join('');
-
-  // Distant background stars
-  const starCount = 55;
-  const stars = Array.from({ length: starCount }, (_, i) => {
-    const x = Math.random() * 100, y = Math.random() * 65;
-    const s = Math.random() * 2.2 + 0.5;
-    const op = Math.random() * 0.5 + 0.15;
-    const dur = 2.5 + Math.random() * 4;
-    const del = -(Math.random() * dur);
-    return `<div class="isc-star" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(1)}px;height:${s.toFixed(1)}px;opacity:${op.toFixed(2)};animation-duration:${dur.toFixed(1)}s;animation-delay:${del.toFixed(1)}s"></div>`;
-  }).join('');
-
-  // Show the five stylized hero islands used by current art direction.
-  const featuredOrder = ['tundra', 'volcano', 'jungle', 'desert', 'forest'];
+  // Show all 11 islands in order — first is unlocked, rest unlock progressively
+  const featuredOrder = ['tundra', 'volcano', 'jungle', 'desert', 'abyss', 'forest', 'ice_cream', 'candy_cane', 'chocolate', 'sky_peak', 'planetary'];
   const islands = featuredOrder
     .map(id => BIOME_DEFS[id])
     .filter(Boolean)
@@ -2746,7 +3182,7 @@ function renderIslandCards() {
     </div>
   </div>`;
 
-  grid.innerHTML = wisps + stars + islands + detailPanel;
+  grid.innerHTML = islands + detailPanel;
   // Kick off all canvas particle engines after DOM is populated
   requestAnimationFrame(initAllIslandParticles);
 }
@@ -2905,8 +3341,10 @@ window.selectBiome = function (biomeId) {
 
   // Show in-game tutorial for new registrations or first-timers
   const seenTut = localStorage.getItem('kr_tutorial_done');
-  if (!seenTut || G._isNewRegistration) {
+  const isNewPlayer = !seenTut || G._isNewRegistration || !!sessionStorage.getItem('kr_new_reg');
+  if (isNewPlayer) {
     G._isNewRegistration = false;
+    sessionStorage.removeItem('kr_new_reg');
     localStorage.removeItem('kr_tutorial_done');
     setTimeout(startTutorial, 800);
   }
@@ -3871,7 +4309,7 @@ async function handleGameOver() {
 // Called when the player clears a "checkpoint wave" (wave 10) on an island.
 // Unlocks the next island for THIS player only and persists to the server.
 function onIslandCleared(biomeId) {
-  const FEATURED_ORDER = ['tundra', 'volcano', 'jungle', 'desert', 'forest'];
+  const FEATURED_ORDER = ['tundra', 'volcano', 'jungle', 'desert', 'abyss', 'forest', 'ice_cream', 'candy_cane', 'chocolate', 'sky_peak', 'planetary'];
   const idx = FEATURED_ORDER.indexOf(biomeId) + 1;  // 1-based
   if (idx < 1) return;
   if (idx >= (G.extremeProgress || 1)) {

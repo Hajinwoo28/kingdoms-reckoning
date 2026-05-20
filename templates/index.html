@@ -1540,7 +1540,8 @@
         <div class="reward-chip">🪙 <strong>+50</strong><br><small>Gold</small></div>
         <div class="reward-chip">💎 <strong>+1</strong><br><small>Diamond</small></div>
         <div class="reward-chip" style="border-color:rgba(240,200,66,.5);background:rgba(240,200,66,.08)">🏅
-          <strong>Tutorial</strong><br><small>Badge</small></div>
+          <strong>Tutorial</strong><br><small>Badge</small>
+        </div>
       </div>
       <button class="btn-modal primary-btn"
         style="width:100%;background:linear-gradient(135deg,#22c55e,#16a34a);margin-top:8px"
@@ -1946,6 +1947,16 @@
             <h1 class="is-title">Choose Your Island</h1>
             <p class="is-sub">Each island holds unique creatures, challenges &amp; exclusive rewards</p>
           </div>
+        </div>
+        <!-- Scroll arrows -->
+        <div class="isc-scroll-hint">
+          <button class="isc-scroll-btn isc-scroll-left"
+            onclick="document.getElementById('island-grid').scrollBy({left:-240,behavior:'smooth'})"
+            aria-label="Scroll left">‹</button>
+          <span class="isc-scroll-label">Scroll to explore all islands</span>
+          <button class="isc-scroll-btn isc-scroll-right"
+            onclick="document.getElementById('island-grid').scrollBy({left:240,behavior:'smooth'})"
+            aria-label="Scroll right">›</button>
         </div>
         <div class="island-grid" id="island-grid"></div>
       </div>
