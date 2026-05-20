@@ -5368,7 +5368,7 @@ body {
   align-items: center;
   justify-content: safe center;
   gap: 40px;
-  padding: 48px 80px 32px;
+  padding: 12px 80px 8px;
   overflow-x: auto;
   overflow-y: visible;
   width: 100%;
@@ -5404,10 +5404,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding: 6px 24px 2px;
+  padding: 10px 24px 18px;
   pointer-events: all;
   position: relative;
   z-index: 20;
+  flex-shrink: 0;
 }
 
 .isc-scroll-label {

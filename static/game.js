@@ -4141,6 +4141,16 @@ async function waveComplete() {
     updateDailyProgress('nodmg');
   }
 
+  // ── Tutorial wave intercept: player completed wave 1 during tutorial ──
+  if (G._tutorialWaveActive) {
+    G._tutorialWaveActive = false;
+    localStorage.setItem('kr_tutorial_done', '1');
+    showToast('Tutorial complete! Good luck, Commander! ⚔️', 'tsuccess');
+    const tcModal = document.getElementById('tutorial-complete-modal');
+    if (tcModal) tcModal.style.display = 'flex';
+    return;
+  }
+
   // ── Story mode: show stage wave complete or stage complete ──
   if (G.gameMode === 'story') {
     const stageData = STORY_STAGES[G.storyStage - 1];
@@ -4301,6 +4311,23 @@ async function _submitScore(score, mode) {
 
 // ── GAME OVER ─────────────────────────────────────────────────
 async function handleGameOver() {
+  // ── Tutorial wave: auto-retry instead of game over ──
+  if (G._tutorialWaveActive) {
+    showToast('Your castle fell! Don\'t worry — try again, Commander! 💪', 'terror');
+    G.gameOver = false;
+    G.isAnimating = false;
+    const skin = CASTLE_SKINS[G.castleSkin] || CASTLE_SKINS.Wooden;
+    G.maxHp = skin.maxHp; G.hp = G.maxHp; G.waveStartHp = G.maxHp;
+    G.enemies = []; G.spawnIndex = 0;
+    G.towers = []; G.gold = 80;
+    buildWaveQueue();
+    createBoard(); renderBoard(); renderTowerSelector(); renderUpgradePanel();
+    updateHUD(); setPhase('planning');
+    document.getElementById('execute-btn').disabled = false;
+    showWavePreview();
+    return;
+  }
+
   G.gameOver = true;
   if (G.wave > G.bestWave) G.bestWave = G.wave;
   if (G.activeBiome) saveIslandStat(G.activeBiome.id, G.wave, G.score);
@@ -5609,25 +5636,26 @@ function endTutorial() {
   document.getElementById('tut-spotlight').style.display = 'none';
   document.getElementById('tut-arrow').style.display = 'none';
   document.querySelectorAll('.tut-highlight').forEach(e => e.classList.remove('tut-highlight'));
-  localStorage.setItem('kr_tutorial_done', '1');
 
-  // Final achievement
+  // Final achievement for finishing the overlay steps
   _tutShowAchievement({ icon: '🏆', name: 'Ready for Battle!', xp: '+100 XP Bonus' });
-  showToast('Tutorial complete! Good luck, Commander! ⚔️', 'tsuccess');
 
-  // Show the tutorial complete modal overlay
-  const tcModal = document.getElementById('tutorial-complete-modal');
-  if (tcModal) tcModal.style.display = 'flex';
+  // Don't mark tutorial as done yet — player must complete the wave first!
+  // Set a flag so waveComplete knows to show the tutorial-complete modal
+  G._tutorialWaveActive = true;
+  showToast('Now defend your castle! Place towers and defeat the enemies! ⚔️', 'tsuccess');
 }
 
 window.skipTutorial = function () { endTutorial(); };
 
 window.exitTutorialToModeSelect = function () {
+  G._tutorialWaveActive = false;
   const tcModal = document.getElementById('tutorial-complete-modal');
   if (tcModal) tcModal.style.display = 'none';
   document.getElementById('game-section').style.display = 'none';
   G.gameOver = true;
   G.isAnimating = false;
+  localStorage.setItem('kr_tutorial_done', '1');
   showModeSelect();
 };
 
